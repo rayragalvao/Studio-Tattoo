@@ -1,2 +1,16 @@
+---
+
 # Studio-Tattoo
-🎨💉 Projeto de um estúdio de tatuagem: portfólio online, agendamento de clientes e área administrativa.
+🎨💉Projeto desenvolvido em grupo para a disciplina de Pesquisa e Inovação.  
+O objetivo é criar um sistema/site para gerenciamento e divulgação de um estúdio de tatuagem. 
+
+---
+
+## 🚀 Tecnologias utilizadas  
+- [ ] HTML / CSS / JS  
+- [ ] React
+- [ ] Java
+- [ ] Node.js
+- [ ] Spring Boot
+
+---

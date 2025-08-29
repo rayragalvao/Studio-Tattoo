@@ -22,6 +22,7 @@ public class Usuario {
     private String telefone;
     private String senha;
     private Date dtNasc;
+    private TipoUsuario tipo;
 
     public void setId(Long id) {
         this.id = id;
@@ -50,4 +51,6 @@ public class Usuario {
     public Date getDtNasc() {
         return dtNasc;
     }
+
+    public TipoUsuario getTipo() {return tipo;}
 }

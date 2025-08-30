@@ -38,4 +38,11 @@ public class Equipamento {
     public Double getMinAviso() {
         return minAviso;
     }
+
+    public Long setId(Long id) {
+        if (this.id == null) {
+            this.id = id;
+        }
+        return this.id;
+    }
 }

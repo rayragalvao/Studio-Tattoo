@@ -1,12 +1,9 @@
 package hub.orcana.controller;
 
 import hub.orcana.tables.Usuario;
-import hub.orcana.tables.TipoUsuario;
 import hub.orcana.tables.repository.UsuarioRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,74 +18,61 @@ public class UsuarioController {
         this.repository = repository;
     }
 
-    // CREATE - POST
+    // cria o usuário
     @PostMapping
     public ResponseEntity<Usuario> criar(@RequestBody Usuario usuario) {
-        // Validação do tipo de usuário
-        if (usuario.getTipo() == null) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(null); // você pode criar um objeto de erro se quiser
-        }
-
         try {
             Usuario salvo = repository.save(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(salvo);
+            return ResponseEntity.status(201).body(salvo);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
-    // READ ALL - GET
+    // listar todos os usuários existentes
     @GetMapping
     public ResponseEntity<List<Usuario>> listar() {
         List<Usuario> usuarios = repository.findAll();
         return usuarios.isEmpty()
-                ? ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-                : ResponseEntity.status(HttpStatus.OK).body(usuarios);
+                ? ResponseEntity.status(204).build()
+                : ResponseEntity.status(200).body(usuarios);
     }
 
-    // READ ONE - GET/{id}
+    // buscar usuário pelo id
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscar(@PathVariable Long id) {
+    public ResponseEntity<Usuario> buscarPeloId(@PathVariable Long id) {
         Optional<Usuario> usuario = repository.findById(id);
-        return usuario.isPresent()
-                ? ResponseEntity.ok(usuario.get())
-                : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return usuario.map(value -> ResponseEntity.status(200).body(value)).orElseGet(()
+                -> ResponseEntity.status(404).build());
     }
 
-    // UPDATE - PUT/{id}
+    // atualizar os dados do usuário pelo id
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
+    public ResponseEntity<Usuario> atualizarPeloId(@PathVariable Long id, @RequestBody Usuario usuario) {
         if (!repository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-        // Validação do tipo de usuário
-        if (usuario.getTipo() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(404).build();
         }
 
         try {
-            usuario.setId(id); // garante que atualize o certo
+            usuario.setId(id);
             Usuario atualizado = repository.save(usuario);
-            return ResponseEntity.ok(atualizado);
+            return ResponseEntity.status(200).body(atualizado);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(500).build();
         }
     }
 
-    // DELETE - DELETE/{id}
+    // deleta o usuario pelo id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarPeloId(@PathVariable Long id) {
         if (!repository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(404).build();
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            return ResponseEntity.status(204).build();
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(500).build();
         }
     }
 }

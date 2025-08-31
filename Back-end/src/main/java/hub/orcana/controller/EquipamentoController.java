@@ -11,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/equipamento")
-public classEquipamentoController {
+public class EquipamentoController {
     private final EquipamentoService service;
     private final EquipamentoRepository equipamentoRepository;
 

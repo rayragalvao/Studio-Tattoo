@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -20,59 +21,105 @@ public class UsuarioController {
 
     // cria o usuário
     @PostMapping
-    public ResponseEntity<Usuario> criar(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> criar(@RequestBody Usuario usuario) {
         try {
             Usuario salvo = repository.save(usuario);
-            return ResponseEntity.status(201).body(salvo);
+            return ResponseEntity.status(201).body(Map.of(
+                    "mensagem", "Usuário criado com sucesso!",
+                    "dados", salvo
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(Map.of(
+                    "erro", "Erro ao criar usuário.",
+                    "detalhe", e.getMessage()
+            ));
         }
     }
 
     // listar todos os usuários existentes
     @GetMapping
-    public ResponseEntity<List<Usuario>> listar() {
-        List<Usuario> usuarios = repository.findAll();
-        return usuarios.isEmpty()
-                ? ResponseEntity.status(204).build()
-                : ResponseEntity.status(200).body(usuarios);
+    public ResponseEntity<?> listar() {
+        try {
+            List<Usuario> usuarios = repository.findAll();
+            if (usuarios.isEmpty()) {
+                return ResponseEntity.status(204).body(Map.of(
+                        "mensagem", "Nenhum usuário encontrado."
+                ));
+            }
+            return ResponseEntity.ok(Map.of(
+                    "mensagem", "Usuários encontrados com sucesso!",
+                    "dados", usuarios
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "erro", "Erro ao listar usuários.",
+                    "detalhe", e.getMessage()
+            ));
+        }
     }
 
     // buscar usuário pelo id
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPeloId(@PathVariable Long id) {
-        Optional<Usuario> usuario = repository.findById(id);
-        return usuario.map(value -> ResponseEntity.status(200).body(value)).orElseGet(()
-                -> ResponseEntity.status(404).build());
+    public ResponseEntity<?> buscarPeloId(@PathVariable Long id) {
+        try {
+            Optional<Usuario> usuario = repository.findById(id);
+            return usuario.map(value -> ResponseEntity.ok(Map.of(
+                            "mensagem", "Usuário encontrado com sucesso!",
+                            "dados", value
+                    )))
+                    .orElseGet(() -> ResponseEntity.status(404).body(Map.of(
+                            "mensagem", "Usuário não encontrado."
+                    )));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "erro", "Erro ao buscar usuário.",
+                    "detalhe", e.getMessage()
+            ));
+        }
     }
 
     // atualizar os dados do usuário pelo id
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizarPeloId(@PathVariable Long id, @RequestBody Usuario usuario) {
+    public ResponseEntity<?> atualizarPeloId(@PathVariable Long id, @RequestBody Usuario usuario) {
         if (!repository.existsById(id)) {
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.status(404).body(Map.of(
+                    "mensagem", "Usuário não encontrado para atualização."
+            ));
         }
 
         try {
             usuario.setId(id);
             Usuario atualizado = repository.save(usuario);
-            return ResponseEntity.status(200).body(atualizado);
+            return ResponseEntity.ok(Map.of(
+                    "mensagem", "Usuário atualizado com sucesso!",
+                    "dados", atualizado
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(Map.of(
+                    "erro", "Erro ao atualizar usuário.",
+                    "detalhe", e.getMessage()
+            ));
         }
     }
 
     // deleta o usuario pelo id
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarPeloId(@PathVariable Long id) {
+    public ResponseEntity<?> deletarPeloId(@PathVariable Long id) {
         if (!repository.existsById(id)) {
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.status(404).body(Map.of(
+                    "mensagem", "Usuário não encontrado para exclusão."
+            ));
         }
         try {
             repository.deleteById(id);
-            return ResponseEntity.status(204).build();
+            return ResponseEntity.ok(Map.of(
+                    "mensagem", "Usuário deletado com sucesso!"
+            ));
         } catch (Exception e) {
-            return ResponseEntity.status(500).build();
+            return ResponseEntity.status(500).body(Map.of(
+                    "erro", "Erro ao deletar usuário.",
+                    "detalhe", e.getMessage()
+            ));
         }
     }
 }

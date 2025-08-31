@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/equipamento")
-public class EquipamentoController {
+public classEquipamentoController {
     private final EquipamentoService service;
 
     public EquipamentoController(EquipamentoService service) {

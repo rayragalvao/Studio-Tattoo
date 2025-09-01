@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class Equipamento {
+public class Estoque {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotBlank

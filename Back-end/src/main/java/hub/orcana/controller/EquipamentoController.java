@@ -13,11 +13,9 @@ import java.util.List;
 @RequestMapping("/equipamento")
 public class EquipamentoController {
     private final EquipamentoService service;
-    private final EquipamentoRepository equipamentoRepository;
 
     public EquipamentoController(EquipamentoService service, EquipamentoRepository equipamentoRepository) {
         this.service = service;
-        this.equipamentoRepository = equipamentoRepository;
     }
 
     @GetMapping

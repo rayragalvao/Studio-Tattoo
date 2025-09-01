@@ -6,6 +6,13 @@
       "email": "maria@",
       "senha": "maria1",
       "tipo": "cliente"
+    },
+    {
+      "id": 1756730498330,
+      "nome": "vivi",
+      "email": "vivi@gmail.com",
+      "senha": "vivi@123",
+      "tipo": "cliente"
     }
   ]
 }

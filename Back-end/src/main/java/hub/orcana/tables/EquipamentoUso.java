@@ -6,13 +6,10 @@ import jakarta.persistence.*;
 public class EquipamentoUso {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "equipamento_id")
     private Equipamento equipamento;
-
     private int quantidade;
-
     @ManyToOne
     @JoinColumn(name = "relatorio_id")
     private Relatorio relatorio;

@@ -9,7 +9,7 @@ public class EquipamentoUso {
 
     @ManyToOne
     @JoinColumn(name = "equipamento_id")
-    private Equipamento equipamento;
+    private Estoque equipamento;
 
     private int quantidade;
 
@@ -21,7 +21,7 @@ public class EquipamentoUso {
         return id;
     }
 
-    public Equipamento getEquipamento() {
+    public Estoque getEquipamento() {
         return equipamento;
     }
 

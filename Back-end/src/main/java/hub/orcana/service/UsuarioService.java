@@ -20,21 +20,28 @@ public class UsuarioService {
         this.repository = repository;
     }
 
-    // cria o usuário
-    @PostMapping
-    public ResponseEntity<?> criar(@RequestBody @Valid Usuario usuario) {
-        try {
-            Usuario salvo = repository.save(usuario);
-            return ResponseEntity.status(201).body(Map.of(
-                    "mensagem", "Usuário criado com sucesso!",
-                    "dados", salvo
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of(
-                    "erro", "Erro ao criar usuário.",
-                    "detalhe", e.getMessage()
-            ));
-        }
+//    Como o metodo estava antes
+//    @PostMapping -> Não deve ter essa anotação, o controller que tem os endppoints
+//    public ResponseEntity<?> criar(@RequestBody @Valid Usuario usuario) { -> Aqui tbm não deve ter as anotações @RequestBody e @Valid pq o controller que lida com isso
+//        try { -> Removi o try catch pq o metodo não precisa lidar com a resposta HTTP, quem lida com isso é o controller
+//            Usuario salvo = repository.save(usuario);
+//            return ResponseEntity.status(201).body(Map.of(
+//                    "mensagem", "Usuário criado com sucesso!",
+//                    "dados", salvo
+//            ));
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body(Map.of(
+//                    "erro", "Erro ao criar usuário.",
+//                    "detalhe", e.getMessage()
+//            ));
+//        }
+//    }
+
+
+//    Método depois, corrigido
+//    cria o usuário
+    public Usuario criar(Usuario usuario) {
+        return repository.save(usuario); // Simplesmente salva e retorna o usuário salvo, se acontecer algum erro ele será enviado para o controller lidar
     }
 
     // listar todos os usuários existentes

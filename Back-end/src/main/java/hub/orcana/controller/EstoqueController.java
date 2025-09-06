@@ -2,7 +2,6 @@ package hub.orcana.controller;
 
 import hub.orcana.service.EstoqueService;
 import hub.orcana.tables.Estoque;
-import hub.orcana.tables.repository.EstoqueRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,26 +19,64 @@ public class EstoqueController {
 
     @GetMapping
     public ResponseEntity<?> getEstoque() {
-        return service.getEstoque();
+        try {
+            List<Estoque> material = service.getEstoque();
+            if (material.isEmpty()) {
+                return ResponseEntity.status(204).body(null);
+            } else {
+                return ResponseEntity.status(200).body(material);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Erro ao listar materiais: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{nomeMaterial}")
-    public List<?> getEstoqueByNome(@PathVariable String nomeMaterial) {
-        return (List<?>) service.getEstoqueByNome(nomeMaterial).getBody();
+    public ResponseEntity<?> getEstoqueByNome(@PathVariable String nomeMaterial) {
+        try {
+            var material = service.getEstoqueByNome(nomeMaterial);
+            if (material.isEmpty()) {
+                return ResponseEntity.status(204).body(null);
+            }
+            return ResponseEntity.status(200).body(material);
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Erro ao buscar material: " + e.getMessage());
+        }
     }
 
     @PostMapping
     public ResponseEntity<?> postEstoque(@RequestBody Estoque estoque) {
-        return service.postEstoque(estoque);
+        try {
+            Estoque novoMaterial = service.postEstoque(estoque);
+            return ResponseEntity.status(201).body(novoMaterial);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(409).body("Erro ao cadastrar material: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Erro ao cadastrar material: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> putEstoqueById(@PathVariable Long id, @RequestBody @Valid Estoque estoque) {
-        return service.putEstoqueById(id, estoque);
+        try {
+            Estoque novoMaterial = service.putEstoqueById(id, estoque);
+            return ResponseEntity.status(201).body(novoMaterial);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("Erro ao atualizar material: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Erro ao atualizar material: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEstoqueById(@PathVariable Long id) {
-       return service.deleteEstoqueById(id);
+       try {
+            service.deleteEstoqueById(id);
+            return ResponseEntity.status(204).body(null);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("Erro ao excluir material: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body("Erro ao excluir material: " + e.getMessage());
+       }
     }
 }

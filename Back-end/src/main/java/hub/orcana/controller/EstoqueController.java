@@ -74,9 +74,9 @@ public class EstoqueController {
             service.deleteEstoqueById(id);
             return ResponseEntity.status(204).body(null);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body("Erro ao excluir material: " + e.getMessage());
+            return ResponseEntity.status(404).body("Erro excluir material: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(400).body("Erro ao excluir material: " + e.getMessage());
+            return ResponseEntity.status(400).body("Erro excluir material: " + e.getMessage());
        }
     }
 }

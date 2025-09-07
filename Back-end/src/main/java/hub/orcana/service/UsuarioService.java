@@ -106,7 +106,7 @@ public class UsuarioService {
             return ResponseEntity.status(500).body(Map.of(
                     "erro", "Erro ao atualizar usuário.",
                     "detalhe", e.getMessage()
-            ));
+         git   ));
         }
     }
 

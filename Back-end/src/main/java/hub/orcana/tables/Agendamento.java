@@ -48,4 +48,9 @@ public class Agendamento {
     public StatusAgendamento getStatus() {
         return status;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }

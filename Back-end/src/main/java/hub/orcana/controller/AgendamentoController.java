@@ -1,5 +1,8 @@
 package hub.orcana.controller;
 
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import hub.orcana.service.AgendamentoService;
 import hub.orcana.tables.Agendamento;
 import jakarta.validation.Valid;

@@ -1,132 +1,140 @@
+:root {
+    --color-white: #FFF;
+    --color-black: #000;
+    --color-red: #E40B00;
+    --color-gray: #828282;
+    --color-orange: #FA6506;
+}
+
 body {
+    font-family: Arial, sans-serif;
+    background-color: var(--color-black);
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #373737;
-    font-size: 25px;
-    padding: 5%;
+    height: 100vh;
+    margin: 0;
 }
 
-button:hover {
-  transform: scale(1.05);
-  border: 1px solid black;
+.container {
+    background-color: var(--color-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 50px rgba(228, 11, 0, 0.5);
+    width: 300px;
+    text-align: center;
+    position: relative;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-left: 2em;
-  padding-right: 2em;
-  padding-bottom: 0.4em;
-  background-color: #171717;
-  border-radius: 25px;
-  transition: .4s ease-in-out;
-  width: 40%;
+.container h2 {
+    margin-bottom: 20px;
+    color: var(--color-red);
 }
 
-.form:hover {
-  transform: scale(1.05);
-  border: 1px solid black;
+.input-group {
+    margin-bottom: 15px;
+    text-align: left;
 }
 
-#heading {
-  text-align: center;
-  margin: 2em;
-  color: rgb(255, 255, 255);
-  font-size: 1.2em;
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--color-gray);
+    font-weight: bold;
 }
 
-.field {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5em;
-  border-radius: 25px;
-  padding: 0.6em;
-  border: none;
-  outline: none;
-  color: white;
-  background-color: #171717;
-  box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-gray);
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: var(--color-black);
 }
 
-.input-field {
-  background: none;
-  border: none;
-  outline: none;
-  width: 100%;
-  color: #d3d3d3;
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-orange);
 }
 
-.form .btn {
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  margin-top: 2.5em;
+.buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
 }
 
-.button1 {
-  padding: 0.5em;
-  padding-left: 1.1em;
-  padding-right: 1.1em;
-  border-radius: 5px;
-  margin-right: 0.5em;
-  border: none;
-  outline: none;
-  transition: .4s ease-in-out;
-  background-color: #252525;
-  color: white;
+.buttons-container button {
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
 }
 
-.button1:hover {
-  background-color: black;
-  color: white;
-  transform: scale(1.05);
+.login-button {
+    background-color: var(--color-red);
+    color: var(--color-white);
 }
 
-.button2 {
-  padding: 0.5em;
-  padding-left: 2.3em;
-  padding-right: 2.3em;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-  transition: .4s ease-in-out;
-  background-color: #252525;
-  color: white;
+.login-button:hover {
+    background-color: var(--color-orange);
+    transform: scale(1.03);
 }
 
-.button2:hover {
-  background-color: black;
-  color: white;
+.register-button {
+    background-color: var(--color-gray);
+    color: var(--color-white);
 }
 
-.button3 {
-  margin-bottom: 3em;
-  padding: 0.5em;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-  transition: .4s ease-in-out;
-  background-color: #252525;
-  color: white;
+.register-button.main {
+    background-color: var(--color-orange);
+}
+
+.register-button.main:hover {
+    background-color: var(--color-red);
+}
+
+.register-button:not(.main):hover {
+    background-color: var(--color-red);
+}
+
+.back-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    background: none;
+    border: none;
+    color: var(--color-gray);
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.back-button:hover {
+    color: var(--color-red);
 }
 
 .toast {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #fa0101;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #2700c5;
   color: #fff;
-  padding: 12px 18px;
+  padding: 12px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   opacity: 0;
-  transform: translateY(-20px);
-  transition: all 0.4s ease;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  z-index: 1000;
+  pointer-events: none;
 }
+
 .toast.show {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateX(-50%) translateY(-20px);
 }

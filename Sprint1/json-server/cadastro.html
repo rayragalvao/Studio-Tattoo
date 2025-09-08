@@ -6,69 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CADASTRO</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
 
 <body>
 
-    <form class="form">
-        <p id="heading">crie sua conta (ou não)</p>
-        <div class="field">
-            <input placeholder="nome" class="input-field" type="text">
-        </div>
-        <div class="field">
-            <input autocomplete="off" placeholder="email" class="input-field" type="text">
-        </div>
-        <div class="field">
-            <input placeholder="senha" class="input-field" type="password">
-        </div>
-        <div class="btn">
-            <button onclick="cadastrar()" class="button2">terminei</button>
-        </div>
-    </form>
-    <div id="toast" class="toast">não foi tão difícil, né?</div>
+    <div id="toast" class="toast"></div>
+    <div class="container">
+        <h2>Cadastre-se</h2>
+        <form action="#" method="post">
+            <div class="input-group">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name" autocomplete="off" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" autocomplete="off" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Senha</label>
+                <input type="password" id="password" name="password" autocomplete="off" required>
+            </div>
+            <div class="buttons-container">
+                <button onclick="cadastrar()" type="submit" class="register-button main">Cadastrar</button>
+            </div>
+        </form>
+        <button class="back-button" onclick="window.location.href='login.html'">&larr;</button>
+    </div>
 
 </body>
 
 </html>
-
-<script>
-
-    async function cadastrar() {
-        event.preventDefault();
-
-        let nome = document.querySelector('.input-field[type="text"]').value;
-        let email = document.querySelectorAll('.input-field[type="text"]')[1].value;
-        let senha = document.querySelector('.input-field[type="password"]').value;
-
-        try {
-            const resposta = await fetch('http://localhost:3000/pessoas', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    id: Date.now(),
-                    nome: nome,
-                    email: email,
-                    senha: senha,
-                    tipo: "cliente"
-                })
-            })
-            showToast()
-        } catch (erro) {
-
-        }
-    }
-
-    function showToast() {
-        const toast = document.getElementById("toast");
-        toast.classList.add("show");
-
-        setTimeout(() => {
-            toast.classList.remove("show");
-
-            window.location.href = "login.html";
-        }, 2500);
-    }
-
-</script>

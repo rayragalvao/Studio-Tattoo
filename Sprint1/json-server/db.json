@@ -13,6 +13,27 @@
       "email": "vivi@gmail.com",
       "senha": "vivi@123",
       "tipo": "cliente"
+    },
+    {
+      "nome": "Kawan",
+      "email": "kawan@gmail",
+      "senha": "123",
+      "tipo": "cliente",
+      "id": 1756730498331
+    },
+    {
+      "id": 1757337942394,
+      "nome": "oi",
+      "email": "oi@oi",
+      "senha": "123",
+      "tipo": "cliente"
+    },
+    {
+      "id": 1757338109110,
+      "nome": "alo",
+      "email": "alo@alo",
+      "senha": "123",
+      "tipo": "cliente"
     }
   ]
 }

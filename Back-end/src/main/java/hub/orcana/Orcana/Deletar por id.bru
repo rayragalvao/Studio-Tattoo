@@ -1,0 +1,15 @@
+meta {
+  name: Deletar por id
+  type: http
+  seq: 5
+}
+
+get {
+  url: http://localhost:8080/usuario/4
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

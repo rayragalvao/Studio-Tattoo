@@ -1,9 +1,16 @@
 :root {
     --color-white: #FFF;
-    --color-black: #000;
-    --color-red: #E40B00;
-    --color-gray: #828282;
-    --color-orange: #FA6506;
+    --color-black: #222222;
+    --color-red: #870C0E;
+    --color-orange: #D46B0F;
+    --color-gray: #787878;
+    --color-light-gray: #F8F8F8;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
@@ -16,19 +23,15 @@ body {
     margin: 0;
 }
 
-.container {
+.container-cadastro-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding: 2em;
+    gap: 4em;
+    border-radius: 1em;
     background-color: var(--color-white);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(228, 11, 0, 0.5);
-    width: 300px;
-    text-align: center;
-    position: relative;
-}
-
-.container h2 {
-    margin-bottom: 20px;
-    color: var(--color-red);
 }
 
 .input-group {
@@ -39,17 +42,18 @@ body {
 .input-group label {
     display: block;
     margin-bottom: 5px;
-    color: var(--color-gray);
+    color: var(--color-black);
     font-weight: bold;
 }
 
 .input-group input {
-    width: 100%;
+    width: 22em;
     padding: 10px;
     border: 1px solid var(--color-gray);
     border-radius: 4px;
     box-sizing: border-box;
     color: var(--color-black);
+    background-color: var(--color-light-gray);
 }
 
 .input-group input:focus {

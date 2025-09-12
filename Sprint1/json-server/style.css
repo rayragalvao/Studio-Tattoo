@@ -36,6 +36,21 @@ body {
     background: linear-gradient(120deg, rgba(0, 0, 0, 0.9) 39.73%, rgba(183, 13, 7, 0.99) 103.87%);
 }
 
+.martel-sans {
+    font-family: "Martel Sans", sans-serif;
+    line-height: 1em;
+}
+
+.montserrat-alternates {
+    font-family: "Montserrat Alternates", sans-serif;
+}
+
+.div-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 .container-cadastro-login {
     display: flex;
     justify-content: center;
@@ -45,7 +60,10 @@ body {
     gap: 4em;
     border-radius: 1em;
     background-color: var(--color-white);
-    position: fixed;
+
+    position: relative;
+    overflow: hidden;
+    width: 55vw;
 }
 
 .input-group {
@@ -64,7 +82,7 @@ body {
 }
 
 .input-group input {
-    width: 22em;
+    width: 100%;
     padding: 10px;
     border: 1.5px solid var(--color-gray);
     border-radius: 0.4em;
@@ -114,17 +132,18 @@ body {
     font-weight: bold;
     font-family: "Martel Sans", sans-serif;
     line-height: 1em;
+    margin-bottom: 0.5em;
 }
 
-.card-convite-cadastro {
+.card-convite {
     background: linear-gradient(155deg, var(--color-orange) 8.1%, var(--color-red) 88.32%);
-    width: 22em;
+    width: 50%;
     height: 100%;
     position: absolute;
     top: 0;
     right: 0;
     padding: 1em;
-    border-radius: 0.9em;
+    border-radius: 0.8em;
     text-align: center;
     color: var(--color-white);
 
@@ -132,16 +151,28 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
+    transform: translateX(0);
+    transition: transform 0.5s ease-in-out;
 }
 
-.card-convite-cadastro h1 {
-    font-family: "Montserrat Alternates", sans-serif;
+.card-convite.move-left {
+    transform: translateX(-101%);
+}
+
+.card-convite.move-left h1,
+.card-convite.move-left p {
+    opacity: 0;
+}
+
+.card-convite h1 {
+    transition: opacity 0.25s ease-in-out;
     font-size: 1.8em;
     margin-bottom: 10px;
 }
 
-.card-convite-cadastro p {
-    font-family: "Martel Sans", sans-serif;
+.card-convite p {
+    transition: opacity 0.25s ease-in-out;
     font-size: 1em;
 }
 
@@ -193,16 +224,6 @@ body {
     color: var(--color-green);
     background-color: var(--color-light-green);
 }
-/* 
-.login-button {
-    background-color: var(--color-red);
-    color: var(--color-white);
-}
-
-.login-button:hover {
-    background-color: var(--color-orange);
-    transform: scale(1.03);
-} */
 
 .register-button {
     background-color: var(--color-orange);
@@ -211,4 +232,22 @@ body {
 
 .register-button:hover {
     background-color: var(--color-dark-orange);
+}
+
+.links {
+    font-size: 0.8em;
+    font-family: "Martel Sans", sans-serif;
+    text-align: center;
+    width: 100%;
+    align-self: center;
+}
+
+.links a {
+    color: var(--color-orange);
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+    color: var(--color-dark-orange);
 }

@@ -12,35 +12,11 @@ function togglePasswordVisibility(eye, input){
     }
 }
 
-function exibirMensagem(status, mensagem) {
-    const mensagemDiv = document.getElementById('mensagem');
-    
-    if (status === 'error') {
-        mensagemDiv.appendChild(`
-            <div class="mensagem success" id="mensagem-sucesso">
-                <span class="material-symbols-outlined icon-sucesso">
-                    check_circle
-                </span>
-                <span class="texto-sucesso" id="texto-sucesso">${mensagem}</span>
-            </div>
-        `);
-    } else if (status === 'success') {
-        mensagemDiv.appendChild(`
-            <div class="mensagem error" id="mensagem-erro">
-                <span class="material-symbols-outlined icon-erro">
-                    error
-                </span>
-                <span class="texto-erro" id="texto-erro">${mensagem}</span>
-            </div>
-        `);
-    }
-}
-
 async function entrar() {
     event.preventDefault();
 
-    const email = document.getElementById('email').value;
-    const senha = document.getElementById('password').value;
+    const email = document.getElementById('login-email').value;
+    const senha = document.getElementById('login-password').value;
 
     try {
         const resposta = await fetch(`${API_URL}?email=${email}&senha=${senha}`);
@@ -51,7 +27,6 @@ async function entrar() {
 
         if (usuario) {
             showToast(`Login efetuado com sucesso, ${usuario.nome}!`, false, 'success');
-            // window.location.href = 'dashboard.html';
         } else {
             showToast('E-mail ou senha incorretos.', false, 'error');
         }
@@ -102,7 +77,7 @@ async function cadastrar() {
         });
 
         if (resposta.status === 201) {
-            showToast('Cadastro bem-sucedido!', false, 'success');
+            showToast('Cadastro bem-sucedido!', true, 'success');
         } else {
             showToast('Ocorreu um erro no cadastro. Tente novamente.', false, 'error');
         }
@@ -167,8 +142,86 @@ function showNextMensagem() {
             mensagemFila.shift();
             
             if (redirect) {
-                window.location.href = 'login.html';
+                moverCard();
             }
         }, 400);
     }, 2500);
+}
+
+cardConviteLogin = false;
+
+function moverCard() {
+    const card = document.querySelector('.card-convite');
+    const titulo = card.querySelector('h1');
+    const paragrafo = card.querySelector('p');
+    const botao = card.querySelector('button');
+
+    if (!cardConviteLogin) {
+        card.classList.add('move-left');
+        atualizarTituloPagina('login');
+
+        titulo.style.opacity = '0';
+        paragrafo.style.opacity = '0';
+
+        setTimeout(() => {
+            titulo.textContent = "Ainda não marcou presença no nosso estúdio?";
+            paragrafo.textContent = "Cadastre-se e comece a planejar sua próxima tattoo!";
+            botao.textContent = "Fazer Cadastro";
+
+            titulo.style.opacity = '1';
+            paragrafo.style.opacity = '1';
+        }, 250);
+
+        cardConviteLogin = true;
+    } else {
+        card.classList.remove('move-left');
+        atualizarTituloPagina('cadastro');
+
+        titulo.style.opacity = '0';
+        paragrafo.style.opacity = '0';
+
+        setTimeout(() => {
+            titulo.textContent = "Já eternizou seu estilo com a gente?";
+            paragrafo.textContent = "Entre agora e planeje sua nova tattoo";
+            botao.textContent = "Fazer Login";
+            titulo.style.opacity = '1';
+            paragrafo.style.opacity = '1';
+        }, 250);
+
+        cardConviteLogin = false;
+    }
+}
+
+function getParametroUrl(parametro) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(parametro);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Verifica se existe o parâmetro 'page' na URL
+    const page = getParametroUrl('page');
+    
+    // Define o estado inicial do card com base no parâmetro
+    if (page === 'login') {
+        cardConviteLogin = false;
+        atualizarTituloPagina('login');
+        moverCard();
+    } else if (page === 'cadastro') {
+        cardConviteLogin = true;
+        atualizarTituloPagina('cadastro');
+        moverCard();
+    }
+});
+
+function atualizarTituloPagina(pagina) {
+    switch(pagina) {
+        case 'login':
+            document.title = "Júpiter Fritto | Login";
+            break;
+        case 'cadastro':
+            document.title = "Júpiter Fritto | Cadastro";
+            break;
+        default:
+            document.title = "Júpiter Fritto";
+    }
 }

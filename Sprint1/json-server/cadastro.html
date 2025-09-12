@@ -1,26 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Cadastro</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="script.js"></script>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-</head>
-
-<body>
-    <div class="container-cadastro-login">
-        <div class="card-cadastro">
-            <form action="#" method="post">
-                <div class="input-group">
-                    <label for="name">Nome completo</label>
-                    <input type="text" id="name" name="name" autocomplete="off" placeholder="Digite seu nome completo" required>
-                </div>
-                <div class="input-group">
-                    <label for="dt-nasc">Data de nascimento</label>
-                    <input type="date" id="dt-nasc" name="dt-nasc" autocomplete="off" required>
-                </div>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Martel+Sans:wght@200;300;400;600;700;800;900&family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    </head>
+    <body>
+        <div class="container-cadastro-login">
+            <div class="card-cadastro">
+                <form method="post">
+                    <div class="input-group">
+                        <label for="name">Nome completo</label>
+                        <input type="text" id="name" name="name" autocomplete="off" placeholder="Digite seu nome completo" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="dt-nasc">Data de nascimento</label>
+                        <input type="date" id="dt-nasc" name="dt-nasc" autocomplete="off" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" autocomplete="off" placeholder="Digite seu email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Senha</label>
+                        <span class="input-senha">
+                            <input type="password" id="password" name="password" autocomplete="off" placeholder="Digite sua senha" required>
+                            <span class="material-symbols-outlined icon" id="eye-icon" onclick="togglePasswordVisibility('eye-icon', 'password')">
+                                visibility
+                            </span>
+                        </span>
+                    </div>
+                    <div class="input-group">
+                        <label for="confirm-password">Confirmação de senha</label>
+                        <span class="input-senha">
+                            <input type="password" id="confirm-password" name="confirm-password" autocomplete="off" placeholder="Confirme sua senha" required>
+                            <span class="material-symbols-outlined icon" id="eye-icon-confirm" onclick="togglePasswordVisibility('eye-icon-confirm', 'confirm-password')">
+                                visibility
+                            </span>
+                        </span>
+                    </div>
+                    <div class="buttons-container">
+                        <button onclick="cadastrar()" type="submit" class="register-button">Cadastrar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-login">
                 <div class="input-group">
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" autocomplete="off" placeholder="Digite seu email" required>
@@ -29,37 +60,21 @@
                     <label for="password">Senha</label>
                     <input type="password" id="password" name="password" autocomplete="off" placeholder="Digite sua senha" required>
                 </div>
-                <div class="input-group">
-                    <label for="password">Confirmação de senha</label>
-                    <input type="password" id="password" name="password" autocomplete="off" placeholder="Digite sua senha" required>
-                </div>
                 <div class="buttons-container">
-                    <button onclick="cadastrar()" type="submit" class="register-button main">Cadastrar</button>
+                    <button onclick="cadastrar()" type="submit" class="register-button">Cadastrar</button>
                 </div>
-            </form>
-        </div>
-        <div class="card-login">
-            <div class="input-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" autocomplete="off" placeholder="Digite seu email" required>
-            </div>
-            <div class="input-group">
-                <label for="password">Senha</label>
-                <input type="password" id="password" name="password" autocomplete="off" placeholder="Digite sua senha" required>
-            </div>
-            <div class="buttons-container">
-                <button onclick="cadastrar()" type="submit" class="register-button main">Cadastrar</button>
+
+                <div class="card-convite-cadastro">
+                    <h1>Já eternizou seu estilo com a gente?</h1>
+                    <p>Entre agora e planeje sua nova tattoo</p>
+                    <div class="buttons-container">
+                        <button type="submit" class="convite-button">Fazer login</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- <div id="toast" class="toast"></div>
-    <div class="container">
-        <h2>Cadastre-se</h2>
-        
-        <button class="back-button" onclick="window.location.href='login.html'">&larr;</button>
-    </div> -->
-
-</body>
-
+        <div class="mensagens">
+        </div>
+    </body>
 </html>

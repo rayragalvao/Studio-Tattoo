@@ -1,16 +1,4 @@
-const API_URL = 'http://localhost:3000/pessoas';
-
-function togglePasswordVisibility(eye, input){
-    const passwordInput = document.getElementById(input);
-    const eyeIcon = document.getElementById(eye);
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        eyeIcon.textContent = 'visibility_off';
-    } else {
-        passwordInput.type = 'password';
-        eyeIcon.textContent = 'visibility';
-    }
-}
+const API_URL = 'http://localhost:3000/usuarios';
 
 async function entrar() {
     event.preventDefault();
@@ -146,6 +134,18 @@ function showNextMensagem() {
             }
         }, 400);
     }, 2500);
+}
+
+function togglePasswordVisibility(eye, input){
+    const passwordInput = document.getElementById(input);
+    const eyeIcon = document.getElementById(eye);
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.textContent = 'visibility_off';
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.textContent = 'visibility';
+    }
 }
 
 cardConviteLogin = false;

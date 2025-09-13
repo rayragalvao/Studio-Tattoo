@@ -1,16 +1,16 @@
-function formatarCpf(cpf) {
+//  export function formatarCpf(cpf) {
   const limpar = cpf.replace(/\D/g, '');
   const limite = limpar.slice(0, 11);
   return limite.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 }
 
-function formatarCnpj(cnpj) {
+export function formatarCnpj(cnpj) {
   const limpar = cnpj.replace(/\D/g, '');
   const limite = limpar.slice(0, 14);
   return limite.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, '$1.$2.$3/$4-$5');
 }
 
-function formatarTel(telefone) {
+export function formatarTel(telefone) {
   const limpar = telefone.replace(/\D/g, '');
   const limite = limpar.slice(0, 11);
 
@@ -23,14 +23,13 @@ function formatarTel(telefone) {
   return limite;
 }
 
-function formatarData(data) {
+export function formatarData(data) {
   const limpar = data.replace(/\D/g, '');
   const limite = limpar.slice(0, 8);
   return limite.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
 }
 
-
-function validarCpf(cpf) {
+export function validarCpf(cpf) {
   if (!cpf) return false;
 
   const limpa = cpf.replace(/\D/g, '');
@@ -55,7 +54,7 @@ function validarCpf(cpf) {
   return true;
 }
 
-function validarCnpj(cnpj) {
+export function validarCnpj(cnpj) {
   if (!cnpj || cnpj.trim() === '') {
     return false;
   }
@@ -83,8 +82,7 @@ function validarCnpj(cnpj) {
   return digito1 === parseInt(limpa[12]) && digito2 === parseInt(limpa[13]);
 }
 
-
-function validarTelefone(telefone) {
+export function validarTelefone(telefone) {
   if (!telefone) return false;
 
   const limpa = telefone.replace(/\D/g, '');
@@ -98,9 +96,7 @@ function validarTelefone(telefone) {
   return true;
 }
 
-
-
-function validarDataNascimento(dataString, idadeMinima = 18) {
+export function validarDataNascimento(dataString, idadeMinima = 18) {
   if (!dataString) return false;
 
   const data = new Date(dataString);
@@ -116,26 +112,26 @@ function validarDataNascimento(dataString, idadeMinima = 18) {
   return idade >= idadeMinima;
 }
 
-function validarEmail(email) {
+export function validarEmail(email) {
   if (!email) return false;
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return regex.test(email);
 }
 
-function validarSenha(senha) {
+export function validarSenha(senha) {
   if (!senha) return false;
   const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+]{8,}$/;
   return regex.test(senha);
 }
 
-function validarNomeCompleto(nome) {
+export function validarNomeCompleto(nome) {
   if (!nome) return false;
   const partes = nome.trim().split(/\s+/);
   return partes.length >= 2;
 }
 
 
-const validadores = {
+export const validadores = {
   cpf: validarCpf,
   cnpj: validarCnpj,
   telefone: validarTelefone,

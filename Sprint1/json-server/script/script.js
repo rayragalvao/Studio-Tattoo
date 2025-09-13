@@ -37,6 +37,27 @@ async function cadastrar() {
         showToast('As senhas não coincidem. Por favor, tente novamente.', false, 'error');
         return;
     }
+
+    if (!validadores.dataNascimento(dtNasc)) {
+        showToast('Você deve ter pelo menos 18 anos para se cadastrar.', false, 'error');
+        return;
+    }
+    console.log(validadores.dataNascimento(dtNasc));
+
+    if (!validadores.email(email)) {
+        showToast('Por favor, insira um e-mail válido.', false, 'error');
+        return;
+    }
+
+    if (!validadores.senha(senha)) {
+        showToast('A senha deve ter no mínimo 8 caracteres, incluindo letras e números.', false, 'error');
+        return;
+    }
+
+    if (!validadores.nomeCompleto(nome)) {
+        showToast('Por favor, insira seu nome completo.', false, 'error');
+        return;
+    }
     
     const novoUsuario = {
         id: Date.now(),

@@ -33,8 +33,8 @@ async function cadastrar() {
     const senha = document.getElementById('password').value;
     const confirmSenha = document.getElementById('confirm-password').value;
 
-    if (senha !== confirmSenha) {
-        showToast('As senhas não coincidem. Por favor, tente novamente.', false, 'error');
+    if (!validadores.nomeCompleto(nome)) {
+        showToast('Por favor, insira seu nome completo.', false, 'error');
         return;
     }
 
@@ -42,7 +42,6 @@ async function cadastrar() {
         showToast('Você deve ter pelo menos 18 anos para se cadastrar.', false, 'error');
         return;
     }
-    console.log(validadores.dataNascimento(dtNasc));
 
     if (!validadores.email(email)) {
         showToast('Por favor, insira um e-mail válido.', false, 'error');
@@ -54,8 +53,8 @@ async function cadastrar() {
         return;
     }
 
-    if (!validadores.nomeCompleto(nome)) {
-        showToast('Por favor, insira seu nome completo.', false, 'error');
+    if (senha !== confirmSenha) {
+        showToast('As senhas não coincidem. Por favor, tente novamente.', false, 'error');
         return;
     }
     
@@ -178,7 +177,11 @@ function moverCard() {
     const botao = card.querySelector('button');
 
     if (!cardConviteLogin) {
-        card.classList.add('move-left');
+        if (card.classList.contains('left')) {
+            card.style.transform = 'translateX(0%)';
+        } else {
+            card.classList.add('move-left');
+        }
         atualizarTituloPagina('login');
 
         titulo.style.opacity = '0';
@@ -195,7 +198,11 @@ function moverCard() {
 
         cardConviteLogin = true;
     } else {
-        card.classList.remove('move-left');
+        if (card.classList.contains('left')) {
+            card.style.transform = 'translateX(100%)';
+        } else {
+            card.classList.remove('move-left');
+        }
         atualizarTituloPagina('cadastro');
 
         titulo.style.opacity = '0';
@@ -219,14 +226,12 @@ function getParametroUrl(parametro) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Verifica se existe o parâmetro 'page' na URL
     const page = getParametroUrl('page');
     
-    // Define o estado inicial do card com base no parâmetro
     if (page === 'login') {
         cardConviteLogin = false;
         atualizarTituloPagina('login');
-        moverCard();
+        carregarLogin();
     } else if (page === 'cadastro') {
         cardConviteLogin = true;
         atualizarTituloPagina('cadastro');
@@ -246,3 +251,41 @@ function atualizarTituloPagina(pagina) {
             document.title = "Júpiter Fritto";
     }
 }
+
+function carregarLogin() {
+    const card = document.querySelector('.card-convite');
+    const titulo = card.querySelector('h1');
+    const paragrafo = card.querySelector('p');
+    const botao = card.querySelector('button');
+
+    card.classList.add('left');
+
+    titulo.textContent = "Ainda não marcou presença no nosso estúdio?";
+    paragrafo.textContent = "Cadastre-se e comece a planejar sua próxima tattoo!";
+    botao.textContent = "Fazer Cadastro";
+
+    titulo.style.opacity = '1';
+    paragrafo.style.opacity = '1';
+
+    cardConviteLogin = true;
+}
+
+// Função para formatar campos em tempo real
+// function adicionarFormatacaoEmTempoReal() {
+//     // Exemplo: formatar telefone enquanto digita
+//     const telefoneInput = document.getElementById('telefone');
+//     if (telefoneInput) {
+//         telefoneInput.addEventListener('input', function(e) {
+//             e.target.value = formatarTel(e.target.value);
+//         });
+//     }
+    
+//     // Exemplo: formatar CPF enquanto digita
+//     const cpfInput = document.getElementById('cpf');
+//     if (cpfInput) {
+//         cpfInput.addEventListener('input', function(e) {
+//             e.target.value = formatarCpf(e.target.value);
+//         });
+//     }
+// }
+

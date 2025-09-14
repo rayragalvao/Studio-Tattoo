@@ -156,6 +156,11 @@ body {
     transition: transform 0.5s ease-in-out;
 }
 
+.left {
+    left: 0;
+    right: auto;
+}
+
 .card-convite.move-left {
     transform: translateX(-101%);
 }

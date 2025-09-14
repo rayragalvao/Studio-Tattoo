@@ -1,9 +1,28 @@
 :root {
     --color-white: #FFF;
-    --color-black: #000;
-    --color-red: #E40B00;
-    --color-gray: #828282;
-    --color-orange: #FA6506;
+    --color-black: #222222;
+    --color-red: #870C0E;
+    --color-orange: #D46B0F;
+    --color-gray: #acacac;
+    --color-light-gray: #F8F8F8;
+    --color-dark-orange: #d4470f;
+    --color-light-red: #fcbbbb;
+    --color-green: #2c9125;
+    --color-light-green: #c8f5c8;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
@@ -14,47 +33,86 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    background: linear-gradient(120deg, rgba(0, 0, 0, 0.9) 39.73%, rgba(183, 13, 7, 0.99) 103.87%);
 }
 
-.container {
+.martel-sans {
+    font-family: "Martel Sans", sans-serif;
+    line-height: 1em;
+}
+
+.montserrat-alternates {
+    font-family: "Montserrat Alternates", sans-serif;
+}
+
+.div-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.container-cadastro-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    padding: 2em;
+    gap: 4em;
+    border-radius: 1em;
     background-color: var(--color-white);
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 0 50px rgba(228, 11, 0, 0.5);
-    width: 300px;
-    text-align: center;
-    position: relative;
-}
 
-.container h2 {
-    margin-bottom: 20px;
-    color: var(--color-red);
+    position: relative;
+    overflow: hidden;
+    width: 55vw;
 }
 
 .input-group {
     margin-bottom: 15px;
     text-align: left;
+    font-family: "Martel Sans", sans-serif;
+    line-height: 1em;
+    font-size: 0.9em;
 }
 
 .input-group label {
     display: block;
     margin-bottom: 5px;
-    color: var(--color-gray);
+    color: var(--color-black);
     font-weight: bold;
 }
 
 .input-group input {
     width: 100%;
     padding: 10px;
-    border: 1px solid var(--color-gray);
-    border-radius: 4px;
+    border: 1.5px solid var(--color-gray);
+    border-radius: 0.4em;
     box-sizing: border-box;
     color: var(--color-black);
+    background-color: var(--color-light-gray);
 }
 
 .input-group input:focus {
     outline: none;
     border-color: var(--color-orange);
+}
+
+.input-senha {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-senha .icon {
+    position: absolute;
+    right: 0.5em;
+    font-size: 24px;
+    width: 1em;
+    color: var(--color-gray);
+}
+
+.input-senha .icon:hover {
+    cursor: pointer;
+    color: var(--color-orange);
 }
 
 .buttons-container {
@@ -71,70 +129,130 @@ body {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    font-family: Arial, sans-serif;
     font-weight: bold;
+    font-family: "Martel Sans", sans-serif;
+    line-height: 1em;
+    margin-bottom: 0.5em;
 }
 
-.login-button {
-    background-color: var(--color-red);
+.card-convite {
+    background: linear-gradient(155deg, var(--color-orange) 8.1%, var(--color-red) 88.32%);
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1em;
+    border-radius: 0.8em;
+    text-align: center;
     color: var(--color-white);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    transform: translateX(0);
+    transition: transform 0.5s ease-in-out;
 }
 
-.login-button:hover {
-    background-color: var(--color-orange);
+.left {
+    left: 0;
+    right: auto;
+}
+
+.card-convite.move-left {
+    transform: translateX(-101%);
+}
+
+.card-convite.move-left h1,
+.card-convite.move-left p {
+    opacity: 0;
+}
+
+.card-convite h1 {
+    transition: opacity 0.25s ease-in-out;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.card-convite p {
+    transition: opacity 0.25s ease-in-out;
+    font-size: 1em;
+}
+
+.convite-button {
+    background-color: var(--color-white);
+    color: var(--color-orange);
+    width: 15em;
+}
+
+.convite-button:hover {
     transform: scale(1.03);
 }
 
+.mensagens {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: "Martel Sans", sans-serif;
+    font-size: 0.9em;
+    width: 24em;
+    margin: 1em;
+    height: fit-content;
+}
+
+.mensagem {
+    padding: 10px;
+    border-radius: 0.5em;
+    margin-bottom: 1em;
+    
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5em;
+    font-family: "Martel Sans", sans-serif;
+    font-size: 1em;
+    
+    opacity: 1;
+    transition: opacity 0.4s ease-in-out;
+}
+
+.mensagem.error {
+    border: 1.5px solid var(--color-red);
+    color: var(--color-red);
+    background-color: var(--color-light-red);
+}
+
+.mensagem.success {
+    border: 1.5px solid var(--color-green);
+    color: var(--color-green);
+    background-color: var(--color-light-green);
+}
+
 .register-button {
-    background-color: var(--color-gray);
+    background-color: var(--color-orange);
     color: var(--color-white);
 }
 
-.register-button.main {
-    background-color: var(--color-orange);
+.register-button:hover {
+    background-color: var(--color-dark-orange);
 }
 
-.register-button.main:hover {
-    background-color: var(--color-red);
+.links {
+    font-size: 0.8em;
+    font-family: "Martel Sans", sans-serif;
+    text-align: center;
+    width: 100%;
+    align-self: center;
 }
 
-.register-button:not(.main):hover {
-    background-color: var(--color-red);
+.links a {
+    color: var(--color-orange);
+    text-decoration: none;
 }
 
-.back-button {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    background: none;
-    border: none;
-    color: var(--color-gray);
-    font-size: 24px;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.back-button:hover {
-    color: var(--color-red);
-}
-
-.toast {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #2700c5;
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-  z-index: 1000;
-  pointer-events: none;
-}
-
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(-20px);
+.links a:hover {
+    text-decoration: underline;
+    color: var(--color-dark-orange);
 }

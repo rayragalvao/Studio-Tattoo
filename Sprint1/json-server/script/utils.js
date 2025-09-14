@@ -29,7 +29,6 @@ function formatarData(data) {
   return limite.replace(/(\d{2})(\d{2})(\d{4})/, '$1/$2/$3');
 }
 
-
 function validarCpf(cpf) {
   if (!cpf) return false;
 
@@ -83,7 +82,6 @@ function validarCnpj(cnpj) {
   return digito1 === parseInt(limpa[12]) && digito2 === parseInt(limpa[13]);
 }
 
-
 function validarTelefone(telefone) {
   if (!telefone) return false;
 
@@ -97,8 +95,6 @@ function validarTelefone(telefone) {
 
   return true;
 }
-
-
 
 function validarDataNascimento(dataString, idadeMinima = 18) {
   if (!dataString) return false;
@@ -133,7 +129,6 @@ function validarNomeCompleto(nome) {
   const partes = nome.trim().split(/\s+/);
   return partes.length >= 2;
 }
-
 
 const validadores = {
   cpf: validarCpf,

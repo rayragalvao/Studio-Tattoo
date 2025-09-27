@@ -1,7 +1,9 @@
 package hub.orcana.service;
 
+import hub.orcana.dto.DadosCadastroMaterial;
 import hub.orcana.tables.Estoque;
 import hub.orcana.tables.repository.EstoqueRepository;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 

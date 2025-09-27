@@ -2,6 +2,8 @@ package hub.orcana.controller;
 
 import hub.orcana.service.UsuarioService;
 import hub.orcana.tables.Usuario;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuario")
+@Tag(name = "Usuários", description = "Gerenciamento de usuários")
 public class UsuarioController {
     private final UsuarioService service;
 
@@ -19,6 +22,7 @@ public class UsuarioController {
 
     // Lista todos os usuários
     @GetMapping
+    @Operation(summary = "Listar todos os usuários")
     public ResponseEntity<?> listarUsuarios() {
         try {
             List<Usuario> usuarios = service.listar();
@@ -33,6 +37,7 @@ public class UsuarioController {
 
     // Busca usuário pelo id
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar usuário por ID")
     public ResponseEntity<?> buscarUsuarioById(@PathVariable Long id) {
         try {
             var usuario = service.buscarById(id);
@@ -47,6 +52,7 @@ public class UsuarioController {
 
     // Cria usuário
     @PostMapping
+    @Operation(summary = "Criar um novo usuário")
     public ResponseEntity<?> criarUsuario(@RequestBody @Valid Usuario usuario) {
         try {
             Usuario novoUsuario = service.criar(usuario);
@@ -60,6 +66,7 @@ public class UsuarioController {
 
     // Atualiza usuário pelo id
     @PutMapping("/{id}")
+    @Operation(summary = "Atualizar um usuário existente por ID")
     public ResponseEntity<?> atualizarUsuario(@PathVariable Long id, @RequestBody @Valid Usuario usuario) {
         try {
             Usuario usuarioAtualizado = service.atualizarById(id, usuario);
@@ -73,6 +80,7 @@ public class UsuarioController {
 
     // Deleta usuário pelo id
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar um usuário existente por ID")
     public ResponseEntity<?> deletarUsuario(@PathVariable Long id) {
         try {
             service.deletarById(id);

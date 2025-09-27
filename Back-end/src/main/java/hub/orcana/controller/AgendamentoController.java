@@ -1,5 +1,7 @@
 package hub.orcana.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/agendamento")
+@Tag(name = "Agendamentos", description = "API para gerenciamento de agendamentos")
 public class AgendamentoController {
     private final AgendamentoService service;
 
@@ -22,6 +25,7 @@ public class AgendamentoController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar todos os agendamentos")
     public ResponseEntity<?> getAgendamento(){
         try{
             List<Agendamento> agenda = service.getAgendamentos();
@@ -37,6 +41,7 @@ public class AgendamentoController {
 
 
     @GetMapping("/{id}")
+    @Operation(summary = "Listar agendamento por ID")
     public ResponseEntity<?> getAgendamentoPorId(@PathVariable Long id) {
         try {
             Agendamento agendamento = service.getAgendamentoPorId(id);
@@ -46,8 +51,8 @@ public class AgendamentoController {
         }
     }
 
-
     @GetMapping("/statusAtual/{status}")
+    @Operation(summary = "Listar agendamentos por status")
     public ResponseEntity<?> getAgendamentosByStatus(@PathVariable String status) {
         try {
             List<Agendamento> sitStatus = service.getAgendamentosByStatus(status);
@@ -74,10 +79,8 @@ public class AgendamentoController {
     }
 */
 
-
-
-
     @PostMapping
+    @Operation(summary = "Inserir novo agendamento")
     public ResponseEntity<?> postAgendamento( @RequestBody  Agendamento agendamento){
         try{
             Agendamento novaAgenda = service.postAgendamento(agendamento);
@@ -89,8 +92,8 @@ public class AgendamentoController {
         }
     }
 
-
     @PutMapping("/{id}")
+    @Operation(summary = "Atualizar agendamento pelo ID")
     public ResponseEntity<?> putAgendamento(@PathVariable Long id, @RequestBody @Valid Agendamento agendamento){
         try{
             Agendamento novaAgenda = service.putAgendamentoById(id, agendamento);
@@ -102,8 +105,8 @@ public class AgendamentoController {
         }
     }
 
-
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar agendamento pelo ID")
     public ResponseEntity<String> deleteAgendamento(@PathVariable Long id){
         try{
              service.deleteAgendamentoById(id);

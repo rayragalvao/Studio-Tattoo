@@ -1,9 +1,6 @@
 package hub.orcana.tables;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -17,7 +14,18 @@ public class Estoque {
     private Double quantidade;
     @NotBlank
     private String unidadeMedida;
+
     private Double minAviso;
+
+    public Estoque() {
+    }
+
+    public Estoque(String nome, Double quantidade, String unidadeMedida, Double minAviso) {
+        this.nome = nome;
+        this.quantidade = quantidade;
+        this.unidadeMedida = unidadeMedida;
+        this.minAviso = minAviso;
+    }
 
     public Long getId() {
         return id;

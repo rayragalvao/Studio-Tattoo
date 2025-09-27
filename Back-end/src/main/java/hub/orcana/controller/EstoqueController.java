@@ -1,7 +1,10 @@
 package hub.orcana.controller;
 
+import hub.orcana.dto.DadosCadastroMaterial;
 import hub.orcana.service.EstoqueService;
 import hub.orcana.tables.Estoque;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/estoque")
+@Tag(name = "Estoque", description = "API para gerenciamento de materiais em estoque")
 public class EstoqueController {
     private final EstoqueService service;
 
@@ -18,6 +22,7 @@ public class EstoqueController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar todos os materiais")
     public ResponseEntity<?> getEstoque() {
         try {
             List<Estoque> material = service.getEstoque();
@@ -32,7 +37,8 @@ public class EstoqueController {
     }
 
     @GetMapping("/{nomeMaterial}")
-    public ResponseEntity<?> getEstoqueByNome(@PathVariable String nomeMaterial) {
+    @Operation(summary = "Buscar material pelo nome")
+    public ResponseEntity<?> getEstoqueByNome(@PathVariable @Valid String nomeMaterial) {
         try {
             var material = service.getEstoqueByNome(nomeMaterial);
             if (material.isEmpty()) {
@@ -45,6 +51,7 @@ public class EstoqueController {
     }
 
     @PostMapping
+    @Operation(summary = "Inserir material no estoque")
     public ResponseEntity<?> postEstoque(@RequestBody Estoque estoque) {
         try {
             Estoque novoMaterial = service.postEstoque(estoque);
@@ -57,6 +64,7 @@ public class EstoqueController {
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualizar material pelo ID")
     public ResponseEntity<?> putEstoqueById(@PathVariable Long id, @RequestBody @Valid Estoque estoque) {
         try {
             Estoque novoMaterial = service.putEstoqueById(id, estoque);
@@ -69,6 +77,7 @@ public class EstoqueController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deletar material pelo ID")
     public ResponseEntity<?> deleteEstoqueById(@PathVariable Long id) {
        try {
             service.deleteEstoqueById(id);

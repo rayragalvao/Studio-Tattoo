@@ -9,3 +9,4 @@ public record DadosCadastroMaterial(
     @NotBlank String unidadeMedida,
     Double minAviso)
 {}
+

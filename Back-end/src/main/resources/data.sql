@@ -20,3 +20,4 @@ INSERT INTO estoque (nome, quantidade, unidade_medida, min_aviso) VALUES
     ('Papel higiênico', 8, 'unidades', NULL),
     ('Água mineral', 4, 'litros', NULL),
     ('Sabonete higienizador para as mãos', 200, 'ml', NULL);
+

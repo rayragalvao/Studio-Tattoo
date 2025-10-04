@@ -1,0 +1,313 @@
+.card-resposta-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.card-resposta-container {
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 15px;
+}
+
+.card-resposta {
+  background: var(--branco);
+  padding: 30px 25px;
+  border-radius: 12px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  position: relative;
+  animation: fadeInScale 0.3s ease-out;
+  border-top: 4px solid;
+}
+
+.card-resposta--sucesso {
+  border-top-color: #0d9349ae;
+}
+
+.card-resposta--erro {
+  border-top-color: var(--vermelho);
+}
+
+.card-resposta--aviso {
+  border-top-color: #f59e0b; /* Amarelo */
+}
+
+.card-resposta--info {
+  border-top-color: #3b82f6; /* Azul */
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.card-resposta-icone {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0 auto 15px auto;
+  color: var(--branco);
+}
+
+.card-resposta-icone--sucesso {
+  background: #0d9349ae;
+}
+
+.card-resposta-icone--erro {
+  background: var(--vermelho);
+}
+
+.card-resposta-icone--aviso {
+  background: #f59e0b;
+}
+
+.card-resposta-icone--info {
+  background: #3b82f6;
+}
+
+.card-resposta-titulo {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--cinza-escuro);
+  margin: 0 0 15px 0;
+  line-height: 1.2;
+}
+
+.card-resposta-mensagem {
+  font-family: 'Martel Sans', sans-serif;
+  font-size: 15px;
+  color: var(--cinza-escuro);
+  line-height: 1.5;
+  margin: 0 0 20px 0;
+  opacity: 0.8;
+}
+
+.card-resposta-codigo {
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 0 0 20px 0;
+  font-family: 'Martel Sans', sans-serif;
+  font-size: 14px;
+  color: var(--cinza-escuro);
+  border: 2px solid;
+}
+
+.card-resposta-codigo--sucesso {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: #0d9349ae;
+}
+
+.card-resposta-codigo--erro {
+  background: rgba(212, 107, 15, 0.1);
+  border-color: var(--vermelho);
+}
+
+.card-resposta-codigo--aviso {
+  background: rgba(245, 158, 11, 0.1);
+  border-color: #f59e0b;
+}
+
+.card-resposta-codigo--info {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+}
+
+.card-resposta-codigo span {
+  font-weight: 500;
+}
+
+.card-resposta-codigo strong {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: 1px;
+}
+
+.card-resposta-codigo--sucesso strong {
+  color: #0d9349ae;
+}
+
+.card-resposta-codigo--erro strong {
+  color: var(--vermelho);
+}
+
+.card-resposta-codigo--aviso strong {
+  color: #f59e0b;
+}
+
+.card-resposta-codigo--info strong {
+  color: #3b82f6;
+}
+
+.card-resposta-botao {
+  width: 100%;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  font-family: 'Montserrat Alternates', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--branco);
+}
+
+.card-resposta-titulo {
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.card-resposta-mensagem,
+.card-resposta-botao {
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.card-resposta-botao--sucesso {
+  background: #0d9349ae;
+}
+
+.card-resposta-botao--sucesso:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+}
+
+.card-resposta-botao--erro {
+  background: var(--vermelho);
+}
+
+.card-resposta-botao--erro:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+}
+
+.card-resposta-botao--aviso {
+  background: #f59e0b;
+}
+
+.card-resposta-botao--aviso:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+}
+
+.card-resposta-botao--info {
+  background: #3b82f6;
+}
+
+.card-resposta-botao--info:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.card-resposta-botao:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .card-resposta-container {
+    max-width: 350px;
+    padding: 15px;
+  }
+  
+  .card-resposta {
+    padding: 25px 20px;
+  }
+  
+  .card-resposta-icone {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+  
+  .card-resposta-titulo {
+    font-family: 'Martel Sans', sans-serif;
+    font-size: 22px;
+  }
+  
+  .card-resposta-mensagem {
+    font-family: 'Martel Sans', sans-serif;
+    font-size: 14px;
+  }
+  
+  .card-resposta-codigo {
+    font-family: 'Martel Sans', sans-serif;
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .card-resposta-codigo strong {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  
+  .card-resposta-botao {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-resposta-container {
+    max-width: 320px;
+    padding: 10px;
+  }
+  
+  .card-resposta {
+    padding: 20px 15px;
+  }
+  
+  .card-resposta-icone {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+  
+  .card-resposta-titulo {
+    font-size: 20px;
+  }
+  
+  .card-resposta-mensagem {
+    font-size: 13px;
+  }
+  
+  .card-resposta-codigo {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  
+  .card-resposta-codigo strong {
+    font-size: 13px;
+  }
+  
+  .card-resposta-botao {
+    padding: 10px 14px;
+    font-size: 12px;
+  }
+}

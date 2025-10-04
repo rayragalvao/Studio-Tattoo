@@ -1,0 +1,26 @@
+import React from "react";
+import Navbar from "../components/Navbar";
+import Hero from "../components/Hero";
+import Sobre from "../components/Sobre";
+import Geolocalizacao from "../components/Geolocalizacao";
+import Instagram from "../components/Instagram";
+import FeedbackClientes from "../components/Feedback";
+import Faq from "../components/Faq";
+import Footer from "../components/Footer";
+
+const Home = () => {
+  return (
+    <>
+      <Navbar />
+      <Hero />
+      <Sobre />
+      <Geolocalizacao />
+      <Instagram />
+      <FeedbackClientes />
+      <Faq />
+      <Footer />
+    </>
+  );
+};
+
+export default Home;

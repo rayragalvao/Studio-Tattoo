@@ -1,25 +1,22 @@
 import React from "react";
-import Hero from "./components/Hero";
-import Sobre from "./components/Sobre";
-import Geolocalizacao from "./components/Geolocalizacao";
-import Instagram from "./components/Instagram";
-import FeedbackClientes from "./components/Feedback";
-import Faq from "./components/Faq";
-import Footer from "./components/Footer";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Portfolio from "./pages/Portfolio";
+import Agendamento from "./pages/Agendamento";
+import Orcamento from "./pages/Orcamento";
 
 import "./styles/global.css";
 
 function App() {
   return (
-    <>
-      <Hero />
-      <Sobre />
-      <Geolocalizacao />
-      <Instagram />
-      <FeedbackClientes />
-      <Faq />
-      <Footer />
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/agendamento" element={<Agendamento />} />
+        <Route path="/orcamento" element={<Orcamento />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,6 +1,6 @@
 import React from "react";
 import instaLogo from "../assets/img/instagram.png";
-import logoInsta from "../assets/img/logo_insta.png";
+import logoInsta from "../assets/img/logo-insta.png";
 
 import foto1 from "../assets/img/branco.jpg";
 import foto2 from "../assets/img/branco.jpg";

@@ -1,0 +1,336 @@
+.orcamento-section {
+  width: 100vw;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background: linear-gradient(180deg,
+      var(--cinza-escuro) 15%,
+      var(--vermelho) 70%,
+      var(--cinza-escuro) 100%);
+}
+
+.orcamento-container {
+  max-width: 650px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.orcamento-header {
+  text-align: center;
+  margin-bottom: 20px;
+  color: var(--branco);
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.orcamento-header h1 {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 6px;
+  line-height: 1.1;
+  margin-top: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orcamento-header p {
+  font-family: 'Montserrat Alternates', sans-serif;
+  font-size: 17px;
+  opacity: 0.9;
+  margin: 0;
+  white-space: normal;
+}
+
+.orcamento-form {
+  background: var(--branco);
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  width: 100%;
+  max-width: 460px;
+  box-sizing: border-box;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: var(--cinza-escuro);
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.required {
+  color: var(--vermelho);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #e1e5e9;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Martel Sans', sans-serif;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background: var(--cinza-claro);
+  color: var(--cinza-escuro);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--laranja);
+  box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
+  transform: translateY(-1px);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 50px;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.form-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23D46B0F' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 16px center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  padding-right: 48px;
+}
+
+.file-upload-container {
+  position: relative;
+}
+
+.file-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.file-upload-area {
+  border: 2px dashed var(--laranja);
+  border-radius: 5px;
+  padding: 15px 12px;
+  text-align: center;
+  background-color: rgba(212, 107, 15, 0.05);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.file-upload-area:hover {
+  border-color: var(--vermelho);
+  background-color: rgba(212, 107, 15, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(212, 107, 15, 0.2);
+}
+
+.file-upload-area p {
+  margin: 0;
+  font-size: 11px;
+  color: var(--cinza-escuro);
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.file-upload-area p:first-child {
+  font-weight: 700;
+  margin-bottom: 3px;
+  color: var(--laranja);
+  font-family: 'Martel Sans', sans-serif;
+  font-size: 12px;
+}
+
+.file-selected {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--laranja);
+  font-weight: 700;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.submit-button {
+  width: 100%;
+  background: var(--laranja);
+  height: 34px;
+  color: var(--branco);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 1000;
+  font-family: 'Martel Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 8px;
+}
+
+.submit-button:hover {
+  background: var(--vermelho);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(212, 107, 15, 0.4);
+}
+
+.submit-button:active {
+  transform: translateY(-1px);
+}
+
+.error {
+  border-color: var(--vermelho) !important;
+  box-shadow: 0 0 0 4px rgba(135, 12, 14, 0.2) !important;
+}
+
+.error-message {
+  display: block;
+  color: var(--vermelho);
+  font-size: 12px;
+  margin-top: 6px;
+  font-weight: 600;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+@media (max-width: 768px) {
+  .orcamento-section {
+    padding: 40px 16px;
+  }
+
+  .orcamento-container {
+    max-width: 95%;
+    width: 100%;
+  }
+
+  .orcamento-header {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .orcamento-header h1 {
+    font-size: 24px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .orcamento-header p {
+    font-size: 14px;
+    white-space: normal;
+  }
+
+  .orcamento-form {
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 14px;
+    font-size: 16px;
+    height: auto;
+  }
+
+  .submit-button {
+    padding: 18px 24px;
+    font-size: 16px;
+    height: auto;
+    width: 100%;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orcamento-section {
+    padding: 32px 12px;
+  }
+
+  .orcamento-container {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .orcamento-header {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .orcamento-header h1 {
+    font-family: 'Montserrat Alternates', sans-serif;
+    width: 100%;
+    max-width: 100%;
+    font-size: 20px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+  }
+
+  .orcamento-header p {
+    font-family: 'Martel Sans', sans-serif;
+    font-size: 12px;
+    white-space: normal;
+  }
+
+  .orcamento-form {
+    padding: 20px 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 12px;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .submit-button {
+    padding: 16px 20px;
+    font-size: 16px;
+    height: auto;
+    width: 100%;
+    margin-top: 20px;
+    box-sizing: border-box;
+  }
+
+  .file-upload-area {
+    padding: 12px 16px;
+  }
+
+  .file-upload-area p:first-child {
+    font-size: 14px;
+  }
+}

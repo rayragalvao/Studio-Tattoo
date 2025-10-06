@@ -24,16 +24,6 @@ const Navbar = () => {
     <div className="nav-outer">
       <div className="nav-inner">
         <nav className="navbar">
-        <button 
-          className={`hamburger ${isMenuOpen ? 'active' : ''}`}
-          aria-label="Menu"
-          onClick={toggleMenu}
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-
         <div className="logo">
           <Link to="/">
             <img src={logoBranca} alt="Tattoo Studio" />

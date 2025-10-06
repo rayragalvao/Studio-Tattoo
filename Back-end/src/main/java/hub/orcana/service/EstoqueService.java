@@ -1,6 +1,7 @@
 package hub.orcana.service;
 
 import hub.orcana.dto.DadosCadastroMaterial;
+import hub.orcana.exception.DependenciaNaoEncontradaException;
 import hub.orcana.tables.Estoque;
 import hub.orcana.tables.repository.EstoqueRepository;
 import jakarta.validation.Valid;
@@ -19,17 +20,24 @@ public class EstoqueService {
 
     // Lista todos os materiais existentes
     public List<Estoque> getEstoque() {
-        return repository.findAll();
+        var materiais = repository.findAll();
+        if (materiais.isEmpty()) {
+            throw new DependenciaNaoEncontradaException("Nenhum material cadastrado.");
+        }
+        return materiais;
     }
 
     // Busca material pelo nome
     public List<Estoque> getEstoqueByNome(@PathVariable String nomeMaterial) {
-        var material = repository.findAll()
+        var materiais = repository.findAll()
                 .stream()
                 .filter(atual -> nomeMaterial.equals(atual.getNome()))
                 .toList();
 
-        return material;
+        if (materiais.isEmpty()) {
+            throw new DependenciaNaoEncontradaException("Material não encontrado.");
+        }
+        return materiais;
     }
 
     // Cadastra um novo material
@@ -41,26 +49,23 @@ public class EstoqueService {
                 estoque.setId(null);
             }
         }
-
         return repository.save(estoque);
     }
 
     // Atualiza um material existente pelo ID
     public Estoque putEstoqueById(@PathVariable Long id, @RequestBody Estoque estoque) {
         if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Material não encontrado.");
+            throw new DependenciaNaoEncontradaException("Material não encontrado.");
         }
         estoque.setId(id);
         return repository.save(estoque);
     }
 
-
     // Exclui um estoque existente pelo ID
     public void deleteEstoqueById(@PathVariable Long id) {
             if (!repository.existsById(id)) {
-                throw new IllegalArgumentException("Material não encontrado.");
+                throw new DependenciaNaoEncontradaException("Material não encontrado.");
             }
-
             repository.deleteById(id);
 
             if (repository.existsById(id)) {

@@ -1,12 +1,19 @@
 package hub.orcana.service;
 
+import hub.orcana.exception.QuantidadeMinimaUsuariosException;
+import hub.orcana.exception.UsuarioProtegidoException;
 import hub.orcana.tables.Usuario;
 import hub.orcana.tables.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
+import hub.orcana.exception.DependenciaNaoEncontradaException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@Slf4J
 public class UsuarioService {
 
     private final UsuarioRepository repository;
@@ -15,50 +22,62 @@ public class UsuarioService {
         this.repository = repository;
     }
 
-    // Cria um novo usuário
+
     public Usuario criar(Usuario usuario) {
+
         if (usuario.getId() != null && repository.existsById(usuario.getId())) {
-            throw new IllegalArgumentException("O ID do usuário já existe.");
+            throw new DependenciaNaoEncontradaException("ID já existente");
         }
+
         usuario.setId(null);
-        return repository.save(usuario);
+        Usuario novoUsuario = repository.save(usuario);
+        log.info("Usuário criado com sucesso: ID {}", novoUsuario.getId());
+        return novoUsuario;
     }
 
-    // Lista todos os usuários
+    private void validarIdUsuario(Long id) {
+        if (!repository.existsById(id)) {
+            throw new DependenciaNaoEncontradaException("Usuário");
+        }
+    }
+
     public List<Usuario> listar() {
-        return repository.findAll();
+        List<Usuario> usuarios = repository.findAll();
+        log.debug("Listagem de usuários retornou {} registros", usuarios.size());
+        return usuarios;
     }
 
-    // Busca usuário pelo ID
     public Usuario buscarById(Long id) {
         return repository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+                .orElseThrow(() -> new DependenciaNaoEncontradaException("Usuário"));
     }
 
-    // Atualiza usuário pelo ID
     public Usuario atualizarById(Long id, Usuario usuario) {
-        if (usuario.getId() != null && !usuario.getId().equals(id)) {
-            throw new IllegalArgumentException("O ID do usuário não pode ser alterado.");
-        }
+        validarIdUsuario(id);
 
-        if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Usuário não encontrado para atualização.");
+        if (usuario.getId() != null && !usuario.getId().equals(id)) {
+            throw new DependenciaNaoEncontradaException("ID inconsistente para atualização");
         }
 
         usuario.setId(id);
-        return repository.save(usuario);
+        Usuario atualizado = repository.save(usuario);
+        log.info("Usuário atualizado com sucesso: ID {}", atualizado.getId());
+        return atualizado;
     }
 
-    // Deleta usuário pelo ID
     public void deletarById(Long id) {
-        if (!repository.existsById(id)) {
-            throw new IllegalArgumentException("Usuário não encontrado para exclusão.");
+        if (repository.count() == 1) {
+            throw new QuantidadeMinimaUsuariosException();
         }
+
+        if (id == 1) {
+            throw new UsuarioProtegidoException(id);
+        }
+
+        validarIdUsuario(id);
 
         repository.deleteById(id);
-
-        if (repository.existsById(id)) {
-            throw new IllegalArgumentException("Erro ao excluir usuário.");
-        }
+        log.info("Usuário deletado com sucesso: ID {}", id);
     }
 }
+

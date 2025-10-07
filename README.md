@@ -1,19 +1,66 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<h1 align="center">Studio Tattoo</h1>
 
-Currently, two official plugins are available:
+Projeto de faculdade para gerenciamento de um estúdio de tatuagem, incluindo funcionalidades de agendamento, orçamento, cadastro de clientes/usuários e controle de estoque de materiais.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Funcionalidades
 
-## React Compiler
+- **Agendamento de sessões**: Permite que clientes agendem horários para tatuagens.
+- **Orçamento**: Geração de orçamentos personalizados para cada cliente.
+- **Cadastro de usuários**: Gerenciamento de clientes, tatuadores e funcionários.
+- **Estoque de materiais**: Controle de entrada, saída e uso de materiais do estúdio.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+## 🛠️ Tecnologias Utilizadas
 
-Note: This will impact Vite dev & build performances.
+- **Back-end**: Java + Spring Boot
+- **Front-end**: React
+- **Banco de Dados**: H2 (em memória)
 
-## Expanding the ESLint configuration
+## 📁 Estrutura do Projeto
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- `Back-end/`: Código-fonte do servidor Spring Boot
+- `src/`: Código-fonte do front-end React
+- `public/`: Recursos estáticos e banco de dados
+
+## 🚀 Como Executar o Projeto
+
+### Pré-requisitos
+- Java 17 ou superior
+- Node.js 18 ou superior
+
+### 1. Executando o Back-end
+
+```bash
+cd Back-end
+./mvnw spring-boot:run
+```
+O servidor será iniciado em `http://localhost:8080`.
+
+### 2. Executando o Front-end
+
+```bash
+cd ..
+cd src
+npm install
+npm run dev
+```
+O front-end estará disponível em `http://localhost:5173`.
+
+## 📷 Modelagem do Banco
+
+A modelagem do banco está disponível em `public/BD/modelagem_studio.mwb` e a imagem em `public/BD/modelagem_studio_img.png`.
+
+## 👥 Integrantes
+
+- Luiza Vicente Pompermayer
+- Linya Alves Mendonça
+- Kawan Fritoli Gomes
+- Nicollas Bispo Pereira
+- Rayra Ferreira Galvão
+- Viviane dos Santos
+
+## 📄 Licença
+
+Este projeto está licenciado sob a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
+
 

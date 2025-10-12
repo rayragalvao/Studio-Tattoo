@@ -19,7 +19,7 @@ public class OrcamentoService {
     private final OrcamentoRepository repository;
 
     public Orcamento postOrcamento(DadosCadastroOrcamento dados) {
-        List<String> caminhos = new ArrayList<>();
+        List<String> urlImagem = new ArrayList<>();
         Path pastaUploads = Path.of("uploads");
         try {
             if (!Files.exists(pastaUploads)) {
@@ -30,7 +30,7 @@ public class OrcamentoService {
                     String nomeArquivo = UUID.randomUUID() + "_" + file.getOriginalFilename();
                     Path destino = pastaUploads.resolve(nomeArquivo);
                     Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
-                    caminhos.add(destino.toString());
+                    urlImagem.add(destino.toString());
                 }
             }
         } catch (Exception e) {
@@ -42,7 +42,7 @@ public class OrcamentoService {
                 dados.tamanho(),
                 dados.cores(),
                 dados.localCorpo(),
-                caminhos
+                urlImagem
         );
         return repository.save(orcamento);
     }

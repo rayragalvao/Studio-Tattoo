@@ -24,7 +24,6 @@ public class Orcamento {
 
     public Orcamento() {}
 
-    // Construtor que recebe todos os campos
     public Orcamento(String email, String ideia, Double tamanho, String cores, String localCorpo, List<String> imagemReferencia) {
         this.email = email;
         this.ideia = ideia;

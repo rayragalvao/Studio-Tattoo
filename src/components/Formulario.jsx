@@ -1,14 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/formulario.css";
 
-const Formulario = ({ 
+const Formulario = ({
   titulo = "Do esboço ao real: Seu projeto começa aqui.",
   subtitulo = "Conte sua ideia, nós criamos a arte.",
   campos = [],
   onSubmit,
   submitButtonText = "Enviar orçamento",
-  className = ""
+  className = "",
+  initialValues = {}, // Recebe valores iniciais do card
 }) => {
+  const [formData, setFormData] = useState(() => {
+    const initialData = {};
+    campos.forEach((campo) => {
+      initialData[campo.name] =
+        initialValues[campo.name] !== undefined
+          ? initialValues[campo.name]
+          : campo.type === "file"
+          ? null
+          : "";
   const [dadosFormulario, setDadosFormulario] = useState(() => {
     const dadosIniciais = {};
     campos.forEach(campo => {
@@ -29,6 +39,47 @@ const Formulario = ({
 
   const [erros, setErros] = useState({});
 
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      ...initialValues,
+    }));
+  }, [initialValues]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFormData((prev) => ({
+      ...prev,
+      imagemReferencia: file,
+    }));
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    campos.forEach((campo) => {
+      if (campo.required) {
+        const value = formData[campo.name];
+        if (!value || (typeof value === "string" && !value.trim())) {
+          newErrors[campo.name] =
+            campo.errorMessage || `${campo.label} é obrigatório`;
+        } else if (campo.type === "email" && !/\S+@\S+\.\S+/.test(value)) {
+          newErrors[campo.name] = "Email inválido";
   const handleMudancaInput = (evento) => {
     const { name: nome, value: valor } = evento.target;
     setDadosFormulario(prev => ({
@@ -96,6 +147,14 @@ const Formulario = ({
     return Object.keys(novosErros).length === 0;
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+    onSubmit(formData);
+  };
+
+  const renderField = (campo) => {
+    const inputClass = errors[campo.name] ? "error" : "";
   const enviarFormulario = async (evento) => {
     evento.preventDefault();
     
@@ -136,11 +195,13 @@ const Formulario = ({
     const classeInput = erros[campo.name] ? 'error' : '';
 
     switch (campo.type) {
-      case 'textarea':
+      case "textarea":
         return (
           <textarea
             id={campo.name}
             name={campo.name}
+            value={formData[campo.name] || ""}
+            onChange={handleInputChange}
             value={dadosFormulario[campo.name] || ''}
             onChange={handleMudancaInput}
             placeholder={campo.placeholder}
@@ -149,8 +210,21 @@ const Formulario = ({
           />
         );
 
-      case 'select':
+      case "select":
         return (
+          <select
+            id={campo.name}
+            name={campo.name}
+            value={formData[campo.name] || ""}
+            onChange={handleInputChange}
+            className={inputClass}
+          >
+            {campo.options?.map((opcao, index) => (
+              <option key={index} value={index === 0 ? "" : opcao}>
+                {opcao}
+              </option>
+            ))}
+          </select>
           <>
             <select
               id={campo.name}
@@ -186,7 +260,7 @@ const Formulario = ({
           </>
         );
 
-      case 'file':
+      case "file":
         return (
           <div className="file-upload-container">
             <input
@@ -242,9 +316,15 @@ const Formulario = ({
       default:
         return (
           <input
-            type={campo.type || 'text'}
+            type={campo.type || "text"}
             id={campo.name}
             name={campo.name}
+            value={
+              campo.type === "number" && formData[campo.name] !== ""
+                ? Number(formData[campo.name])
+                : formData[campo.name] || ""
+            }
+            onChange={handleInputChange}
             value={dadosFormulario[campo.name] || ''}
             onChange={handleMudancaInput}
             placeholder={campo.placeholder}
@@ -255,19 +335,17 @@ const Formulario = ({
   };
 
   return (
-    <section className="orcamento-section">
+    <section className={`orcamento-section ${className}`}>
       <div className="orcamento-container">
         {(titulo || subtitulo) && (
           <div className="orcamento-header">
-            {titulo && (
-              <h1>{titulo}</h1>
-            )}
-            {subtitulo && (
-              <p>{subtitulo}</p>
-            )}
+            {titulo && <h1>{titulo}</h1>}
+            {subtitulo && <p>{subtitulo}</p>}
           </div>
         )}
 
+        <form onSubmit={handleSubmit} className="orcamento-form">
+          {campos.map((campo) => (
         <form 
           onSubmit={enviarFormulario} 
           className="orcamento-form"
@@ -278,8 +356,11 @@ const Formulario = ({
                 {campo.label}
                 {campo.required && <span className="required">*</span>}
               </label>
-              
+
               {renderField(campo)}
+
+              {errors[campo.name] && (
+                <span className="error-message">{errors[campo.name]}</span>
               
               {erros[campo.name] && (
                 <span className="error-message">
@@ -289,10 +370,7 @@ const Formulario = ({
             </div>
           ))}
 
-          <button 
-            type="submit" 
-            className="submit-button"
-          >
+          <button type="submit" className="submit-button">
             {submitButtonText}
           </button>
         </form>

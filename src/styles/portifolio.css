@@ -1,0 +1,76 @@
+body {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background-repeat: no-repeat;
+  
+}
+
+.portfolio-frases {
+  text-align: center;
+  margin-top: 0.5rem; 
+  color: #fff;
+}
+
+.portfolio-titulo {
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  font-family: 'Montserrat Alternates';
+}
+
+.portfolio-subtitulo {
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  color: #d3d3d3;
+  font-family: 'Martel Sans'
+}
+
+.portfolio-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 0.1rem;    
+  column-gap: 0.2rem; 
+  margin: 0.5rem auto;
+  max-width: 1000px;
+}
+
+.tattoo-card {
+  flex: 1 1 30%;
+  max-width: 300px;
+  min-width: 250px;
+  /* margin-bottom: 1rem; */
+}
+
+@media (max-width: 900px) {
+  .tattoo-card {
+    flex: 1 1 45%;
+    max-width: 48vw;
+    min-width: 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .portfolio-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  .tattoo-card {
+    max-width: 95vw;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 768px) {
+  .portfolio-title {
+    font-size: 1.75rem;
+  }
+
+  .portfolio-subtititulo {
+    font-size: 0.9rem;
+  }
+}

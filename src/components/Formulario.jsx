@@ -1,57 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/formulario.css";
 
-const Formulario = ({ 
+const Formulario = ({
   titulo = "Do esboço ao real: Seu projeto começa aqui.",
   subtitulo = "Conte sua ideia, nós criamos a arte.",
   campos = [],
   onSubmit,
   submitButtonText = "Enviar orçamento",
-  className = ""
+  className = "",
+  initialValues = {}, // Recebe valores iniciais do card
 }) => {
   const [formData, setFormData] = useState(() => {
     const initialData = {};
-    campos.forEach(campo => {
-      initialData[campo.name] = campo.type === 'file' ? null : '';
+    campos.forEach((campo) => {
+      initialData[campo.name] =
+        initialValues[campo.name] !== undefined
+          ? initialValues[campo.name]
+          : campo.type === "file"
+          ? null
+          : "";
     });
     return initialData;
   });
 
   const [errors, setErrors] = useState({});
 
+  useEffect(() => {
+    setFormData((prev) => ({
+      ...prev,
+      ...initialValues,
+    }));
+  }, [initialValues]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    
+
     if (errors[name]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [name]: ""
+        [name]: "",
       }));
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      imagemReferencia: file
+      imagemReferencia: file,
     }));
   };
 
   const validateForm = () => {
     const newErrors = {};
-    
-    campos.forEach(campo => {
+
+    campos.forEach((campo) => {
       if (campo.required) {
         const value = formData[campo.name];
-        
-        if (!value || (typeof value === 'string' && !value.trim())) {
-          newErrors[campo.name] = campo.errorMessage || `${campo.label} é obrigatório`;
-        } else if (campo.type === 'email' && !/\S+@\S+\.\S+/.test(value)) {
+        if (!value || (typeof value === "string" && !value.trim())) {
+          newErrors[campo.name] =
+            campo.errorMessage || `${campo.label} é obrigatório`;
+        } else if (campo.type === "email" && !/\S+@\S+\.\S+/.test(value)) {
           newErrors[campo.name] = "Email inválido";
         }
       }
@@ -63,24 +76,20 @@ const Formulario = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     onSubmit(formData);
   };
 
   const renderField = (campo) => {
-    const inputClass = errors[campo.name] ? 'error' : '';
+    const inputClass = errors[campo.name] ? "error" : "";
 
     switch (campo.type) {
-      case 'textarea':
+      case "textarea":
         return (
           <textarea
             id={campo.name}
             name={campo.name}
-            value={formData[campo.name] || ''}
+            value={formData[campo.name] || ""}
             onChange={handleInputChange}
             placeholder={campo.placeholder}
             rows={campo.rows || 4}
@@ -88,12 +97,12 @@ const Formulario = ({
           />
         );
 
-      case 'select':
+      case "select":
         return (
           <select
             id={campo.name}
             name={campo.name}
-            value={formData[campo.name] || ''}
+            value={formData[campo.name] || ""}
             onChange={handleInputChange}
             className={inputClass}
           >
@@ -105,7 +114,7 @@ const Formulario = ({
           </select>
         );
 
-      case 'file':
+      case "file":
         return (
           <div className="file-upload-container">
             <input
@@ -131,10 +140,14 @@ const Formulario = ({
       default:
         return (
           <input
-            type={campo.type || 'text'}
+            type={campo.type || "text"}
             id={campo.name}
             name={campo.name}
-            value={formData[campo.name] || ''}
+            value={
+              campo.type === "number" && formData[campo.name] !== ""
+                ? Number(formData[campo.name])
+                : formData[campo.name] || ""
+            }
             onChange={handleInputChange}
             placeholder={campo.placeholder}
             className={inputClass}
@@ -144,44 +157,32 @@ const Formulario = ({
   };
 
   return (
-    <section className="orcamento-section">
+    <section className={`orcamento-section ${className}`}>
       <div className="orcamento-container">
         {(titulo || subtitulo) && (
           <div className="orcamento-header">
-            {titulo && (
-              <h1>{titulo}</h1>
-            )}
-            {subtitulo && (
-              <p>{subtitulo}</p>
-            )}
+            {titulo && <h1>{titulo}</h1>}
+            {subtitulo && <p>{subtitulo}</p>}
           </div>
         )}
 
-        <form 
-          onSubmit={handleSubmit} 
-          className="orcamento-form"
-        >
-          {campos.map((campo, index) => (
+        <form onSubmit={handleSubmit} className="orcamento-form">
+          {campos.map((campo) => (
             <div key={campo.name} className="form-group">
               <label htmlFor={campo.name}>
                 {campo.label}
                 {campo.required && <span className="required">*</span>}
               </label>
-              
+
               {renderField(campo)}
-              
+
               {errors[campo.name] && (
-                <span className="error-message">
-                  {errors[campo.name]}
-                </span>
+                <span className="error-message">{errors[campo.name]}</span>
               )}
             </div>
           ))}
 
-          <button 
-            type="submit" 
-            className="submit-button"
-          >
+          <button type="submit" className="submit-button">
             {submitButtonText}
           </button>
         </form>

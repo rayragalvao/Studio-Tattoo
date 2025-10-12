@@ -5,9 +5,13 @@ import CardResposta from "../components/CardResposta";
 import Footer from "../components/Footer";
 import "../styles/global.css";
 import "../styles/formulario.css";
+import { useLocation } from "react-router-dom";
 
 const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
+  const location = useLocation();
+  const tattooData = location.state || {}; // pega os dados enviados do TattooCard
+
   const camposOrcamento = [
     {
       name: "email",
@@ -15,7 +19,7 @@ const Orcamento = () => {
       label: "Email para contato",
       placeholder: "Digite seu e-mail",
       required: true,
-      errorMessage: "Email é obrigatório"
+      errorMessage: "Email é obrigatório",
     },
     {
       name: "ideia",
@@ -24,7 +28,7 @@ const Orcamento = () => {
       placeholder: "Descreva sua ideia",
       rows: 4,
       required: true,
-      errorMessage: "Descrição da ideia é obrigatória"
+      errorMessage: "Descrição da ideia é obrigatória",
     },
     {
       name: "tamanho",
@@ -32,7 +36,7 @@ const Orcamento = () => {
       label: "Tamanho estimado (cm)",
       placeholder: "Digite o tamanho desejado",
       required: true,
-      errorMessage: "Tamanho estimado é obrigatório"
+      errorMessage: "Tamanho estimado é obrigatório",
     },
     {
       name: "localCorpo",
@@ -55,48 +59,47 @@ const Orcamento = () => {
         "Punho",
         "Tornozelo",
         "Pescoço",
-        "Outro"
-      ]
+        "Outro",
+      ],
     },
     {
       name: "imagemReferencia",
       type: "file",
       label: "Enviar referência de imagem (opcional)",
       accept: "image/*",
-      fileText: "💡 Dica: Inspire-se! Busque referências no Pinterest, Instagram e outras redes.",
-      fileSubtext: "Clique aqui para enviar sua imagem de referência"
-    }
+      fileText:
+        "💡 Dica: Inspire-se! Busque referências no Pinterest, Instagram e outras redes.",
+      fileSubtext: "Clique aqui para enviar sua imagem de referência",
+    },
   ];
 
   const handleSubmitOrcamento = async (dados) => {
     try {
       console.log("Dados do orçamento:", dados);
-      // rota para enviar pro backend
-      // await api.post('/orcamentos', dados);
-      
-      // isso aqui é para em ambiente de dev a gente testar o ERRO e SUCESSO
-      const sucesso = Math.random() > 0.4; // 60% chance de sucesso
+      const sucesso = Math.random() > 0.4;
 
-      // já aqui é quando a gente for integrar com o backend
-      // const sucesso = backendResponse.success;
       if (sucesso) {
         setCardResposta({
-          tipo: 'sucesso',
-          titulo: 'Sua ideia já chegou até nós!',
-          mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.',
-          codigo: `ORC-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`,
-          botaoTexto: 'Continuar navegando'
+          tipo: "sucesso",
+          titulo: "Sua ideia já chegou até nós!",
+          mensagem:
+            "Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.",
+          codigo: `ORC-2025-${Math.floor(Math.random() * 1000)
+            .toString()
+            .padStart(3, "0")}`,
+          botaoTexto: "Continuar navegando",
         });
       } else {
-        throw new Error('Erro simulado');
+        throw new Error("Erro simulado");
       }
     } catch (error) {
       console.error("Erro ao enviar orçamento:", error);
       setCardResposta({
-        tipo: 'erro',
-        titulo: 'Erro ao enviar orçamento',
-        mensagem: 'Ocorreu um problema ao processar sua solicitação. Verifique sua conexão e tente novamente.',
-        botaoTexto: 'Tentar novamente'
+        tipo: "erro",
+        titulo: "Erro ao enviar orçamento",
+        mensagem:
+          "Ocorreu um problema ao processar sua solicitação. Verifique sua conexão e tente novamente.",
+        botaoTexto: "Tentar novamente",
       });
     }
   };
@@ -108,12 +111,18 @@ const Orcamento = () => {
   return (
     <>
       <Navbar />
-      <Formulario 
+      <Formulario
         titulo="Do esboço ao real: Seu projeto começa aqui."
         subtitulo="Conte sua ideia, nós criamos a arte."
         campos={camposOrcamento}
         onSubmit={handleSubmitOrcamento}
         submitButtonText="Enviar orçamento"
+        initialValues={{
+          tamanho: tattooData?.tamanho || "",
+          ideia: tattooData?.titulo
+            ? `Fiquei interessado(a) na tatuagem com o desenho "${tattooData.titulo}".`
+            : "",
+        }}
       />
       {cardResposta && (
         <CardResposta

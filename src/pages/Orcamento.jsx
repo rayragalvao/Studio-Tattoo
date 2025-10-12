@@ -7,6 +7,8 @@ import "../styles/global.css";
 import "../styles/formulario.css";
 import { useLocation } from "react-router-dom";
 
+const apiUrl = 'http://localhost:8080';
+
 const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
   const location = useLocation();
@@ -37,6 +39,17 @@ const Orcamento = () => {
       placeholder: "Digite o tamanho desejado",
       required: true,
       errorMessage: "Tamanho estimado é obrigatório",
+    },
+    {
+      name: "cores",
+      type: "checkbox group",
+      label: "Cor desejada (Selecione mais de uma, se necessário)",
+      required: true,
+      errorMessage: "Selecione pelo menos uma cor",
+      options: [
+        { value: "preto", label: " Preto" },
+        { value: "vermelho", label: " Vermelho" }
+      ]
     },
     {
       name: "localCorpo",
@@ -88,9 +101,81 @@ const Orcamento = () => {
             .toString()
             .padStart(3, "0")}`,
           botaoTexto: "Continuar navegando",
+      let response;
+
+      if (Array.isArray(dados.imagemReferencia) && dados.imagemReferencia.length > 0) {
+        const formData = new FormData();
+        Object.keys(dados).forEach(key => {
+          const value = dados[key];
+          if (value === null || value === undefined) return;
+          if (key === 'imagemReferencia') {
+            value.forEach(file => formData.append('imagemReferencia', file));
+          } else if (Array.isArray(value)) {
+            formData.append(key, JSON.stringify(value));
+          } else {
+            formData.append(key, value);
+          }
+        });
+
+        response = await fetch(`${apiUrl}/orcamento`, {
+          method: 'POST',
+          body: formData
         });
       } else {
+        response = await fetch(`${apiUrl}/orcamento`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
+        });
+      }
+
+      const text = await response.text().catch(() => '');
+      let backendResponse = {};
+      if (text) {
+        try {
+          backendResponse = JSON.parse(text);
+        } catch (e) {
+          backendResponse = { message: text };
+        }
+      }
+
+      if (!response.ok) {
+        console.error('Erro HTTP ao enviar orçamento:', response.status, backendResponse);
+        setCardResposta({
+          tipo: 'erro',
+          titulo: 'Erro ao enviar orçamento',
+          mensagem: backendResponse.message || `Servidor retornou status ${response.status}`,
+          botaoTexto: 'Tentar novamente'
+        });
+        return;
+      }
+
+      const sucesso = backendResponse.success !== false;
+      let codigoOrcamento = `ORC-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+      if (sucesso) {
+        setCardResposta({
+          tipo: 'sucesso',
+          titulo: 'Sua ideia já chegou até nós!',
+          mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.',
+          codigo: codigoOrcamento,
+          botaoTexto: 'Continuar navegando'
+        });
+
+        // nao sei se funciona, ainda n testei
+        // response = await fetch(`${apiUrl}/email`, {
+        //   method: 'POST',
+        //   headers: { 'Content-Type': 'application/json' },
+        //   body: JSON.stringify(codigoOrcamento)
+        // });
+
+      } else {
         throw new Error("Erro simulado");
+        setCardResposta({
+          tipo: 'erro',
+          titulo: backendResponse.title || 'Erro ao enviar orçamento',
+          mensagem: backendResponse.message || 'O servidor retornou erro ao processar sua solicitação.',
+          botaoTexto: 'Tentar novamente'
+        });
       }
     } catch (error) {
       console.error("Erro ao enviar orçamento:", error);
@@ -100,6 +185,10 @@ const Orcamento = () => {
         mensagem:
           "Ocorreu um problema ao processar sua solicitação. Verifique sua conexão e tente novamente.",
         botaoTexto: "Tentar novamente",
+        tipo: 'erro',
+        titulo: 'Erro ao enviar orçamento',
+        mensagem: error.message || 'Ocorreu um problema ao processar sua solicitação. Verifique sua conexão e tente novamente.',
+        botaoTexto: 'Tentar novamente'
       });
     }
   };

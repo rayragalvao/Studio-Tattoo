@@ -1,4 +1,4 @@
-package hub.orcana.dto;
+package hub.orcana.dto.usuario;
 
 public record UsuarioToken (
         Long id,

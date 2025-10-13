@@ -1,4 +1,4 @@
-package hub.orcana.dto;
+package hub.orcana.dto.usuario;
 
 import hub.orcana.tables.Usuario;
 

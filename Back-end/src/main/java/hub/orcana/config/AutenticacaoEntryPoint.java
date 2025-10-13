@@ -1,4 +1,4 @@
-package hub.orcana.configurations;
+package hub.orcana.config;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,6 +1,6 @@
 package hub.orcana.service;
 
-import hub.orcana.dto.DetalhesUsuario;
+import hub.orcana.dto.usuario.DetalhesUsuario;
 import hub.orcana.tables.Usuario;
 import hub.orcana.tables.repository.UsuarioRepository;
 import org.springframework.security.core.userdetails.UserDetails;

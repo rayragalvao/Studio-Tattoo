@@ -1,6 +1,7 @@
 package hub.orcana.service;
 
-import hub.orcana.dto.*;
+import hub.orcana.config.GerenciadorTokenJwt;
+import hub.orcana.dto.usuario.*;
 import hub.orcana.exception.QuantidadeMinimaUsuariosException;
 import hub.orcana.exception.UsuarioProtegidoException;
 import hub.orcana.tables.Usuario;
@@ -14,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import hub.orcana.exception.DependenciaNaoEncontradaException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -49,7 +49,7 @@ public class UsuarioService {
         novoUsuario.setSenha(senhaCriptografada);
 
         log.info("Usuário criado com sucesso: ID {}", novoUsuario.getId());
-        return novoUsuario;
+        return repository.save(novoUsuario);
     }
 
     public UsuarioToken autenticar(LoginUsuario usuario) {
@@ -79,9 +79,9 @@ public class UsuarioService {
         }
     }
 
-    public Usuario buscarById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new DependenciaNaoEncontradaException("Usuário"));
+    public ListarUsuarios buscarById(Long id) {
+        return UsuarioMapper.of(repository.findById(id)
+                .orElseThrow(() -> new DependenciaNaoEncontradaException("Usuário")));
     }
 
     public Usuario atualizarById(Long id, Usuario usuario) {

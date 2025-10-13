@@ -1,4 +1,4 @@
-package hub.orcana.dto;
+package hub.orcana.dto.usuario;
 
 import hub.orcana.tables.Usuario;
 import lombok.Getter;
@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @Setter
@@ -35,7 +34,7 @@ public class DetalhesUsuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return nome;
+        return email;
     }
 
     @Override

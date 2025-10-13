@@ -1,4 +1,4 @@
-package hub.orcana.configurations;
+package hub.orcana.config;
 
 import hub.orcana.service.AutenticacaoService;
 import org.springframework.security.authentication.AuthenticationProvider;

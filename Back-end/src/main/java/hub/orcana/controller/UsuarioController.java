@@ -64,7 +64,7 @@ public class UsuarioController {
     // Atualiza um usuário pelo ID
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar um usuário existente por ID")
-    public ResponseEntity<Usuario> atualizarUsuario(
+    public ResponseEntity<ListarUsuarios> atualizarUsuario(
             @PathVariable Long id,
             @RequestBody @Valid Usuario usuario
     ) {

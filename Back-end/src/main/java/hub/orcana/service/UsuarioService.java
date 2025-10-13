@@ -84,7 +84,7 @@ public class UsuarioService {
                 .orElseThrow(() -> new DependenciaNaoEncontradaException("Usuário")));
     }
 
-    public Usuario atualizarById(Long id, Usuario usuario) {
+    public ListarUsuarios atualizarById(Long id, Usuario usuario) {
         validarIdUsuario(id);
 
         if (usuario.getId() != null && !usuario.getId().equals(id)) {
@@ -94,7 +94,7 @@ public class UsuarioService {
         usuario.setId(id);
         Usuario atualizado = repository.save(usuario);
         log.info("Usuário atualizado com sucesso: ID {}", atualizado.getId());
-        return atualizado;
+        return UsuarioMapper.of(atualizado);
     }
 
     public void deletarById(Long id) {

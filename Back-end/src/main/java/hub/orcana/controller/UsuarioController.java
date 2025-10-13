@@ -1,5 +1,6 @@
 package hub.orcana.controller;
 
+import hub.orcana.dto.CadastroUsuario;
 import hub.orcana.service.UsuarioService;
 import hub.orcana.tables.Usuario;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,7 +44,7 @@ public class UsuarioController {
     // Cria um usuário
     @PostMapping
     @Operation(summary = "Criar um novo usuário")
-    public ResponseEntity<Usuario> criarUsuario(@RequestBody @Valid Usuario usuario) {
+    public ResponseEntity<Usuario> criarUsuario(@RequestBody @Valid CadastroUsuario usuario) {
         var novoUsuario = service.criar(usuario);
         return ResponseEntity.status(201).body(novoUsuario);
     }

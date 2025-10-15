@@ -4,6 +4,7 @@ import hub.orcana.dto.DadosCadastroMaterial;
 import hub.orcana.service.EstoqueService;
 import hub.orcana.tables.Estoque;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ public class EstoqueController {
 
     @GetMapping
     @Operation(summary = "Listar todos os materiais")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<?> getEstoque() {
         var materiais = service.getEstoque();
         return ResponseEntity.ok(materiais);
@@ -30,6 +32,7 @@ public class EstoqueController {
 
     @GetMapping("/{nomeMaterial}")
     @Operation(summary = "Buscar material pelo nome")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<?> getEstoqueByNome(@PathVariable @Valid String nomeMaterial) {
         var material = service.getEstoqueByNome(nomeMaterial);
         return ResponseEntity.ok(material);
@@ -37,6 +40,7 @@ public class EstoqueController {
 
     @PostMapping
     @Operation(summary = "Inserir material no estoque")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<?> postEstoque(@RequestBody Estoque estoque) {
         var novoMaterial = service.postEstoque(estoque);
         return ResponseEntity.status(201).body(novoMaterial);
@@ -44,6 +48,7 @@ public class EstoqueController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar material pelo ID")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<?> putEstoqueById(@PathVariable Long id, @RequestBody @Valid Estoque estoque) {
         Estoque novoMaterial = service.putEstoqueById(id, estoque);
         return ResponseEntity.status(201).body(novoMaterial);
@@ -51,6 +56,7 @@ public class EstoqueController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar material pelo ID")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<?> deleteEstoqueById(@PathVariable Long id) {
         service.deleteEstoqueById(id);
         return ResponseEntity.status(204).body(null);

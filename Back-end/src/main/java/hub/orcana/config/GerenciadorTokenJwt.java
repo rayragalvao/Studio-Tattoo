@@ -54,11 +54,14 @@ public class GerenciadorTokenJwt {
 
     private boolean isTokenExpired(String token) {
         Date expiration = getExpirationDateFromToken(token);
-        return expiration.before(new Date(System.currentTimeMillis()));
+        return expiration.after(new Date(System.currentTimeMillis()));
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(parseSecret()).build().parseClaimsJws(token).getBody();
+        return Jwts.parserBuilder()
+                .setSigningKey(parseSecret())
+                .build()
+                .parseClaimsJws(token).getBody();
     }
 
     private SecretKey parseSecret() {

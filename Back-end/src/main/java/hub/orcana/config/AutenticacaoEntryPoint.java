@@ -14,9 +14,9 @@ public class AutenticacaoEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws java.io.IOException, ServletException {
         if (authException.getClass().equals(BadCredentialsException.class) || authException.getClass().equals(InsufficientAuthenticationException.class)) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Acesso não autorizado: Autenticação necessária.");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acesso proibido: Você não tem permissão para acessar este recurso.");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 }

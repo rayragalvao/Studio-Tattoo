@@ -54,6 +54,7 @@ public class UsuarioController {
     // Busca usuário pelo ID
     @GetMapping("/{id}")
     @Operation(summary = "Buscar usuário por ID")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<ListarUsuarios> buscarUsuarioById(@PathVariable Long id) {
         var usuario = service.buscarById(id);
         return usuario != null
@@ -64,6 +65,7 @@ public class UsuarioController {
     // Atualiza um usuário pelo ID
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar um usuário existente por ID")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<ListarUsuarios> atualizarUsuario(
             @PathVariable Long id,
             @RequestBody @Valid Usuario usuario
@@ -71,9 +73,11 @@ public class UsuarioController {
         var usuarioAtualizado = service.atualizarById(id, usuario);
         return ResponseEntity.ok(usuarioAtualizado);
     }
+
      // Deleta um usuário pelo ID
     @DeleteMapping("/{id}")
     @Operation(summary = "Deletar um usuário existente por ID")
+    @SecurityRequirement(name = "Bearer")
     public ResponseEntity<Void> deletarUsuario(@PathVariable Long id) {
         service.deletarById(id);
         return ResponseEntity.noContent().build();

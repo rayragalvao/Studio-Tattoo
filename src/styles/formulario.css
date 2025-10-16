@@ -5,12 +5,7 @@
   justify-content: center;
   align-items: center;
   padding: 40px 20px;
-  background: linear-gradient(
-    180deg,
-    var(--cinza-escuro) 15%,
-    var(--vermelho) 70%,
-    var(--cinza-escuro) 100%
-  );
+  background: var(--cinza-escuro);
 }
 
 /* Container Principal */

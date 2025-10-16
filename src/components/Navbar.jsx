@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import logoBranca from "../assets/img/logo-branca.png";
@@ -17,7 +18,8 @@ const Navbar = () => {
     { label: "Início", to: "/" },
     { label: "Portfólio", to: "/portfolio" },
     { label: "Agendamento", to: "/agendamento" },
-    { label: "Orçamento", to: "/orcamento" }
+    { label: "Orçamento", to: "/orcamento" },
+    { label: "Estoque", to: "/estoque" }
   ];
 
   return (

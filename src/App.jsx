@@ -4,6 +4,7 @@ import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Agendamento from "./pages/Agendamento";
 import Orcamento from "./pages/Orcamento";
+import Estoque from "./pages/Estoque";
 
 import "./styles/global.css";
 
@@ -15,6 +16,7 @@ function App() {
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/agendamento" element={<Agendamento />} />
         <Route path="/orcamento" element={<Orcamento />} />
+        <Route path="/estoque" element={<Estoque />} />
       </Routes>
     </Router>
   );

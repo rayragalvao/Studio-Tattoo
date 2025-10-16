@@ -119,7 +119,7 @@
 
 .checkbox-item {
   display: inline-flex;
-  align-items: laft;
+  align-items: left;
   gap: 8px;
   font-family: 'Martel Sans', sans-serif;
   color: var(--cinza-escuro);

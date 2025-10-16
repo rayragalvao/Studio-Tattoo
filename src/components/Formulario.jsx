@@ -1,207 +1,119 @@
-import React, { useState, useEffect } from "react";
-import "../styles/formulario.css";
+import React, { useEffect, useState } from 'react';
+import '../styles/formulario.css';
 
 const Formulario = ({
-  titulo = "Do esboço ao real: Seu projeto começa aqui.",
-  subtitulo = "Conte sua ideia, nós criamos a arte.",
+  titulo = 'Do esboço ao real: Seu projeto começa aqui.',
+  subtitulo = 'Conte sua ideia, nós criamos a arte.',
   campos = [],
   onSubmit,
-  submitButtonText = "Enviar orçamento",
-  className = "",
-  initialValues = {}, // Recebe valores iniciais do card
+  submitButtonText = 'Enviar orçamento',
+  className = '',
+  initialValues = {},
 }) => {
-  const [formData, setFormData] = useState(() => {
-    const initialData = {};
-    campos.forEach((campo) => {
-      initialData[campo.name] =
-        initialValues[campo.name] !== undefined
-          ? initialValues[campo.name]
-          : campo.type === "file"
-          ? null
-          : "";
+  // Estado único para o formulário
   const [dadosFormulario, setDadosFormulario] = useState(() => {
-    const dadosIniciais = {};
-    campos.forEach(campo => {
-      if (campo.type === 'file') {
-        dadosIniciais[campo.name] = [];
-      } else if (campo.type === 'checkbox group') {
-        dadosIniciais[campo.name] = [];
-      } else {
-        dadosIniciais[campo.name] = '';
-      }
+    const inicial = {};
+    campos.forEach((campo) => {
+      if (campo.type === 'file') inicial[campo.name] = [];
+      else if (campo.type === 'checkbox group') inicial[campo.name] = [];
+      else inicial[campo.name] = '';
 
-      if (campo.type === 'select') {
-        dadosIniciais[`${campo.name}_outro`] = '';
-      }
+      if (campo.type === 'select') inicial[`${campo.name}_outro`] = '';
     });
-    return dadosIniciais;
+    return { ...inicial, ...initialValues };
   });
 
   const [erros, setErros] = useState({});
 
   useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      ...initialValues,
-    }));
+    setDadosFormulario((prev) => ({ ...prev, ...initialValues }));
   }, [initialValues]);
 
-  const handleInputChange = (e) => {
+  // Handlers
+  const handleMudancaInput = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
+    setDadosFormulario((prev) => ({ ...prev, [name]: value }));
+    if (erros[name]) setErros((prev) => ({ ...prev, [name]: '' }));
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setFormData((prev) => ({
-      ...prev,
-      imagemReferencia: file,
-    }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    campos.forEach((campo) => {
-      if (campo.required) {
-        const value = formData[campo.name];
-        if (!value || (typeof value === "string" && !value.trim())) {
-          newErrors[campo.name] =
-            campo.errorMessage || `${campo.label} é obrigatório`;
-        } else if (campo.type === "email" && !/\S+@\S+\.\S+/.test(value)) {
-          newErrors[campo.name] = "Email inválido";
-  const handleMudancaInput = (evento) => {
-    const { name: nome, value: valor } = evento.target;
-    setDadosFormulario(prev => ({
-      ...prev,
-      [nome]: valor
-    }));
-    
-    if (erros[nome]) {
-      setErros(prev => ({
-        ...prev,
-        [nome]: ""
-      }));
-    }
-  };
-
-  const handleMudancaArquivo = (evento) => {
-    const arquivos = Array.from(evento.target.files || []);
-    const nomeCampo = evento.target.name;
-
-    const imagens = arquivos.filter(f => f.type && f.type.startsWith('image/'));
-
-    if (imagens.length > 5) {
-      imagens.length = 5;
-    }
-
-    setDadosFormulario(prev => ({
-      ...prev,
-      [nomeCampo]: imagens
-    }));
+  const handleMudancaArquivo = (e) => {
+    const nome = e.target.name;
+    const arquivos = Array.from(e.target.files || []).filter((f) => f.type && f.type.startsWith('image/'));
+    if (arquivos.length > 5) arquivos.length = 5;
+    setDadosFormulario((prev) => ({ ...prev, [nome]: arquivos }));
+    if (erros[nome]) setErros((prev) => ({ ...prev, [nome]: '' }));
   };
 
   const handleMudancaCheckbox = (nomeCampo, valorOpcao) => {
-    setDadosFormulario(prev => {
+    setDadosFormulario((prev) => {
       const atual = Array.isArray(prev[nomeCampo]) ? prev[nomeCampo] : [];
       const existe = atual.includes(valorOpcao);
-      const atualizado = existe ? atual.filter(v => v !== valorOpcao) : [...atual, valorOpcao];
-      return {
-        ...prev,
-        [nomeCampo]: atualizado
-      };
+      const atualizado = existe ? atual.filter((v) => v !== valorOpcao) : [...atual, valorOpcao];
+      return { ...prev, [nomeCampo]: atualizado };
     });
+    if (erros[nomeCampo]) setErros((prev) => ({ ...prev, [nomeCampo]: '' }));
   };
 
+  // Validação simples
   const validarFormulario = () => {
     const novosErros = {};
-    
-    campos.forEach(campo => {
-      if (campo.required) {
-        const valorCampo = dadosFormulario[campo.name];
+    campos.forEach((campo) => {
+      if (!campo.required) return;
+      const valor = dadosFormulario[campo.name];
 
-        if (campo.type === 'select' && String(valorCampo).toLowerCase() === 'outro') {
-          const outroValor = dadosFormulario[`${campo.name}_outro`];
-          if (!outroValor || !String(outroValor).trim()) {
-            novosErros[`${campo.name}_outro`] = campo.errorMessage || `Digite o ${campo.label}`;
-          }
-        } else if (!valorCampo || (typeof valorCampo === 'string' && !valorCampo.trim())) {
-          novosErros[campo.name] = campo.errorMessage || `${campo.label} é obrigatório`;
-        } else if (campo.type === 'email' && !/\S+@\S+\.\S+/.test(valorCampo)) {
-          novosErros[campo.name] = "Email inválido";
-        }
+      if (campo.type === 'select' && String(valor).toLowerCase() === 'outro') {
+        const outro = dadosFormulario[`${campo.name}_outro`];
+        if (!outro || !String(outro).trim()) novosErros[`${campo.name}_outro`] = campo.errorMessage || `Digite o ${campo.label}`;
+      } else if (!valor || (typeof valor === 'string' && !valor.trim()) || (Array.isArray(valor) && valor.length === 0)) {
+        novosErros[campo.name] = campo.errorMessage || `${campo.label} é obrigatório`;
+      } else if (campo.type === 'email' && !/\S+@\S+\.\S+/.test(valor)) {
+        novosErros[campo.name] = 'Email inválido';
       }
     });
-
     setErros(novosErros);
     return Object.keys(novosErros).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    onSubmit(formData);
-  };
-
-  const renderField = (campo) => {
-    const inputClass = errors[campo.name] ? "error" : "";
-  const enviarFormulario = async (evento) => {
-    evento.preventDefault();
-    
-    if (!validarFormulario()) {
-      return;
-    }
+  // Monta o payload e chama onSubmit
+  const enviarFormulario = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!validarFormulario()) return;
 
     const dadosEnvio = { ...dadosFormulario };
-    campos.forEach(campo => {
-       if (campo.type === 'select') {
+
+    // Substitui select 'Outro' pelo texto do input auxiliar
+    campos.forEach((campo) => {
+      if (campo.type === 'select') {
         const val = String(dadosEnvio[campo.name] || '');
-        if (val.toLowerCase() === 'outro') {
-          dadosEnvio[campo.name] = dadosEnvio[`${campo.name}_outro`] || '';
-        }
+        if (val.toLowerCase() === 'outro') dadosEnvio[campo.name] = dadosEnvio[`${campo.name}_outro`] || '';
         delete dadosEnvio[`${campo.name}_outro`];
       }
 
       if (campo.type === 'checkbox group') {
-        const selecoes = Array.isArray(dadosEnvio[campo.name]) ? dadosEnvio[campo.name] : [];
-        if (selecoes.length === 0) {
-          dadosEnvio[campo.name] = '';
-        } else if (selecoes.length === 1) {
-          dadosEnvio[campo.name] = selecoes[0];
-        } else if (selecoes.length === 2) {
-          dadosEnvio[campo.name] = `${selecoes[0]} e ${selecoes[1]}`;
-        } else {
-           const ultimo = selecoes[selecoes.length - 1];
-          const outros = selecoes.slice(0, -1).join(', ');
-          dadosEnvio[campo.name] = `${outros} e ${ultimo}`;
+        const arr = Array.isArray(dadosEnvio[campo.name]) ? dadosEnvio[campo.name] : [];
+        if (arr.length === 0) dadosEnvio[campo.name] = '';
+        else if (arr.length === 1) dadosEnvio[campo.name] = arr[0];
+        else if (arr.length === 2) dadosEnvio[campo.name] = `${arr[0]} e ${arr[1]}`;
+        else {
+          const ultimo = arr[arr.length - 1];
+          const primeiros = arr.slice(0, -1).join(', ');
+          dadosEnvio[campo.name] = `${primeiros} e ${ultimo}`;
         }
       }
     });
 
-    onSubmit(dadosEnvio);
+    // onSubmit recebe o objeto; o caller decide se monta FormData
+    if (onSubmit) onSubmit(dadosEnvio);
   };
 
   const renderField = (campo) => {
     const classeInput = erros[campo.name] ? 'error' : '';
-
     switch (campo.type) {
-      case "textarea":
+      case 'textarea':
         return (
           <textarea
             id={campo.name}
             name={campo.name}
-            value={formData[campo.name] || ""}
-            onChange={handleInputChange}
             value={dadosFormulario[campo.name] || ''}
             onChange={handleMudancaInput}
             placeholder={campo.placeholder}
@@ -210,37 +122,12 @@ const Formulario = ({
           />
         );
 
-      case "select":
+      case 'select':
         return (
-          <select
-            id={campo.name}
-            name={campo.name}
-            value={formData[campo.name] || ""}
-            onChange={handleInputChange}
-            className={inputClass}
-          >
-            {campo.options?.map((opcao, index) => (
-              <option key={index} value={index === 0 ? "" : opcao}>
-                {opcao}
-              </option>
-            ))}
-          </select>
           <>
-            <select
-              id={campo.name}
-              name={campo.name}
-              value={dadosFormulario[campo.name] || ''}
-              onChange={(e) => {
-                const val = e.target.value;
-                setDadosFormulario(prev => ({ ...prev, [campo.name]: val, [`${campo.name}_outro`]: val.toLowerCase() === 'outro' ? prev?.[`${campo.name}_outro`] : '' }));
-                if (erros[campo.name]) {
-                  setErros(prev => ({ ...prev, [campo.name]: '' }));
-                }
-              }}
-              className={classeInput}
-            >
-              {campo.options?.map((opcao, index) => (
-                <option key={index} value={index === 0 ? "" : opcao}>
+            <select id={campo.name} name={campo.name} value={dadosFormulario[campo.name] || ''} onChange={handleMudancaInput} className={classeInput}>
+              {campo.options?.map((opcao, idx) => (
+                <option key={idx} value={idx === 0 ? '' : opcao}>
                   {opcao}
                 </option>
               ))}
@@ -260,30 +147,21 @@ const Formulario = ({
           </>
         );
 
-      case "file":
+      case 'file':
         return (
           <div className="file-upload-container">
-            <input
-              type="file"
-              id={campo.name}
-              name={campo.name}
-              onChange={handleMudancaArquivo}
-              accept={campo.accept || "image/*"}
-              className="file-input"
-              multiple
-            />
+            <input type="file" id={campo.name} name={campo.name} onChange={handleMudancaArquivo} accept={campo.accept || 'image/*'} className="file-input" multiple />
             <div className="file-upload-area">
-              <p>{campo.fileText || "📷 Clique para enviar arquivo"}</p>
-              <p>{campo.fileSubtext || "Arraste e solte ou clique para selecionar"}</p>
+              <p>{campo.fileText || '📷 Clique para enviar arquivo'}</p>
+              <p>{campo.fileSubtext || 'Arraste e solte ou clique para selecionar'}</p>
             </div>
+
             {Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0 && (
               <div className="file-selected">
-                {dadosFormulario[campo.name].slice(0,5).map((f, i) => (
+                {dadosFormulario[campo.name].slice(0, 5).map((f, i) => (
                   <p key={i} className="file-name">{f.name}</p>
                 ))}
-                {dadosFormulario[campo.name].length > 5 && (
-                  <p className="file-name">...mais {dadosFormulario[campo.name].length - 5} arquivos</p>
-                )}
+                {dadosFormulario[campo.name].length > 5 && <p className="file-name">...mais {dadosFormulario[campo.name].length - 5} arquivos</p>}
               </div>
             )}
           </div>
@@ -296,16 +174,9 @@ const Formulario = ({
               const optionValue = typeof opcao === 'string' ? opcao : opcao.value;
               const optionLabel = typeof opcao === 'string' ? opcao : opcao.label;
               const checked = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].includes(optionValue);
-
               return (
                 <label key={idx} className="checkbox-item">
-                  <input
-                    type="checkbox"
-                    name={campo.name}
-                    value={optionValue}
-                    checked={checked}
-                    onChange={() => handleMudancaCheckbox(campo.name, optionValue)}
-                  />
+                  <input type="checkbox" name={campo.name} value={optionValue} checked={checked} onChange={() => handleMudancaCheckbox(campo.name, optionValue)} />
                   {optionLabel}
                 </label>
               );
@@ -315,21 +186,7 @@ const Formulario = ({
 
       default:
         return (
-          <input
-            type={campo.type || "text"}
-            id={campo.name}
-            name={campo.name}
-            value={
-              campo.type === "number" && formData[campo.name] !== ""
-                ? Number(formData[campo.name])
-                : formData[campo.name] || ""
-            }
-            onChange={handleInputChange}
-            value={dadosFormulario[campo.name] || ''}
-            onChange={handleMudancaInput}
-            placeholder={campo.placeholder}
-            className={classeInput}
-          />
+          <input type={campo.type || 'text'} id={campo.name} name={campo.name} value={dadosFormulario[campo.name] || ''} onChange={handleMudancaInput} placeholder={campo.placeholder} className={classeInput} />
         );
     }
   };
@@ -344,13 +201,8 @@ const Formulario = ({
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="orcamento-form">
+        <form onSubmit={enviarFormulario} className="orcamento-form">
           {campos.map((campo) => (
-        <form 
-          onSubmit={enviarFormulario} 
-          className="orcamento-form"
-        >
-          {campos.map((campo, index) => (
             <div key={campo.name} className="form-group">
               <label htmlFor={campo.name}>
                 {campo.label}
@@ -359,14 +211,8 @@ const Formulario = ({
 
               {renderField(campo)}
 
-              {errors[campo.name] && (
-                <span className="error-message">{errors[campo.name]}</span>
-              
-              {erros[campo.name] && (
-                <span className="error-message">
-                  {erros[campo.name]}
-                </span>
-              )}
+              {erros[campo.name] && <span className="error-message">{erros[campo.name]}</span>}
+              {erros[`${campo.name}_outro`] && <span className="error-message">{erros[`${campo.name}_outro`]}</span>}
             </div>
           ))}
 

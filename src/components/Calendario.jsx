@@ -21,7 +21,11 @@ const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
     for (let dia = 1; dia <= ultimoDiaMes.getDate(); dia++) {
       const data = new Date(ano, mes, dia);
       
-      if (data < hoje.setHours(0, 0, 0, 0)) continue;
+      const amanha = new Date();
+      amanha.setDate(amanha.getDate() + 1);
+      amanha.setHours(0, 0, 0, 0);
+      
+      if (data < amanha) continue;
       
       const tresMesesFuturo = new Date();
       tresMesesFuturo.setMonth(tresMesesFuturo.getMonth() + 3);

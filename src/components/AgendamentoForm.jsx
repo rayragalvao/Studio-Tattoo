@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../styles/agendamento-form.css";
 import Calendario from "./Calendario";
+import AlertaCustomizado from "./AlertaCustomizado";
 
 const AgendamentoForm = () => {
   const [codigoOrcamento, setCodigoOrcamento] = useState("");
@@ -8,6 +9,7 @@ const AgendamentoForm = () => {
   const [horarioSelecionado, setHorarioSelecionado] = useState("");
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
   const [errors, setErrors] = useState({});
+  const [showAlerta, setShowAlerta] = useState(false);
 
   const gerarHorariosDisponiveis = (data) => {
     const horariosBase = [
@@ -83,6 +85,14 @@ const AgendamentoForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const limparFormulario = () => {
+    setCodigoOrcamento("");
+    setDataSelecionada("");
+    setHorarioSelecionado("");
+    setHorariosDisponiveis([]);
+    setErrors({});
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -97,7 +107,12 @@ const AgendamentoForm = () => {
     };
 
     console.log("Dados do agendamento:", dadosAgendamento);
-    alert("Agendamento realizado com sucesso!");
+    setShowAlerta(true);
+  };
+
+  const handleCloseAlerta = () => {
+    setShowAlerta(false);
+    limparFormulario();
   };
 
   return (
@@ -118,6 +133,7 @@ const AgendamentoForm = () => {
               type="text"
               id="codigoOrcamento"
               name="codigoOrcamento"
+              autoComplete="off"
               value={codigoOrcamento}
               onChange={handleCodigoChange}
               placeholder="Digite o código do seu orçamento"
@@ -192,6 +208,15 @@ const AgendamentoForm = () => {
           </button>
         </form>
       </div>
+
+      <AlertaCustomizado
+        isVisible={showAlerta}
+        onClose={handleCloseAlerta}
+        tipo="success"
+        titulo="Agendamento Confirmado!"
+        mensagem={`Sua sessão foi agendada para o dia ${dataSelecionada ? new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR') : ''} às ${horarioSelecionado}. Você receberá uma confirmação em breve.`}
+        botaoTexto="Entendi"
+      />
     </section>
   );
 };

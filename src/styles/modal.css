@@ -1,0 +1,464 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  max-width: 800px;
+  width: 90%;
+  height: 600px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px;
+  right: 25px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #ffffff;
+  cursor: pointer;
+  z-index: 1001;
+  transition: color 0.3s ease;
+  font-weight: 300;
+}
+
+.modal-close:hover {
+  color: #f0f0f0;
+}
+
+.modal-cadastro,
+.modal-login {
+  display: flex;
+  height: 100%;
+  animation: modalSlideIn 0.4s ease-out;
+}
+
+.modal-content.transitioning-out {
+  animation: modalSlideOut 0.3s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+.modal-content.transitioning-in {
+  animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalSlideOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateX(0) rotateY(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.92) translateX(-40px) rotateY(-5deg);
+  }
+}
+
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateX(40px) rotateY(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0) rotateY(0deg);
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-cadastro .modal-left-form {
+  flex: 1;
+  background: white;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-cadastro .modal-right-orange {
+  flex: 1;
+  background: linear-gradient(135deg, #D46B0F, #ff8533);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 50px 40px;
+}
+
+.modal-login .modal-left-orange {
+  flex: 1;
+  background: linear-gradient(135deg, #D46B0F, #ff8533);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 50px 40px;
+}
+
+.modal-login .modal-right-form {
+  flex: 1;
+  background: white;
+  padding: 50px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.welcome-text h2 {
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'Montserrat Alternates', sans-serif;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.welcome-text p {
+  font-size: 18px;
+  font-family: 'Martel Sans', sans-serif;
+  margin-bottom: 40px;
+  opacity: 0.95;
+  line-height: 1.4;
+}
+
+.btn-fazer-login,
+.btn-fazer-cadastro {
+  background: white;
+  color: #D46B0F;
+  border: none;
+  padding: 15px 40px;
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 16px;
+  font-family: 'Montserrat Alternates', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: none;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-fazer-login:hover,
+.btn-fazer-cadastro:hover {
+  background: #f8f8f8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.cadastro-form,
+.login-form {
+  max-width: 350px;
+  width: 100%;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 15px;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1px solid #E0E0E0;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: 'Martel Sans', sans-serif;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: #FAFAFA;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #D46B0F;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(212, 107, 15, 0.1);
+}
+
+.form-group input::placeholder {
+  color: #999;
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.form-group input[type="date"] {
+  color: #666;
+}
+
+.form-group input[type="date"]:focus {
+  color: #333;
+}
+
+.form-group input.error {
+  border-color: #dc3545;
+  background: #fdf2f2;
+}
+
+.form-group input.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+}
+
+.error-message {
+  display: block;
+  color: #dc3545;
+  font-size: 12px;
+  font-family: 'Martel Sans', sans-serif;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.success-message {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 16px;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.password-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input input {
+  padding-right: 50px;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #999;
+  padding: 5px;
+  transition: color 0.3s ease;
+}
+
+.password-toggle:hover {
+  color: #D46B0F;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.checkbox-group input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.checkbox-group label {
+  margin: 0;
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
+  cursor: pointer;
+  color: #666;
+}
+
+.btn-cadastrar,
+.btn-entrar {
+  width: 100%;
+  background: #D46B0F;
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Montserrat Alternates', sans-serif;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+  margin-top: 10px;
+}
+
+.btn-cadastrar:hover,
+.btn-entrar:hover {
+  background: #b85e0d;
+  transform: translateY(-2px);
+}
+
+.forgot-password {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.forgot-password a {
+  color: #D46B0F;
+  text-decoration: none;
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: #b85e0d;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 95%;
+    height: auto;
+    max-height: 90vh;
+  }
+  
+  .modal-cadastro,
+  .modal-login {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .modal-left-form,
+  .modal-right-form,
+  .modal-left-orange,
+  .modal-right-orange {
+    padding: 40px 30px;
+  }
+  
+  .welcome-text h2 {
+    font-size: 26px;
+  }
+  
+  .welcome-text p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-left-form,
+  .modal-right-form,
+  .modal-left-orange,
+  .modal-right-orange {
+    padding: 30px 20px;
+  }
+  
+  .welcome-text h2 {
+    font-size: 22px;
+  }
+  
+  .welcome-text p {
+    font-size: 14px;
+  }
+  
+  .cadastro-form,
+  .login-form {
+    max-width: 100%;
+  }
+}
+
+.success-message {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  border-radius: 15px;
+  padding: 0;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+  animation: slideDown 0.4s ease-out;
+  overflow: hidden;
+}
+
+.success-content {
+  padding: 25px 30px;
+  text-align: center;
+  color: white;
+}
+
+.success-content span {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.success-content p {
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.btn-success-close {
+  background: white;
+  color: #28a745;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-success-close:hover {
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

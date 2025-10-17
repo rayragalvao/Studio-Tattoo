@@ -138,6 +138,9 @@ a:hover {
     font-size: 13px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
     transition: background 0.3s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .btn-cadastro:hover {
@@ -155,6 +158,8 @@ a:hover {
     font-size: 13px;
     border: 1px solid rgba(212, 107, 15, 0.95);
     transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .btn-login:hover {

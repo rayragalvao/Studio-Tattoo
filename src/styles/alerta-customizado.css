@@ -4,12 +4,12 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(2px);
+  z-index: 10000;
+  backdrop-filter: blur(3px);
 }
 
 .alerta-modal {
@@ -193,5 +193,57 @@
   .alerta-botao {
     padding: 10px 25px;
     font-size: 13px;
+  }
+}
+
+.alerta-modal.success .alerta-icone {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  font-size: 32px;
+  animation: celebracao 0.6s ease-out 0.3s both;
+}
+
+.alerta-mensagem-secundaria {
+  font-family: 'Martel Sans', sans-serif;
+  font-size: 14px;
+  color: var(--cinza-escuro);
+  line-height: 1.4;
+  margin: 10px 0 0 0;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+.alerta-botao.success {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: var(--branco);
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: none;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.alerta-botao.success:hover {
+  background: linear-gradient(135deg, #218838, #1abc9c);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(40, 167, 69, 0.3);
+}
+
+.alerta-botao.success:active {
+  transform: translateY(0);
+}
+
+@keyframes celebracao {
+  0% {
+    transform: scale(0.8) rotate(-10deg);
+  }
+  50% {
+    transform: scale(1.1) rotate(5deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
   }
 }

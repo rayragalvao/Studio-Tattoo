@@ -4,19 +4,16 @@ import Footer from "../components/Footer";
 import "../styles/global.css";
 import "../styles/estoque.css";
 import React, { useEffect, useState } from "react";
+import api from "../service/api";
 
 const Estoque = () => {
-    // const apiUrl = "http://localhost:8080";
+    const url = "/estoque";
     const [adicionarEstoque, setAdicionarEstoque] = useState(false);
     const [informacoesItem, setInformacoesItem] = useState(false);
-    const [itensEstoque, setItensEstoque] = useState([
-        { nome: "Luvas", quantidade: 2, unidadeMedida: "Unidades", minimoEstoque: 5 },
-        { nome: "Agulhas", quantidade: 12, unidadeMedida: "Unidades", minimoEstoque: 10 },
-        { nome: "Tinta preta", quantidade: 1, unidadeMedida: "Litros", minimoEstoque: 1 },
-        { nome: "Tinta vermelha", quantidade: 2, unidadeMedida: "Litros", minimoEstoque: 0.5 }
-    ]);
+    const [itensEstoque, setItensEstoque] = useState([]);
     const [itensEstoqueExibir, setItensEstoqueExibir] = useState(itensEstoque);
     const [itemSelecionado, setItemSelecionado] = useState(null);
+    const [qtdParaAtualizar, setQtdParaAtualizar] = useState(0);
 
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
     const [filtros, setFiltros] = useState({
@@ -24,6 +21,105 @@ const Estoque = () => {
         alertaEstoque: "todos",
         ordenarPor: "nome"
     });
+
+    const [carregando, setCarregando] = useState(false);
+
+    useEffect(() => {
+        if (itensEstoque.length <= 0) {
+            setCarregando(true);
+        }
+        api.get(url)
+            .then(response => {
+                setItensEstoque(response.data);
+                setItensEstoqueExibir(response.data);
+
+                console.log(response.data);
+                setCarregando(false);
+            })
+            .catch(error => {
+                setCarregando(false);
+                console.error('Erro ao buscar itens de estoque:', error);
+            });
+    }, []);
+
+    // Aplicar filtros sempre que mudarem
+    useEffect(() => {
+        aplicarFiltros();
+    }, [filtros, itensEstoque]);
+
+    function cadastrarItem() {
+        console.log("Item a ser cadastrado:", itemSelecionado);
+        api.post(url, itemSelecionado)
+            .then(response => {
+                console.log("Item cadastrado com sucesso:", response.data);
+                setItensEstoque([...itensEstoque, response.data]);
+                setItensEstoqueExibir([...itensEstoqueExibir, response.data]);
+            })
+            .catch(error => {
+                console.error('Erro ao cadastrar item:', error);
+            });
+    }
+
+    function excluirItem() {
+        console.log("Item a ser excluído:", itemSelecionado);
+        api.delete(`${url}/${itemSelecionado.id}`)
+            .then(response => {
+                console.log("Item excluído com sucesso:", response.data);
+                const itensAtualizados = itensEstoque.filter(item => item.id !== itemSelecionado.id);
+                setItensEstoque(itensAtualizados);
+                setItensEstoqueExibir(itensAtualizados);
+
+                aplicarFiltros();
+            })
+            .catch(error => {
+                console.error('Erro ao excluir item:', error);
+            });
+    }
+
+    function atualizarItem(){
+        console.log("Item a ser atualizado:", itemSelecionado);
+        api.put(`${url}/${itemSelecionado.id}`, itemSelecionado)
+            .then(response => {
+                console.log("Item atualizado com sucesso:", response.data);
+                const itensAtualizados = itensEstoque.map(item =>
+                    item.id === itemSelecionado.id ? response.data : item
+                );
+                setItensEstoque(itensAtualizados);
+                setItensEstoqueExibir(itensAtualizados);
+
+                aplicarFiltros();
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar item:', error);
+            });
+    }
+
+    function atualizarQuantidade(operacao){
+        let qtdAtualizada =  itemSelecionado.quantidade;
+
+        if (operacao == "soma") {
+            qtdAtualizada += qtdParaAtualizar;
+        } else {
+            qtdAtualizada -= qtdParaAtualizar;
+        }
+
+        console.log("Quantidade atualizada para:", qtdAtualizada);
+
+        api.patch(`${url}/${itemSelecionado.id}`, {quantidade: qtdAtualizada})
+            .then(response => {
+                console.log("Quantidade atualizada com sucesso:", response.data);
+                const itensAtualizados = itensEstoque.map(item =>
+                    item.id === itemSelecionado.id ? response.data : item
+                );
+                setItensEstoque(itensAtualizados);
+                setItensEstoqueExibir(itensAtualizados);
+
+                aplicarFiltros();
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar quantidade do item:', error);
+            });
+    }
 
     function toggleFiltros() {
         setFiltrosAbertos(!filtrosAbertos);
@@ -43,18 +139,18 @@ const Estoque = () => {
         // Filtro por unidade de medida
         if (filtros.unidadeMedida !== "todas") {
             itensFiltrados = itensFiltrados.filter(item =>
-                item.unidadeMedida === filtros.unidadeMedida
+                item.unidadeMedida.toLowerCase() === filtros.unidadeMedida.toLowerCase()
             );
         }
 
         // Filtro por alerta de estoque
         if (filtros.alertaEstoque === "alerta") {
             itensFiltrados = itensFiltrados.filter(item =>
-                item.quantidade < item.minimoEstoque
+                item.quantidade < item.minAviso
             );
         } else if (filtros.alertaEstoque === "ok") {
             itensFiltrados = itensFiltrados.filter(item =>
-                item.quantidade >= item.minimoEstoque
+                item.quantidade >= item.minAviso
             );
         }
 
@@ -66,7 +162,7 @@ const Estoque = () => {
                 case "quantidade":
                     return b.quantidade - a.quantidade;
                 case "alerta":
-                    return (a.quantidade < a.minimoEstoque) ? -1 : 1;
+                    return (a.quantidade < a.minAviso) ? -1 : 1;
                 default:
                     return 0;
             }
@@ -92,11 +188,6 @@ const Estoque = () => {
         setItensEstoqueExibir(itensEstoque);
     }
 
-    // Aplicar filtros sempre que mudarem
-    useEffect(() => {
-        aplicarFiltros();
-    }, [filtros, itensEstoque]);
-
     function mostrarAdicionarEstoque() {
         if (informacoesItem) {
             setInformacoesItem(false);
@@ -119,17 +210,9 @@ const Estoque = () => {
         setInformacoesItem(false);
     }
 
-    // function filtrarItens(pesquisa) {
-    //     const itensFiltrados = itensEstoque.filter(item =>
-    //         item.nome.toLowerCase().includes(pesquisa.toLowerCase())
-    //     );
-    //     setItensEstoqueExibir(itensFiltrados);
-    // }
-
   return (
     <>
       <Navbar />
-
         <div className="section-estoque">
             <div className="card-estoque pesquisa-estoque">
                 <h2> Estoque </h2>
@@ -168,7 +251,11 @@ const Estoque = () => {
                             >
                                 <option value="todas">Todas</option>
                                 <option value="Unidades">Unidades</option>
-                                <option value="Litros">Litros</option>
+                                <option value="l">Litros</option>
+                                <option value="ml">Mililitros</option>
+                                <option value="Folhas">Folhas</option>
+                                <option value="Rolos">Rolos</option>
+                                <option value="g">Kilograma</option>
                                 <option value="Caixas">Caixas</option>
                             </select>
                         </div>
@@ -218,7 +305,11 @@ const Estoque = () => {
                     </div>
                 )}
 
-                { itensEstoqueExibir.length === 0 ? (
+                { carregando ? (
+                    <div className="carregando">
+                        Carregando materiais...
+                    </div>
+                ) : itensEstoqueExibir.length === 0 ? (
                         <div className="nenhum-item">
                             Nenhum item encontrado.
                         </div>
@@ -243,7 +334,7 @@ const Estoque = () => {
                             )}
 
                             {itensEstoqueExibir.map((item, index) => (
-                                <div className={`item ${item.quantidade < item.minimoEstoque ? "item-alerta" : ""}`} key={index}>
+                                <div className={`item ${item.quantidade < item.minAviso ? "item-alerta" : ""}`} key={index}>
                                     <div>
                                         <p className="fonte-negrito">{item.nome}</p>
                                         <p>{item.quantidade} {item.unidadeMedida}</p>
@@ -268,13 +359,15 @@ const Estoque = () => {
                 {adicionarEstoque && (
                     <div className="card-estoque adicionar-estoque">
                         <h2>
-                            Adicionar item
+                            Cadastrar material
                         </h2>
                         <div>
                             <label className="fonte-negrito">Nome</label>
                             <input
                                 type="text"
                                 placeholder="Digite o nome do item"
+                                required
+                                onChange={(e) => setItemSelecionado({...itemSelecionado, nome: e.target.value})}
                             />
                         </div>
 
@@ -283,6 +376,8 @@ const Estoque = () => {
                             <input
                                 type="number"
                                 placeholder="Digite a quantidade"
+                                required
+                                onChange={(e) => setItemSelecionado({...itemSelecionado, quantidade: e.target.value})}
                             />
                         </div>
 
@@ -292,22 +387,28 @@ const Estoque = () => {
                                 <input
                                     type="number"
                                     placeholder="Digite o número desejado"
+                                    onChange={(e) => setItemSelecionado({...itemSelecionado, minAviso: e.target.value})}
                                 />
                             </div>
 
                             <div>
                                 <label className="fonte-negrito">Unidade de medida</label>
-                                <select>
-                                    <option>Selecione uma opção</option>
-                                    <option>Unidades</option>
-                                    <option>Caixas</option>
-                                    <option>Litros</option>
+                                <select id="unidadeMedida" onChange={(e) => setItemSelecionado({...itemSelecionado, unidadeMedida: e.target.value})}>
+                                    <option value="#">Selecione uma opção</option>
+                                    <option value="todas">Todas</option>
+                                    <option value="Unidades">Unidades</option>
+                                    <option value="l">Litros</option>
+                                    <option value="ml">Mililitros</option>
+                                    <option value="Folhas">Folhas</option>
+                                    <option value="Rolos">Rolos</option>
+                                    <option value="g">Kilogramas</option>
+                                    <option value="Caixas">Caixas</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="botoes">
-                            <button className="submit-button">
+                            <button className="submit-button" onClick={cadastrarItem}>
                                 Adicionar ao estoque
                             </button>
                             <button className="submit-button cancel-button" onClick={cancelarAdicionarEstoque}>
@@ -330,7 +431,7 @@ const Estoque = () => {
 
                             <div>
                                 <p className="fonte-negrito">Minimo em estoque</p>
-                                <p>{itemSelecionado.minimoEstoque}</p>
+                                <p>{itemSelecionado.minAviso == null ? "Não definido" : itemSelecionado.minAviso}</p>
                             </div>
                         </div>
 
@@ -351,14 +452,15 @@ const Estoque = () => {
                             <input
                                 type="number"
                                 placeholder="Digite a quantidade desejada"
+                                onChange={(e) => setQtdParaAtualizar(e.target.value)}
                             />
                         </div>
 
                         <div className="botoes">
-                            <button className="submit-button adicionar-qtd-button">
+                            <button className="submit-button adicionar-qtd-button" onClick={atualizarQuantidade("soma")}>
                                 Adicionar
                             </button>
-                            <button className="submit-button remover-qtd-button" onClick={fecharInformacoesItem}>
+                            <button className="submit-button remover-qtd-button" onClick={() => { fecharInformacoesItem(); atualizarQuantidade("subtrair"); }}>
                                 Remover
                             </button>
                         </div>

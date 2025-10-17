@@ -9,18 +9,29 @@ import java.util.List;
 public class Orcamento {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String descricao;
+    private String email;
+    private String ideia;
     private Double valor;
     private Double tamanho;
     private String estilo;
-    @ElementCollection
-    @CollectionTable(name = "orcamento_cores", joinColumns = @JoinColumn(name = "orcamento_id"))
-    @Column(name = "cor")
-    private List<String> cores;
+    private String cores;
     private Time tempo;
+    private String localCorpo;
+    private List<String> imagemReferencia;
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    public Orcamento() {}
+
+    public Orcamento(String email, String ideia, Double tamanho, String cores, String localCorpo, List<String> imagemReferencia) {
+        this.email = email;
+        this.ideia = ideia;
+        this.tamanho = tamanho;
+        this.cores = cores;
+        this.localCorpo = localCorpo;
+        this.imagemReferencia = imagemReferencia;
+    }
 
     public Usuario getUsuario() {
         return usuario;
@@ -34,8 +45,8 @@ public class Orcamento {
         return id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getIdeia() {
+        return ideia;
     }
 
     public Double getValor() {
@@ -50,11 +61,14 @@ public class Orcamento {
         return estilo;
     }
 
-    public List<String> getCores() {
+    public String getCores() {
         return cores;
     }
 
     public Time getTempo() {
         return tempo;
     }
+
+    public List<String> getImagemReferencia() { return imagemReferencia;}
+
 }

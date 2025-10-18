@@ -138,6 +138,9 @@ a:hover {
     font-size: 13px;
     box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
     transition: background 0.3s ease, transform 0.2s ease;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .btn-cadastro:hover {
@@ -155,6 +158,8 @@ a:hover {
     font-size: 13px;
     border: 1px solid rgba(212, 107, 15, 0.95);
     transition: background 0.3s ease, transform 0.2s ease;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .btn-login:hover {
@@ -252,7 +257,6 @@ a:hover {
     line-height: 1.7;
 }
 
-
 .geolocalizacao {
     text-align: center;
     padding: 70px 20px;
@@ -261,12 +265,36 @@ a:hover {
 }
 
 .geolocalizacao .texto h1 {
-    font-size: 30px;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
 }
 
-.mapa img {
+.mapa {
+    display: flex;
+    justify-content: center;
+}
+
+.mapa iframe {
+    width: 90%;
+    max-width: 700px;
     height: 400px;
-    padding: 15px;
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    background: transparent;
+}
+
+@media (max-width: 768px) {
+    .geolocalizacao .texto h1 {
+        font-size: 24px;
+    }
+
+    .mapa iframe {
+        width: 100%;
+        height: 320px;
+        padding: 5px;
+    }
 }
 
 .instagram {

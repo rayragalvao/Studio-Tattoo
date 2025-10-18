@@ -7,6 +7,7 @@ import Instagram from "../components/Instagram";
 import FeedbackClientes from "../components/Feedback";
 import Faq from "../components/Faq";
 import Footer from "../components/Footer";
+import MapaGeolocalizacao from "../components/MapaStudio";
 
 const Home = () => {
   return (

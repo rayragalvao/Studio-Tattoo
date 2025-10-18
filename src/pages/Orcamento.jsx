@@ -7,7 +7,7 @@ import '../styles/global.css';
 import '../styles/formulario.css';
 import { useLocation } from 'react-router-dom';
 
-const apiUrl = 'http://localhost:8080';
+const apiUrl = "http://localhost:8080";
 
 const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
@@ -159,6 +159,8 @@ const Orcamento = () => {
         campos={camposOrcamento}
         onSubmit={handleSubmitOrcamento}
         submitButtonText="Enviar orçamento"
+        
+        isPortfolioImage={!!tattooData?.imagem}
         initialValues={{
           tamanho: tattooData?.tamanho || '',
           ideia: tattooData?.titulo
@@ -170,6 +172,7 @@ const Orcamento = () => {
           precoMax: tattooData?.precoMax || '',
         }}
       />
+
       {cardResposta && (
         <CardResposta
           tipo={cardResposta.tipo}

@@ -103,7 +103,7 @@ const Formulario = ({
   };
 
   const renderField = (campo) => {
-    const classeInput = erros[campo.name] ? 'error' : '';
+    const classeInput = erros[campo.name] ? "error" : "";
 
     switch (campo.type) {
       case 'textarea':
@@ -146,9 +146,9 @@ const Formulario = ({
                 placeholder={`Especifique ${campo.label.toLowerCase()}`}
                 className={classeInput}
               />
-            )}
-          </>
-        );
+            </div>
+          ) : null;
+        }
 
      case 'file':
   const bloqueado = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0;
@@ -219,10 +219,28 @@ const Formulario = ({
                     checked={checked}
                     onChange={() => handleMudancaCheckbox(campo.name, optionValue)}
                   />
-                  {optionLabel}
-                </label>
-              );
-            })}
+                  <button
+                    type="button"
+                    className="remove-image-button"
+                    onClick={() => handleRemoverImagem(campo.name)}
+                  >
+                    &times;
+                  </button>
+                </div>
+              ) : (
+                <div className="file-upload-placeholder">
+                  <p>{campo.fileText || "Clique para enviar sua referência"}</p>
+                  <p className="file-subtext">{campo.fileSubtext || "PNG, JPG, etc."}</p>
+                </div>
+              )}
+            </label>
+            {Array.isArray(dadosFormulario[campo.name]) &&
+              dadosFormulario[campo.name].length > 0 &&
+              !previewImagem && (
+                <div className="file-selected-list">
+                  <p>Arquivo: {dadosFormulario[campo.name][0].name}</p>
+                </div>
+            )}
           </div>
         );
 

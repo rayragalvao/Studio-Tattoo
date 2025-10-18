@@ -54,7 +54,6 @@ const Formulario = ({
     if (erros[nomeCampo]) setErros((prev) => ({ ...prev, [nomeCampo]: '' }));
   };
 
-  // Validação simples
   const validarFormulario = () => {
     const novosErros = {};
     campos.forEach((campo) => {
@@ -74,14 +73,12 @@ const Formulario = ({
     return Object.keys(novosErros).length === 0;
   };
 
-  // Monta o payload e chama onSubmit
   const enviarFormulario = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     if (!validarFormulario()) return;
 
     const dadosEnvio = { ...dadosFormulario };
 
-    // Substitui select 'Outro' pelo texto do input auxiliar
     campos.forEach((campo) => {
       if (campo.type === 'select') {
         const val = String(dadosEnvio[campo.name] || '');
@@ -102,12 +99,12 @@ const Formulario = ({
       }
     });
 
-    // onSubmit recebe o objeto; o caller decide se monta FormData
     if (onSubmit) onSubmit(dadosEnvio);
   };
 
   const renderField = (campo) => {
     const classeInput = erros[campo.name] ? 'error' : '';
+
     switch (campo.type) {
       case 'textarea':
         return (
@@ -125,7 +122,13 @@ const Formulario = ({
       case 'select':
         return (
           <>
-            <select id={campo.name} name={campo.name} value={dadosFormulario[campo.name] || ''} onChange={handleMudancaInput} className={classeInput}>
+            <select
+              id={campo.name}
+              name={campo.name}
+              value={dadosFormulario[campo.name] || ''}
+              onChange={handleMudancaInput}
+              className={classeInput}
+            >
               {campo.options?.map((opcao, idx) => (
                 <option key={idx} value={idx === 0 ? '' : opcao}>
                   {opcao}
@@ -147,25 +150,56 @@ const Formulario = ({
           </>
         );
 
-      case 'file':
-        return (
-          <div className="file-upload-container">
-            <input type="file" id={campo.name} name={campo.name} onChange={handleMudancaArquivo} accept={campo.accept || 'image/*'} className="file-input" multiple />
-            <div className="file-upload-area">
-              <p>{campo.fileText || '📷 Clique para enviar arquivo'}</p>
-              <p>{campo.fileSubtext || 'Arraste e solte ou clique para selecionar'}</p>
-            </div>
+     case 'file':
+  const bloqueado = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0;
+  return (
+    <div className="file-upload-container">
+      <input
+        type="file"
+        id={campo.name}
+        name={campo.name}
+        onChange={handleMudancaArquivo}
+        accept={campo.accept || 'image/*'}
+        className="file-input"
+        multiple
+        disabled={bloqueado} // Bloqueia se já houver arquivos
+      />
 
-            {Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0 && (
-              <div className="file-selected">
-                {dadosFormulario[campo.name].slice(0, 5).map((f, i) => (
-                  <p key={i} className="file-name">{f.name}</p>
-                ))}
-                {dadosFormulario[campo.name].length > 5 && <p className="file-name">...mais {dadosFormulario[campo.name].length - 5} arquivos</p>}
-              </div>
+      <div className="file-upload-area">
+        {!bloqueado && (
+          <>
+            <p>{campo.fileText || '📷 Clique para enviar arquivo'}</p>
+            <p>{campo.fileSubtext || 'Arraste e solte ou clique para selecionar'}</p>
+          </>
+        )}
+
+        {bloqueado && (
+          <div className="file-selected">
+            {dadosFormulario[campo.name].slice(0, 5).map((f, i) =>
+              typeof f === 'string' ? (
+                <img
+                  key={i}
+                  src={f}
+                  alt="Pré-visualização"
+                  className="preview-imagem"
+                />
+              ) : (
+                <p key={i} className="file-name">
+                  {f.name}
+                </p>
+              )
+            )}
+            {dadosFormulario[campo.name].length > 5 && (
+              <p className="file-name">
+                ...mais {dadosFormulario[campo.name].length - 5} arquivos
+              </p>
             )}
           </div>
-        );
+        )}
+      </div>
+    </div>
+  );
+
 
       case 'checkbox group':
         return (
@@ -173,10 +207,18 @@ const Formulario = ({
             {campo.options?.map((opcao, idx) => {
               const optionValue = typeof opcao === 'string' ? opcao : opcao.value;
               const optionLabel = typeof opcao === 'string' ? opcao : opcao.label;
-              const checked = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].includes(optionValue);
+              const checked =
+                Array.isArray(dadosFormulario[campo.name]) &&
+                dadosFormulario[campo.name].includes(optionValue);
               return (
                 <label key={idx} className="checkbox-item">
-                  <input type="checkbox" name={campo.name} value={optionValue} checked={checked} onChange={() => handleMudancaCheckbox(campo.name, optionValue)} />
+                  <input
+                    type="checkbox"
+                    name={campo.name}
+                    value={optionValue}
+                    checked={checked}
+                    onChange={() => handleMudancaCheckbox(campo.name, optionValue)}
+                  />
                   {optionLabel}
                 </label>
               );
@@ -186,7 +228,15 @@ const Formulario = ({
 
       default:
         return (
-          <input type={campo.type || 'text'} id={campo.name} name={campo.name} value={dadosFormulario[campo.name] || ''} onChange={handleMudancaInput} placeholder={campo.placeholder} className={classeInput} />
+          <input
+            type={campo.type || 'text'}
+            id={campo.name}
+            name={campo.name}
+            value={dadosFormulario[campo.name] || ''}
+            onChange={handleMudancaInput}
+            placeholder={campo.placeholder}
+            className={classeInput}
+          />
         );
     }
   };
@@ -211,8 +261,12 @@ const Formulario = ({
 
               {renderField(campo)}
 
-              {erros[campo.name] && <span className="error-message">{erros[campo.name]}</span>}
-              {erros[`${campo.name}_outro`] && <span className="error-message">{erros[`${campo.name}_outro`]}</span>}
+              {erros[campo.name] && (
+                <span className="error-message">{erros[campo.name]}</span>
+              )}
+              {erros[`${campo.name}_outro`] && (
+                <span className="error-message">{erros[`${campo.name}_outro`]}</span>
+              )}
             </div>
           ))}
 

@@ -251,6 +251,13 @@
   font-weight: 600;
   font-family: 'Martel Sans', sans-serif;
 }
+.preview-imagem {
+  width: 100%; 
+  max-width: 250px;
+  max-height: 250px; 
+  object-fit: cover;
+  border-radius: 6px;
+}
 
 @media (max-width: 768px) {
   .orcamento-section {

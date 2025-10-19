@@ -38,7 +38,7 @@ public class OrcamentoService {
                 urlsImagens
         );
 
-        emailService.enviaEmailNovoOrcamento(dados.email(), dados.codigo());
+        emailService.enviaEmailNovoOrcamento(dados.email(), dados.codigoOrcamento());
         return repository.save(orcamento);
 
     }

@@ -9,5 +9,6 @@ public record DadosCadastroOrcamento(
         Double tamanho,
         String cores,
         String localCorpo,
-        List<MultipartFile> imagemReferencia
+        List<MultipartFile> imagemReferencia,
+        String codigoOrcamento
 ) {}

@@ -88,14 +88,7 @@ const Formulario = ({
 
       if (campo.type === 'checkbox group') {
         const arr = Array.isArray(dadosEnvio[campo.name]) ? dadosEnvio[campo.name] : [];
-        if (arr.length === 0) dadosEnvio[campo.name] = '';
-        else if (arr.length === 1) dadosEnvio[campo.name] = arr[0];
-        else if (arr.length === 2) dadosEnvio[campo.name] = `${arr[0]} e ${arr[1]}`;
-        else {
-          const ultimo = arr[arr.length - 1];
-          const primeiros = arr.slice(0, -1).join(', ');
-          dadosEnvio[campo.name] = `${primeiros} e ${ultimo}`;
-        }
+        dadosEnvio[campo.name] = arr.join(', ');
       }
     });
 
@@ -103,7 +96,7 @@ const Formulario = ({
   };
 
   const renderField = (campo) => {
-    const classeInput = erros[campo.name] ? "error" : "";
+    const classeInput = erros[campo.name] ? 'error' : '';
 
     switch (campo.type) {
       case 'textarea':
@@ -146,59 +139,74 @@ const Formulario = ({
                 placeholder={`Especifique ${campo.label.toLowerCase()}`}
                 className={classeInput}
               />
-            </div>
-          ) : null;
-        }
-
-     case 'file':
-  const bloqueado = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0;
-  return (
-    <div className="file-upload-container">
-      <input
-        type="file"
-        id={campo.name}
-        name={campo.name}
-        onChange={handleMudancaArquivo}
-        accept={campo.accept || 'image/*'}
-        className="file-input"
-        multiple
-        disabled={bloqueado} // Bloqueia se já houver arquivos
-      />
-
-      <div className="file-upload-area">
-        {!bloqueado && (
-          <>
-            <p>{campo.fileText || '📷 Clique para enviar arquivo'}</p>
-            <p>{campo.fileSubtext || 'Arraste e solte ou clique para selecionar'}</p>
+            )}
           </>
-        )}
+        );
 
-        {bloqueado && (
-          <div className="file-selected">
-            {dadosFormulario[campo.name].slice(0, 5).map((f, i) =>
-              typeof f === 'string' ? (
-                <img
-                  key={i}
-                  src={f}
-                  alt="Pré-visualização"
-                  className="preview-imagem"
-                />
-              ) : (
-                <p key={i} className="file-name">
-                  {f.name}
-                </p>
-              )
-            )}
-            {dadosFormulario[campo.name].length > 5 && (
-              <p className="file-name">
-                ...mais {dadosFormulario[campo.name].length - 5} arquivos
-              </p>
-            )}
+      case 'file':
+        const hasFiles = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0;
+
+        const handleRemoveFiles = () => {
+          setDadosFormulario((prev) => ({ ...prev, [campo.name]: [] }));
+        };
+
+        const isPortfolioImage = typeof dadosFormulario[campo.name]?.[0] === 'string';
+
+        return (
+          <div className="file-upload-container">
+            <input
+              type="file"
+              id={campo.name}
+              name={campo.name}
+              onChange={handleMudancaArquivo}
+              accept={campo.accept || 'image/*'}
+              className="file-input"
+              multiple
+              style={{ display: 'none' }} 
+            />
+
+            <label htmlFor={campo.name} className="file-upload-area">
+              {!hasFiles && (
+                <div className="file-upload-placeholder">
+                  <p>{campo.fileText || 'Clique para enviar ou arraste o arquivo'}</p>
+                  <p>{campo.fileSubtext || 'Tamanho máximo 5MB'}</p>
+                </div>
+              )}
+
+              {hasFiles && (
+                <div className="file-selected">
+                  {dadosFormulario[campo.name].slice(0, 5).map((f, i) =>
+                    typeof f === 'string' ? (
+                      <img
+                        key={i}
+                        src={f}
+                        alt="Pré-visualização"
+                        className="preview-imagem"
+                      />
+                    ) : (
+                      <p key={i} className="file-name">
+                        {f.name}
+                      </p>
+                    )
+                  )}
+                  {dadosFormulario[campo.name].length > 5 && (
+                    <p className="file-name">
+                      ...mais {dadosFormulario[campo.name].length - 5} arquivos
+                    </p>
+                  )}
+                  <button 
+                    type="button" 
+                    onClick={handleRemoveFiles} 
+                    className="remove-file-button"
+                    disabled={isPortfolioImage}
+                  >
+                    &times;
+                  </button>
+                </div>
+              )}
+            </label>
           </div>
-        )}
-      </div>
-    </div>
-  );
+        );
 
 
       case 'checkbox group':
@@ -219,28 +227,10 @@ const Formulario = ({
                     checked={checked}
                     onChange={() => handleMudancaCheckbox(campo.name, optionValue)}
                   />
-                  <button
-                    type="button"
-                    className="remove-image-button"
-                    onClick={() => handleRemoverImagem(campo.name)}
-                  >
-                    &times;
-                  </button>
-                </div>
-              ) : (
-                <div className="file-upload-placeholder">
-                  <p>{campo.fileText || "Clique para enviar sua referência"}</p>
-                  <p className="file-subtext">{campo.fileSubtext || "PNG, JPG, etc."}</p>
-                </div>
-              )}
-            </label>
-            {Array.isArray(dadosFormulario[campo.name]) &&
-              dadosFormulario[campo.name].length > 0 &&
-              !previewImagem && (
-                <div className="file-selected-list">
-                  <p>Arquivo: {dadosFormulario[campo.name][0].name}</p>
-                </div>
-            )}
+                  {optionLabel}
+                </label>
+              );
+            })}
           </div>
         );
 

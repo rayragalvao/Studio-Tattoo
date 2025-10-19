@@ -2,7 +2,9 @@ package hub.orcana.service;
 
 import hub.orcana.exception.QuantidadeMinimaUsuariosException;
 import hub.orcana.exception.UsuarioProtegidoException;
+import hub.orcana.tables.Orcamento;
 import hub.orcana.tables.Usuario;
+import hub.orcana.tables.repository.OrcamentoRepository;
 import hub.orcana.tables.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 import hub.orcana.exception.DependenciaNaoEncontradaException;
@@ -17,11 +19,12 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
+    private final OrcamentoRepository orcamentoRepository;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioService(UsuarioRepository repository, OrcamentoRepository orcamentoRepository) {
         this.repository = repository;
+        this.orcamentoRepository = orcamentoRepository;
     }
-
 
     public Usuario criar(Usuario usuario) {
 
@@ -30,8 +33,26 @@ public class UsuarioService {
         }
 
         usuario.setId(null);
+
         Usuario novoUsuario = repository.save(usuario);
+
         log.info("Usuário criado com sucesso: ID {}", novoUsuario.getId());
+
+        List<Orcamento> orcamentosEncontrados = orcamentoRepository.findOrcamentoByEmail(usuario.getEmail());
+
+        if(orcamentosEncontrados.isEmpty()) {
+            log.info("Nenhum orçamento encontrado para o novo usuario: {}", usuario);
+        }
+
+        orcamentosEncontrados.forEach(
+                orcamento -> {
+                    log.info("Orçamento do novo usuario com o email={} encontrado: {}", orcamento, usuario);
+                    orcamento.setUsuario(usuario);
+                }
+        );
+
+        orcamentoRepository.saveAll(orcamentosEncontrados);
+
         return novoUsuario;
     }
 

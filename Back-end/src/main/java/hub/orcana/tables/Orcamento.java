@@ -1,10 +1,12 @@
 package hub.orcana.tables;
 
 import jakarta.persistence.*;
+import lombok.ToString;
 
 import java.sql.Time;
 import java.util.List;
 
+@ToString
 @Entity
 public class Orcamento {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -67,6 +69,14 @@ public class Orcamento {
 
     public Time getTempo() {
         return tempo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public List<String> getImagemReferencia() { return imagemReferencia;}

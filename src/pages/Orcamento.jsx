@@ -90,26 +90,32 @@ const Orcamento = () => {
     try {
       console.log('Dados do orçamento:', dados);
 
-      let response;
+      const formData = new FormData();
+      const camposPermitidos = camposOrcamento.map(c => c.name);
 
-      if (Array.isArray(dados.imagemReferencia) && dados.imagemReferencia.length > 0) {
-        const formData = new FormData();
-        Object.keys(dados).forEach((key) => {
-          const value = dados[key];
-          if (value === null || value === undefined) return;
-          if (key === 'imagemReferencia') {
-            value.forEach((file) => formData.append('imagemReferencia', file));
-          } else if (Array.isArray(value)) {
-            formData.append(key, JSON.stringify(value));
-          } else {
-            formData.append(key, value);
+      Object.keys(dados).forEach((key) => {
+        if (!camposPermitidos.includes(key)) return;
+
+        const value = dados[key];
+        if (value === null || value === undefined) return;
+
+        if (key === 'imagemReferencia') {
+          if (Array.isArray(value)) {
+            value.forEach((file) => {
+              if (file instanceof File) {
+                formData.append('imagemReferencia', file);
+              }
+            });
           }
-        });
+        } else {
+          formData.append(key, value);
+        }
+      });
 
-        response = await fetch(`${apiUrl}/orcamento`, { method: 'POST', body: formData });
-      } else {
-        response = await fetch(`${apiUrl}/orcamento`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dados) });
-      }
+      const response = await fetch(`${apiUrl}/orcamento`, {
+        method: 'POST',
+        body: formData,
+      });
 
       const text = await response.text().catch(() => '');
       let backendResponse = {};

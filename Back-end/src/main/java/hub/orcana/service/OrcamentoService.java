@@ -46,4 +46,9 @@ public class OrcamentoService {
         );
         return repository.save(orcamento);
     }
+
+    // Coloquei isso apenas para teste da rota
+    public List<Orcamento> findAllOrcamentos() {
+        return repository.findAll();
+    }
 }

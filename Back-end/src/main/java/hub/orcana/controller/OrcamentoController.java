@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 import hub.orcana.dto.DadosCadastroOrcamento;
 
@@ -32,4 +34,10 @@ public class OrcamentoController {
                 "message", "Orçamento criado com sucesso"
         ));
     }
+
+    @GetMapping
+    public ResponseEntity<List<Orcamento>> getOrcamnetos() {
+        return ResponseEntity.ok(service.findAllOrcamentos());
+    }
+
 }

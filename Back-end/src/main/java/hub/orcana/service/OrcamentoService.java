@@ -20,12 +20,12 @@ public class OrcamentoService {
 
     public Orcamento postOrcamento(DadosCadastroOrcamento dados) {
 
-        List<String> urlsImagens = new ArrayList<>();
+        List<String> urlImagens = new ArrayList<>();
 
         if (dados.imagemReferencia() != null && !dados.imagemReferencia().isEmpty()) {
             for (MultipartFile file : dados.imagemReferencia()) {
                 String urlImagemSalva = gerenciadorService.salvarArquivo(file);
-                urlsImagens.add(urlImagemSalva);
+                urlImagens.add(urlImagemSalva);
             }
         }
 
@@ -35,7 +35,7 @@ public class OrcamentoService {
                 dados.tamanho(),
                 dados.cores(),
                 dados.localCorpo(),
-                urlsImagens
+                urlImagens
         );
 
         emailService.enviaEmailNovoOrcamento(dados.email(), dados.codigoOrcamento());

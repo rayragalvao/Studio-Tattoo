@@ -13,6 +13,8 @@ const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
   const location = useLocation();
   const tattooData = location.state || {};
+  // guarda o código do orçamento durante o ciclo de vida do componente
+  const [codigoOrcamentoState, setCodigoOrcamentoState] = useState(null);
 
   const camposOrcamento = [
     {
@@ -112,6 +114,13 @@ const Orcamento = () => {
         }
       });
 
+      let codigo = codigoOrcamentoState;
+      if (!codigo) {
+        codigo = `ORC-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+        setCodigoOrcamentoState(codigo);
+      }
+      formData.append('codigoOrcamento', codigo);
+
       const response = await fetch(`${apiUrl}/orcamento`, {
         method: 'POST',
         body: formData,
@@ -129,17 +138,17 @@ const Orcamento = () => {
 
       if (!response.ok) {
         console.error('Erro HTTP ao enviar orçamento:', response.status, backendResponse);
-        setCardResposta({ tipo: 'erro', titulo: 'Erro ao enviar orçamento', mensagem: backendResponse.message || `Servidor retornou status ${response.status}`, botaoTexto: 'Tentar novamente' });
+        setCardResposta({ tipo: 'erro', titulo: 'Erro ao enviar orçamento', mensagem: backendResponse.message || `Servidor retornou status ${response.status}`, codigo, botaoTexto: 'Tentar novamente' });
         return;
       }
 
       const sucesso = backendResponse.success !== false;
-      const codigoOrcamento = `ORC-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+      const codigoRetornado = backendResponse.codigo || backendResponse.codigoOrcamento || codigo;
 
       if (sucesso) {
-        setCardResposta({ tipo: 'sucesso', titulo: 'Sua ideia já chegou até nós!', mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.', codigo: codigoOrcamento, botaoTexto: 'Continuar navegando' });
+        setCardResposta({ tipo: 'sucesso', titulo: 'Sua ideia já chegou até nós!', mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.', codigo: codigoRetornado, botaoTexto: 'Continuar navegando' });
       } else {
-        setCardResposta({ tipo: 'erro', titulo: backendResponse.title || 'Erro ao enviar orçamento', mensagem: backendResponse.message || 'O servidor retornou erro ao processar sua solicitação.', botaoTexto: 'Tentar novamente' });
+        setCardResposta({ tipo: 'erro', titulo: backendResponse.title || 'Erro ao enviar orçamento', mensagem: backendResponse.message || 'O servidor retornou erro ao processar sua solicitação.', codigo: codigoRetornado, botaoTexto: 'Tentar novamente' });
       }
 
     } catch (error) {
@@ -149,6 +158,7 @@ const Orcamento = () => {
         titulo: 'Erro ao enviar orçamento',
         mensagem:
           error.message || 'Ocorreu um problema ao processar sua solicitação.',
+        codigo: codigoOrcamentoState,
         botaoTexto: 'Tentar novamente',
       });
     }

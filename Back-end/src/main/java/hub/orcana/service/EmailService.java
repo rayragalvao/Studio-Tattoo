@@ -11,7 +11,7 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    private String templateEmail = "<!DOCTYPE html><html lang=\"pt-br\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>[ASSUNTO DO SEU E-MAIL]</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>";
+//    private String templateEmail = "<!DOCTYPE html><html lang=\"pt-br\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>[ASSUNTO DO SEU E-MAIL]</title><link rel=\"preconnect\" href=\"https://fonts.googleapis.com\"><link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>";
 
     public void enviarTextoSimples(String destinatario, String assunto, String texto) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -24,6 +24,10 @@ public class EmailService {
     }
 
     public void enviaEmailNovoOrcamento(String emailCliente, String codigoOrcamento) {
+        if (emailCliente == null || emailCliente.isBlank()) {
+            throw new IllegalArgumentException("Destinatário inválido para envio de e-mail.");
+        }
+
         String assunto = "Confirmação de Recebimento de Orçamento - Júpiter Frito";
         String textoInicial = "Olá $nomeCliente, recebemos sua solicitação de orçamento e " +
                 "os detalhes já estão sendo analisados. Em breve, entraremos em contato com você.\n\n" +

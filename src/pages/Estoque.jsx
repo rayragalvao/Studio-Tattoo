@@ -23,6 +23,7 @@ const Estoque = () => {
     });
 
     const [carregando, setCarregando] = useState(false);
+    const [filtrosAtivos, setFiltrosAtivos] = useState(false);
 
     useEffect(() => {
         if (itensEstoque.length <= 0) {
@@ -40,12 +41,14 @@ const Estoque = () => {
                 setCarregando(false);
                 console.error('Erro ao buscar itens de estoque:', error);
             });
-    }, []);
+    }, [itensEstoque.length]);
 
     // Aplicar filtros sempre que mudarem
     useEffect(() => {
-        aplicarFiltros();
-    }, [filtros, itensEstoque]);
+        if (itensEstoque.length > 0) {
+            aplicarFiltros();
+        }
+    }, [itensEstoque]);
 
     function cadastrarItem() {
         console.log("Item a ser cadastrado:", itemSelecionado);
@@ -95,29 +98,38 @@ const Estoque = () => {
     }
 
     function atualizarQuantidade(operacao){
-        let qtdAtualizada =  itemSelecionado.quantidade;
+        let qtdAtualizada = Number(itemSelecionado.quantidade);
+        let qtdParaAdicionar = Number(qtdParaAtualizar);
 
-        if (operacao == "soma") {
-            qtdAtualizada += qtdParaAtualizar;
-        } else {
-            qtdAtualizada -= qtdParaAtualizar;
+        if (operacao === "soma") {
+            qtdAtualizada = qtdAtualizada + qtdParaAdicionar;
+        } else if (operacao === "subtrair") {
+            if (qtdAtualizada < qtdParaAdicionar) {
+                alert("Quantidade insuficiente em estoque");
+                return;
+            }
+            qtdAtualizada = qtdAtualizada - qtdParaAdicionar;
         }
 
         console.log("Quantidade atualizada para:", qtdAtualizada);
 
-        api.patch(`${url}/${itemSelecionado.id}`, {quantidade: qtdAtualizada})
+        api.patch(`${url}/${itemSelecionado.id}/${qtdAtualizada}`)
             .then(response => {
                 console.log("Quantidade atualizada com sucesso:", response.data);
+                
                 const itensAtualizados = itensEstoque.map(item =>
-                    item.id === itemSelecionado.id ? response.data : item
+                    item.id === itemSelecionado.id ? { ...item, quantidade: qtdAtualizada } : item
                 );
                 setItensEstoque(itensAtualizados);
                 setItensEstoqueExibir(itensAtualizados);
 
-                aplicarFiltros();
+                setQtdParaAtualizar(0);
+                setItemSelecionado(response.data);
+                document.getElementById('inputAtualizarQtd').value = '';
             })
             .catch(error => {
                 console.error('Erro ao atualizar quantidade do item:', error);
+                alert("Erro ao atualizar quantidade");
             });
     }
 
@@ -128,8 +140,8 @@ const Estoque = () => {
     function aplicarFiltros() {
         let itensFiltrados = [...itensEstoque];
 
-        // Filtro por texto (já existente)
-        const pesquisa = document.getElementById('pesquisa').value;
+        // Filtro por texto
+        const pesquisa = document.getElementById('pesquisa')?.value || '';
         if (pesquisa) {
             itensFiltrados = itensFiltrados.filter(item =>
                 item.nome.toLowerCase().includes(pesquisa.toLowerCase())
@@ -139,18 +151,18 @@ const Estoque = () => {
         // Filtro por unidade de medida
         if (filtros.unidadeMedida !== "todas") {
             itensFiltrados = itensFiltrados.filter(item =>
-                item.unidadeMedida.toLowerCase() === filtros.unidadeMedida.toLowerCase()
+                item.unidadeMedida?.toLowerCase() === filtros.unidadeMedida.toLowerCase()
             );
         }
 
         // Filtro por alerta de estoque
         if (filtros.alertaEstoque === "alerta") {
             itensFiltrados = itensFiltrados.filter(item =>
-                item.quantidade < item.minAviso
+                item.quantidade <= (item.minAviso || 0)
             );
         } else if (filtros.alertaEstoque === "ok") {
             itensFiltrados = itensFiltrados.filter(item =>
-                item.quantidade >= item.minAviso
+                item.quantidade >= (item.minAviso || 0)
             );
         }
 
@@ -168,7 +180,11 @@ const Estoque = () => {
             }
         });
 
-        setItensEstoqueExibir(itensFiltrados);
+        if (JSON.stringify(itensFiltrados) !== JSON.stringify(itensEstoqueExibir)) {
+            setItensEstoqueExibir(itensFiltrados);
+        }
+
+        setFiltrosAtivos(true);
     }
 
     function atualizarFiltro(campo, valor) {
@@ -186,6 +202,8 @@ const Estoque = () => {
         });
         document.getElementById('pesquisa').value = '';
         setItensEstoqueExibir(itensEstoque);
+
+        setFiltrosAtivos(false);
     }
 
     function mostrarAdicionarEstoque() {
@@ -196,17 +214,20 @@ const Estoque = () => {
     }
 
     function cancelarAdicionarEstoque() {
+        setItemSelecionado(null);
         setAdicionarEstoque(false);
     }
 
-    function mostrarInformacoesItem() {
+    function mostrarInformacoesItem(item) {
         if (adicionarEstoque) {
             setAdicionarEstoque(false);
         }
         setInformacoesItem(true);
+        setItemSelecionado(item);
     }
 
     function fecharInformacoesItem() {
+        setItemSelecionado(null);
         setInformacoesItem(false);
     }
 
@@ -305,50 +326,48 @@ const Estoque = () => {
                     </div>
                 )}
 
-                { carregando ? (
-                    <div className="carregando">
-                        Carregando materiais...
-                    </div>
-                ) : itensEstoqueExibir.length === 0 ? (
+                <div className="container-itens">
+                    {/* Indicador de filtros ativos */}
+                    { filtrosAtivos && (
+                        <div className="filtros-ativos">
+                            <span className="fonte-negrito">Filtros ativos: </span>
+                            {filtros.unidadeMedida !== "todas" && (
+                                <span className="tag-filtro">{filtros.unidadeMedida}</span>
+                            )}
+                            {filtros.unidadeMedida !== "todas" && filtros.alertaEstoque !== "todos" && (
+                                <span className="tag-filtro-separador"> | </span>
+                            )}
+                            {filtros.alertaEstoque !== "todos" && (
+                                <span className="tag-filtro">
+                                    {filtros.alertaEstoque === "alerta" ? "Estoque Baixo" : "Estoque OK"}
+                                </span>
+                            )}
+                        </div>
+                    )}
+                    { carregando ? (
+                        <div className="carregando">
+                            Carregando materiais...
+                        </div>
+                    ) : itensEstoqueExibir.length === 0 ? (
                         <div className="nenhum-item">
                             Nenhum item encontrado.
                         </div>
                     ) : (
-                        <div className="container-itens">
-                            {/* Indicador de filtros ativos */}
-                            {(filtros.unidadeMedida !== "todas" || filtros.alertaEstoque !== "todos") && (
-                                <div className="filtros-ativos">
-                                    <span className="fonte-negrito">Filtros ativos: </span>
-                                    {filtros.unidadeMedida !== "todas" && (
-                                        <span className="tag-filtro">{filtros.unidadeMedida}</span>
-                                    )}
-                                    {filtros.unidadeMedida !== "todas" && filtros.alertaEstoque !== "todos" && (
-                                        <span className="tag-filtro-separador"> | </span>
-                                    )}
-                                    {filtros.alertaEstoque !== "todos" && (
-                                        <span className="tag-filtro">
-                                            {filtros.alertaEstoque === "alerta" ? "Estoque Baixo" : "Estoque OK"}
-                                        </span>
-                                    )}
+                        itensEstoqueExibir.map((item, index) => (
+                            <div className={`item ${item.quantidade <= item.minAviso ? "item-alerta" : ""}`} key={index}>
+                                <div>
+                                    <p className="fonte-negrito">{item.nome}</p>
+                                    <p>{item.quantidade} {item.unidadeMedida}</p>
                                 </div>
-                            )}
-
-                            {itensEstoqueExibir.map((item, index) => (
-                                <div className={`item ${item.quantidade < item.minAviso ? "item-alerta" : ""}`} key={index}>
-                                    <div>
-                                        <p className="fonte-negrito">{item.nome}</p>
-                                        <p>{item.quantidade} {item.unidadeMedida}</p>
-                                    </div>
-                                    <button className="bt-info" onClick={() => { setItemSelecionado(item); mostrarInformacoesItem(); }} disabled={filtrosAbertos}>
-                                        <span className="icon material-symbols-outlined">
-                                            info
-                                        </span>
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    )
-                } 
+                                <button className="bt-info" onClick={() => { mostrarInformacoesItem(item) }} disabled={filtrosAbertos}>
+                                    <span className="icon material-symbols-outlined">
+                                        info
+                                    </span>
+                                </button>
+                            </div>
+                        ))
+                    )}
+                </div>
 
                 <button className="submit-button" onClick={mostrarAdicionarEstoque}>
                     Adicionar um novo item
@@ -452,15 +471,16 @@ const Estoque = () => {
                             <input
                                 type="number"
                                 placeholder="Digite a quantidade desejada"
+                                id="inputAtualizarQtd"
                                 onChange={(e) => setQtdParaAtualizar(e.target.value)}
                             />
                         </div>
 
                         <div className="botoes">
-                            <button className="submit-button adicionar-qtd-button" onClick={atualizarQuantidade("soma")}>
+                            <button className="submit-button adicionar-qtd-button" onClick={() => atualizarQuantidade("soma")}>
                                 Adicionar
                             </button>
-                            <button className="submit-button remover-qtd-button" onClick={() => { fecharInformacoesItem(); atualizarQuantidade("subtrair"); }}>
+                            <button className="submit-button remover-qtd-button" onClick={() => atualizarQuantidade("subtrair")}>
                                 Remover
                             </button>
                         </div>

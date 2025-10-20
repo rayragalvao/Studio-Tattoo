@@ -19,7 +19,7 @@ public class EstoqueService {
 
     // Lista todos os materiais existentes
     public List<DetalhesMaterial> getEstoque() {
-        var materiais = repository.findAll().stream()
+        List<DetalhesMaterial> materiais = repository.findAll().stream()
                 .map(atual -> new DetalhesMaterial(
                         atual.getId(),
                         atual.getNome(),

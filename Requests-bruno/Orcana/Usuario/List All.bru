@@ -1,17 +1,17 @@
 meta {
   name: List All
   type: http
-  seq: 3
+  seq: 1
 }
 
 get {
-  url: http://localhost:8080/usuario/
+  url: http://localhost:8080/usuario
   body: none
   auth: bearer
 }
 
 auth:bearer {
-  token: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2aXZpQGdtYWlsLmNvbSIsImlhdCI6MTc2MDM5NzEyNiwiZXhwIjoxNzYzOTk3MTI2fQ.xc8BIWGyoXYrGDXp6eXd1fjS8aRUzR_l7HY7IV1Wj_4
+  token: {{token}}
 }
 
 body:json {
@@ -23,4 +23,5 @@ body:json {
 
 settings {
   encodeUrl: true
+  timeout: 0
 }

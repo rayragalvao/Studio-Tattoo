@@ -54,7 +54,7 @@ public class GerenciadorTokenJwt {
 
     private boolean isTokenExpired(String token) {
         Date expiration = getExpirationDateFromToken(token);
-        return expiration.after(new Date(System.currentTimeMillis()));
+        return expiration.before(new Date(System.currentTimeMillis()));
     }
 
     private Claims getAllClaimsFromToken(String token) {

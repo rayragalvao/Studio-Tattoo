@@ -39,6 +39,9 @@ public class UsuarioMapper {
     }
 
     public static ListarUsuarios of(Usuario usuario) {
+        if (usuario == null) {
+            return null;
+        }
         ListarUsuarios usuarios = new ListarUsuarios(
                 usuario.getId(),
                 usuario.getNome(),

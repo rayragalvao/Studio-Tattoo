@@ -41,6 +41,14 @@ public class UsuarioService {
     public Usuario criar(CadastroUsuario usuario) {
         Usuario novoUsuario = UsuarioMapper.of(usuario);
 
+        if (repository.existsByEmail(novoUsuario.getEmail())) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Email de usuário já cadastrado.");
+        }
+
+        if (repository.existsByTelefone(novoUsuario.getTelefone())) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Telefone de usuário já cadastrado.");
+        }
+
         String senhaCriptografada = passwordEncoder.encode(usuario.senha());
         novoUsuario.setSenha(senhaCriptografada);
 

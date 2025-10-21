@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import Notificacao from "../components/Notificacao";
 import "../styles/global.css";
 import "../styles/estoque.css";
 import React, { useEffect, useState } from "react";
@@ -20,6 +21,12 @@ const Estoque = () => {
         unidadeMedida: "todas",
         alertaEstoque: "todos",
         ordenarPor: "nome"
+    });
+    const [notificacao, setNotificacao] = useState({
+        visivel: false,
+        tipo: 'sucesso',
+        titulo: '',
+        mensagem: ''
     });
 
     const [carregando, setCarregando] = useState(false);
@@ -50,16 +57,46 @@ const Estoque = () => {
         }
     }, [itensEstoque]);
 
+    function mostrarNotificacao(tipo, titulo, mensagem) {
+        setNotificacao({
+            visivel: true,
+            tipo,
+            titulo,
+            mensagem
+        });
+    }
+
+    function fecharNotificacao() {
+        setNotificacao(prev => ({
+            ...prev,
+            visivel: false
+        }));
+    };
+
     function cadastrarItem() {
         console.log("Item a ser cadastrado:", itemSelecionado);
         api.post(url, itemSelecionado)
             .then(response => {
                 console.log("Item cadastrado com sucesso:", response.data);
+
+                mostrarNotificacao(
+                    'sucesso', 
+                    'Item Cadastrado!', 
+                    `${itemSelecionado.nome} foi adicionado ao estoque.`
+                );
+
                 setItensEstoque([...itensEstoque, response.data]);
                 setItensEstoqueExibir([...itensEstoqueExibir, response.data]);
             })
             .catch(error => {
                 console.error('Erro ao cadastrar item:', error);
+
+                mostrarNotificacao(
+                    'erro', 
+                    'Erro ao Cadastrar', 
+                    error.response.data.message
+                );
+
             });
     }
 
@@ -233,6 +270,14 @@ const Estoque = () => {
 
   return (
     <>
+        <Notificacao
+            tipo={notificacao.tipo}
+            titulo={notificacao.titulo}
+            mensagem={notificacao.mensagem}
+            visivel={notificacao.visivel}
+            onFechar={fecharNotificacao}
+            duracao={4000} // 4 segundos (opcional)
+        />
       <Navbar />
         <div className="section-estoque">
             <div className="card-estoque pesquisa-estoque">

@@ -4,9 +4,9 @@ import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Agendamento from "./pages/Agendamento";
 import Orcamento from "./pages/Orcamento";
-import Estoque from "./pages/Estoque";
 
 import "./styles/global.css";
+import Estoque from "./pages/Estoque";
 
 function App() {
   return (

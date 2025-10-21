@@ -5,7 +5,9 @@ import hub.orcana.dto.estoque.DetalhesMaterial;
 import hub.orcana.exception.DependenciaNaoEncontradaException;
 import hub.orcana.tables.Estoque;
 import hub.orcana.tables.repository.EstoqueRepository;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -53,8 +55,8 @@ public class EstoqueService {
 
     // Cadastra um novo material
     public DetalhesMaterial postEstoque(DadosCadastroMaterial estoque) {
-        if (repository.existsByNome(estoque.nome())) {
-            throw new IllegalArgumentException("Material já cadastrado.");
+        if (repository.existsByNomeIgnoreCase(estoque.nome())) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Material já cadastrado.");
         }
 
         Estoque novoMaterial = new Estoque(

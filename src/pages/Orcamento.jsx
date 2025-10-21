@@ -1,133 +1,130 @@
-import React, { useState } from "react";
-import Navbar from "../components/Navbar";
-import Formulario from "../components/Formulario";
-import CardResposta from "../components/CardResposta";
-import Footer from "../components/Footer";
-import "../styles/global.css";
-import "../styles/formulario.css";
-import { useLocation } from "react-router-dom";
+import { useState } from 'react';
+import Navbar from '../components/Navbar';
+import Formulario from '../components/Formulario';
+import CardResposta from '../components/CardResposta';
+import Footer from '../components/Footer';
+import '../styles/global.css';
+import '../styles/formulario.css';
+import { useLocation } from 'react-router-dom';
 
-const apiUrl = 'http://localhost:8080';
+const apiUrl = "http://localhost:8080";
 
 const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
   const location = useLocation();
-  const tattooData = location.state || {}; // pega os dados enviados do TattooCard
+  const tattooData = location.state || {};
+  // guarda o código do orçamento durante o ciclo de vida do componente
+  const [codigoOrcamentoState, setCodigoOrcamentoState] = useState(null);
 
   const camposOrcamento = [
     {
-      name: "email",
-      type: "email",
-      label: "Email para contato",
-      placeholder: "Digite seu e-mail",
+      name: 'email',
+      type: 'email',
+      label: 'Email para contato',
+      placeholder: 'Digite seu e-mail',
       required: true,
-      errorMessage: "Email é obrigatório",
+      errorMessage: 'Email é obrigatório',
     },
     {
-      name: "ideia",
-      type: "textarea",
-      label: "Conte sua ideia e veja sua arte ganhar forma",
-      placeholder: "Descreva sua ideia",
+      name: 'ideia',
+      type: 'textarea',
+      label: 'Conte sua ideia e veja sua arte ganhar forma',
+      placeholder: 'Descreva sua ideia',
       rows: 4,
       required: true,
-      errorMessage: "Descrição da ideia é obrigatória",
+      errorMessage: 'Descrição da ideia é obrigatória',
     },
     {
-      name: "tamanho",
-      type: "number",
-      label: "Tamanho estimado (cm)",
-      placeholder: "Digite o tamanho desejado",
+      name: 'tamanho',
+      type: 'number',
+      label: 'Tamanho estimado (cm)',
+      placeholder: 'Digite o tamanho desejado',
       required: true,
-      errorMessage: "Tamanho estimado é obrigatório",
+      errorMessage: 'Tamanho estimado é obrigatório',
     },
     {
-      name: "cores",
-      type: "checkbox group",
-      label: "Cor desejada (Selecione mais de uma, se necessário)",
+      name: 'cores',
+      type: 'checkbox group',
+      label: 'Cor desejada (Selecione mais de uma, se necessário)',
       required: true,
-      errorMessage: "Selecione pelo menos uma cor",
+      errorMessage: 'Selecione pelo menos uma cor',
       options: [
-        { value: "preto", label: " Preto" },
-        { value: "vermelho", label: " Vermelho" }
-      ]
-    },
-    {
-      name: "localCorpo",
-      type: "select",
-      label: "Local do corpo",
-      required: true,
-      errorMessage: "Local do corpo é obrigatório",
-      options: [
-        "Selecione uma opção",
-        "Braço",
-        "Antebraço",
-        "Perna",
-        "Costas",
-        "Costelas",
-        "Abdômen",
-        "Glúteos",
-        "Meio dos seios",
-        "Cotovelo",
-        "Ombro",
-        "Punho",
-        "Tornozelo",
-        "Pescoço",
-        "Outro",
+        { value: 'preto', label: ' Preto' },
+        { value: 'vermelho', label: ' Vermelho' },
       ],
     },
     {
-      name: "imagemReferencia",
-      type: "file",
-      label: "Enviar referência de imagem (opcional)",
-      accept: "image/*",
+      name: 'localCorpo',
+      type: 'select',
+      label: 'Local do corpo',
+      required: true,
+      errorMessage: 'Local do corpo é obrigatório',
+      options: [
+        'Selecione uma opção',
+        'Braço',
+        'Antebraço',
+        'Perna',
+        'Costas',
+        'Costelas',
+        'Abdômen',
+        'Glúteos',
+        'Meio dos seios',
+        'Cotovelo',
+        'Ombro',
+        'Punho',
+        'Tornozelo',
+        'Pescoço',
+        'Outro',
+      ],
+    },
+    {
+      name: 'imagemReferencia',
+      type: 'file',
+      label: 'Enviar referência de imagem (opcional)',
+      accept: 'image/*',
       fileText:
-        "💡 Dica: Inspire-se! Busque referências no Pinterest, Instagram e outras redes.",
-      fileSubtext: "Clique aqui para enviar sua imagem de referência",
+        '💡 Dica: Inspire-se! Busque referências no Pinterest, Instagram e outras redes.',
+      fileSubtext: 'Clique aqui para enviar sua imagem de referência',
     },
   ];
 
   const handleSubmitOrcamento = async (dados) => {
     try {
-      console.log("Dados do orçamento:", dados);
-      const sucesso = Math.random() > 0.4;
+      console.log('Dados do orçamento:', dados);
 
-      if (sucesso) {
-        setCardResposta({
-          tipo: "sucesso",
-          titulo: "Sua ideia já chegou até nós!",
-          mensagem:
-            "Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.",
-          codigo: `ORC-2025-${Math.floor(Math.random() * 1000)
-            .toString()
-            .padStart(3, "0")}`,
-          botaoTexto: "Continuar navegando",
-      let response;
+      const formData = new FormData();
+      const camposPermitidos = camposOrcamento.map(c => c.name);
 
-      if (Array.isArray(dados.imagemReferencia) && dados.imagemReferencia.length > 0) {
-        const formData = new FormData();
-        Object.keys(dados).forEach(key => {
-          const value = dados[key];
-          if (value === null || value === undefined) return;
-          if (key === 'imagemReferencia') {
-            value.forEach(file => formData.append('imagemReferencia', file));
-          } else if (Array.isArray(value)) {
-            formData.append(key, JSON.stringify(value));
-          } else {
-            formData.append(key, value);
+      Object.keys(dados).forEach((key) => {
+        if (!camposPermitidos.includes(key)) return;
+
+        const value = dados[key];
+        if (value === null || value === undefined) return;
+
+        if (key === 'imagemReferencia') {
+          if (Array.isArray(value)) {
+            value.forEach((file) => {
+              if (file instanceof File) {
+                formData.append('imagemReferencia', file);
+              }
+            });
           }
-        });
+        } else {
+          formData.append(key, value);
+        }
+      });
 
-        response = await fetch(`${apiUrl}/orcamento`, {
-          method: 'POST',
-          body: formData
-        });
-      } else {
-        response = await fetch(`${apiUrl}/orcamento`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(dados)
-        });
+      let codigo = codigoOrcamentoState;
+      if (!codigo) {
+        codigo = `ORC-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+        setCodigoOrcamentoState(codigo);
       }
+      formData.append('codigoOrcamento', codigo);
+
+      const response = await fetch(`${apiUrl}/orcamento`, {
+        method: 'POST',
+        body: formData,
+      });
 
       const text = await response.text().catch(() => '');
       let backendResponse = {};
@@ -141,61 +138,33 @@ const Orcamento = () => {
 
       if (!response.ok) {
         console.error('Erro HTTP ao enviar orçamento:', response.status, backendResponse);
-        setCardResposta({
-          tipo: 'erro',
-          titulo: 'Erro ao enviar orçamento',
-          mensagem: backendResponse.message || `Servidor retornou status ${response.status}`,
-          botaoTexto: 'Tentar novamente'
-        });
+        setCardResposta({ tipo: 'erro', titulo: 'Erro ao enviar orçamento', mensagem: backendResponse.message || `Servidor retornou status ${response.status}`, codigo, botaoTexto: 'Tentar novamente' });
         return;
       }
 
       const sucesso = backendResponse.success !== false;
-      let codigoOrcamento = `ORC-2025-${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+      const codigoRetornado = backendResponse.codigo || backendResponse.codigoOrcamento || codigo;
+
       if (sucesso) {
-        setCardResposta({
-          tipo: 'sucesso',
-          titulo: 'Sua ideia já chegou até nós!',
-          mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.',
-          codigo: codigoOrcamento,
-          botaoTexto: 'Continuar navegando'
-        });
-
-        // nao sei se funciona, ainda n testei
-        // response = await fetch(`${apiUrl}/email`, {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify(codigoOrcamento)
-        // });
-
+        setCardResposta({ tipo: 'sucesso', titulo: 'Sua ideia já chegou até nós!', mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.', codigo: codigoRetornado, botaoTexto: 'Continuar navegando' });
       } else {
-        throw new Error("Erro simulado");
-        setCardResposta({
-          tipo: 'erro',
-          titulo: backendResponse.title || 'Erro ao enviar orçamento',
-          mensagem: backendResponse.message || 'O servidor retornou erro ao processar sua solicitação.',
-          botaoTexto: 'Tentar novamente'
-        });
+        setCardResposta({ tipo: 'erro', titulo: backendResponse.title || 'Erro ao enviar orçamento', mensagem: backendResponse.message || 'O servidor retornou erro ao processar sua solicitação.', codigo: codigoRetornado, botaoTexto: 'Tentar novamente' });
       }
+
     } catch (error) {
-      console.error("Erro ao enviar orçamento:", error);
+      console.error('Erro ao enviar orçamento:', error);
       setCardResposta({
-        tipo: "erro",
-        titulo: "Erro ao enviar orçamento",
-        mensagem:
-          "Ocorreu um problema ao processar sua solicitação. Verifique sua conexão e tente novamente.",
-        botaoTexto: "Tentar novamente",
         tipo: 'erro',
         titulo: 'Erro ao enviar orçamento',
-        mensagem: error.message || 'Ocorreu um problema ao processar sua solicitação. Verifique sua conexão e tente novamente.',
-        botaoTexto: 'Tentar novamente'
+        mensagem:
+          error.message || 'Ocorreu um problema ao processar sua solicitação.',
+        codigo: codigoOrcamentoState,
+        botaoTexto: 'Tentar novamente',
       });
     }
-  };
+  }
 
-  const handleFecharCard = () => {
-    setCardResposta(null);
-  };
+  const handleFecharCard = () => setCardResposta(null);
 
   return (
     <>
@@ -206,13 +175,20 @@ const Orcamento = () => {
         campos={camposOrcamento}
         onSubmit={handleSubmitOrcamento}
         submitButtonText="Enviar orçamento"
+        
+        isPortfolioImage={!!tattooData?.imagem}
         initialValues={{
-          tamanho: tattooData?.tamanho || "",
+          tamanho: tattooData?.tamanho || '',
           ideia: tattooData?.titulo
             ? `Fiquei interessado(a) na tatuagem com o desenho "${tattooData.titulo}".`
-            : "",
+            : '',
+          imagemReferencia: tattooData?.imagem ? [tattooData.imagem] : [], // 👈 coloca no container de upload
+          titulo: tattooData?.titulo || '',
+          precoMin: tattooData?.precoMin || '',
+          precoMax: tattooData?.precoMax || '',
         }}
       />
+
       {cardResposta && (
         <CardResposta
           tipo={cardResposta.tipo}

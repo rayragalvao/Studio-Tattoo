@@ -4,7 +4,9 @@ import hub.orcana.config.GerenciadorTokenJwt;
 import hub.orcana.dto.usuario.*;
 import hub.orcana.exception.QuantidadeMinimaUsuariosException;
 import hub.orcana.exception.UsuarioProtegidoException;
+import hub.orcana.tables.Orcamento;
 import hub.orcana.tables.Usuario;
+import hub.orcana.tables.repository.OrcamentoRepository;
 import hub.orcana.tables.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
@@ -30,6 +32,7 @@ public class UsuarioService {
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository repository;
+    private final OrcamentoRepository orcamentoRepository;
 
     public UsuarioService(UsuarioRepository repository, AuthenticationManager authenticationManager, GerenciadorTokenJwt gerenciadorTokenJwt, PasswordEncoder passwordEncoder) {
         this.repository = repository;

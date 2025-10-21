@@ -11,16 +11,22 @@ import lombok.Setter;
 
 import java.util.Date;
 
+@ToString
 @Entity
 public class Usuario {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @NotBlank
     @Setter
     private String nome;
+
     @Email
     @Setter
     private String email;
+
     @Pattern(regexp = "(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\-\\d{4})")
     @Setter
     private String telefone;

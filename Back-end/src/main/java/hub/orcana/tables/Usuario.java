@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.ToString;
+import lombok.Setter;
 
 import java.util.Date;
 
@@ -27,12 +27,12 @@ public class Usuario {
 
     @Pattern(regexp = "(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\-\\d{4})")
     private String telefone;
-
+    @Setter
     private String senha;
-
+    @Setter
     private Date dtNasc;
-
-    private boolean admin;
+    @Setter
+    private boolean isAdmin;
 
     public void setId(Long id) {
         this.id = id;
@@ -63,6 +63,6 @@ public class Usuario {
     }
 
     public boolean isAdmin() {
-        return admin;
+        return isAdmin;
     }
 }

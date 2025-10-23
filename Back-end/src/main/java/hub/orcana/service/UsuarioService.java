@@ -32,7 +32,6 @@ public class UsuarioService {
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository repository;
-    private final OrcamentoRepository orcamentoRepository;
 
     public UsuarioService(UsuarioRepository repository, AuthenticationManager authenticationManager, GerenciadorTokenJwt gerenciadorTokenJwt, PasswordEncoder passwordEncoder) {
         this.repository = repository;

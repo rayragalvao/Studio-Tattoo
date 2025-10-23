@@ -43,6 +43,17 @@ const Estoque = () => {
 
                 console.log(response.data);
                 setCarregando(false);
+
+                let itensEstoqueBaixo = response.data.filter(item =>
+                    item.quantidade <= (item.minAviso || 0)
+                );
+                if (itensEstoqueBaixo.length > 0) {
+                    mostrarNotificacao(
+                        'aviso',
+                        'Estoque Baixo',
+                        itensEstoqueBaixo.length + ' itens estão com estoque baixo.'
+                    );
+                }
             })
             .catch(error => {
                 setCarregando(false);
@@ -127,10 +138,21 @@ const Estoque = () => {
                 setItensEstoque(itensAtualizados);
                 setItensEstoqueExibir(itensAtualizados);
 
+                mostrarNotificacao(
+                    'sucesso',
+                    'Item Atualizado',
+                    'As informações do item foram atualizadas com sucesso.'
+                );
+
                 aplicarFiltros();
             })
             .catch(error => {
                 console.error('Erro ao atualizar item:', error);
+                mostrarNotificacao(
+                    'erro',
+                    'Erro ao Atualizar',
+                    error.response.data.message
+                );
             });
     }
 
@@ -160,13 +182,23 @@ const Estoque = () => {
                 setItensEstoque(itensAtualizados);
                 setItensEstoqueExibir(itensAtualizados);
 
+                mostrarNotificacao(
+                    'sucesso',
+                    'Estoque Atualizado',
+                    'A quantidade de itens foi atualizada com sucesso.'
+                );
+
                 setQtdParaAtualizar(0);
                 setItemSelecionado(response.data);
                 document.getElementById('inputAtualizarQtd').value = '';
             })
             .catch(error => {
                 console.error('Erro ao atualizar quantidade do item:', error);
-                alert("Erro ao atualizar quantidade");
+                mostrarNotificacao(
+                    'erro',
+                    'Erro ao Atualizar',
+                    error.response.data.message
+                );
             });
     }
 
@@ -201,7 +233,7 @@ const Estoque = () => {
             itensFiltrados = itensFiltrados.filter(item =>
                 item.quantidade >= (item.minAviso || 0)
             );
-        }
+        } 
 
         // Ordenação
         itensFiltrados.sort((a, b) => {
@@ -221,7 +253,12 @@ const Estoque = () => {
             setItensEstoqueExibir(itensFiltrados);
         }
 
-        setFiltrosAtivos(true);
+        if (filtros.unidadeMedida !== "todas" || filtros.alertaEstoque !== "todos") {
+            setFiltrosAtivos(true);
+            return;
+        } else {
+            setFiltrosAtivos(false);
+        }
     }
 
     function atualizarFiltro(campo, valor) {
@@ -276,7 +313,7 @@ const Estoque = () => {
             mensagem={notificacao.mensagem}
             visivel={notificacao.visivel}
             onFechar={fecharNotificacao}
-            duracao={4000} // 4 segundos (opcional)
+            duracao={4000}
         />
       <Navbar />
         <div className="section-estoque">
@@ -307,7 +344,7 @@ const Estoque = () => {
                 </div>
 
                 {/* Painel de Filtros */}
-                {filtrosAbertos && (
+                { filtrosAbertos && (
                     <div className="painel-filtros">
                         <div className="filtro-grupo">
                             <label className="fonte-negrito">Unidade de Medida</label>
@@ -315,13 +352,13 @@ const Estoque = () => {
                                 value={filtros.unidadeMedida}
                                 onChange={(e) => atualizarFiltro('unidadeMedida', e.target.value)}
                             >
-                                <option value="todas">Todas</option>
+                                <option value="Todas">Todas</option>
                                 <option value="Unidades">Unidades</option>
-                                <option value="l">Litros</option>
-                                <option value="ml">Mililitros</option>
+                                <option value="Litros">Litros</option>
+                                <option value="Mililitros">Mililitros</option>
                                 <option value="Folhas">Folhas</option>
                                 <option value="Rolos">Rolos</option>
-                                <option value="g">Kilograma</option>
+                                <option value="Kilogramas">Kilogramas</option>
                                 <option value="Caixas">Caixas</option>
                             </select>
                         </div>
@@ -344,9 +381,9 @@ const Estoque = () => {
                                 value={filtros.ordenarPor}
                                 onChange={(e) => atualizarFiltro('ordenarPor', e.target.value)}
                             >
-                                <option value="nome">Nome (A-Z)</option>
-                                <option value="quantidade">Quantidade (Maior)</option>
-                                <option value="alerta">Alertas Primeiro</option>
+                                <option value="Nome">Nome (A-Z)</option>
+                                <option value="Quantidade">Quantidade (Maior)</option>
+                                <option value="Alerta">Alertas Primeiro</option>
                             </select>
                         </div>
 
@@ -371,10 +408,11 @@ const Estoque = () => {
                     </div>
                 )}
 
-                <div className="container-itens">
-                    {/* Indicador de filtros ativos */}
+                
+                {/* Indicador de filtros ativos */}
+                <div className="filtros-ativos">
                     { filtrosAtivos && (
-                        <div className="filtros-ativos">
+                        <>
                             <span className="fonte-negrito">Filtros ativos: </span>
                             {filtros.unidadeMedida !== "todas" && (
                                 <span className="tag-filtro">{filtros.unidadeMedida}</span>
@@ -387,18 +425,20 @@ const Estoque = () => {
                                     {filtros.alertaEstoque === "alerta" ? "Estoque Baixo" : "Estoque OK"}
                                 </span>
                             )}
-                        </div>
+                        </>
                     )}
-                    { carregando ? (
-                        <div className="carregando">
-                            Carregando materiais...
-                        </div>
-                    ) : itensEstoqueExibir.length === 0 ? (
-                        <div className="nenhum-item">
-                            Nenhum item encontrado.
-                        </div>
-                    ) : (
-                        itensEstoqueExibir.map((item, index) => (
+                </div>
+                { carregando ? (
+                    <div className="carregando">
+                        Carregando materiais...
+                    </div>
+                ) : itensEstoqueExibir.length === 0 ? (
+                    <div className="nenhum-item">
+                        Nenhum item encontrado.
+                    </div>
+                ) : (
+                    <div className="container-itens">
+                        {itensEstoqueExibir.map((item, index) => (
                             <div className={`item ${item.quantidade <= item.minAviso ? "item-alerta" : ""}`} key={index}>
                                 <div>
                                     <p className="fonte-negrito">{item.nome}</p>
@@ -410,9 +450,9 @@ const Estoque = () => {
                                     </span>
                                 </button>
                             </div>
-                        ))
-                    )}
-                </div>
+                        ))}
+                    </div>
+                )}
 
                 <button className="submit-button" onClick={mostrarAdicionarEstoque}>
                     Adicionar um novo item
@@ -511,23 +551,29 @@ const Estoque = () => {
                             </div>
                         </div>
 
-                        <div>
-                            <label className="fonte-negrito">Quantidade</label>
-                            <input
-                                type="number"
-                                placeholder="Digite a quantidade desejada"
-                                id="inputAtualizarQtd"
-                                onChange={(e) => setQtdParaAtualizar(e.target.value)}
-                            />
-                        </div>
+                        <div className="campos-quantidade">
+                            <div>
+                                <label className="fonte-negrito">Quantidade</label>
+                                <input
+                                    type="number"
+                                    placeholder="Digite a quantidade desejada"
+                                    id="inputAtualizarQtd"
+                                    onChange={(e) => setQtdParaAtualizar(e.target.value)}
+                                />
+                            </div>
 
-                        <div className="botoes">
-                            <button className="submit-button adicionar-qtd-button" onClick={() => atualizarQuantidade("soma")}>
-                                Adicionar
-                            </button>
-                            <button className="submit-button remover-qtd-button" onClick={() => atualizarQuantidade("subtrair")}>
-                                Remover
-                            </button>
+                            <div className="botoes">
+                                <button className="submit-button adicionar-qtd-button" onClick={() => atualizarQuantidade("soma")}>
+                                    <span class="material-symbols-outlined">
+                                        add_2
+                                    </span>
+                                </button>
+                                <button className="submit-button remover-qtd-button" onClick={() => atualizarQuantidade("subtrair")}>
+                                    <span class="material-symbols-outlined">
+                                        check_indeterminate_small
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

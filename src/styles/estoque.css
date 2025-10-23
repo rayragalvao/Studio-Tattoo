@@ -44,7 +44,7 @@
     min-height: 40em;
     max-height: 100vh;    
     display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    grid-template-rows: auto auto auto 1fr auto;
 }
 
 .adicionar-estoque {
@@ -426,7 +426,6 @@
         max-width: 70vw;
         height: auto;
         min-height: 70vh;
-        grid-template-rows: auto auto 1fr auto;
         gap: 1em;
     }
 
@@ -468,6 +467,12 @@
         min-height: 60vh;
     }
 
+    .pesquisa-estoque {
+        padding: 0.8em;
+        border-radius: 0.3em;
+        grid-template-rows: auto auto auto 1fr auto;
+    }
+
     .adicionar-estoque {
         min-height: 30vh;
     }
@@ -485,6 +490,7 @@
         grid-template-columns: 90% 10%;
         gap: 0.3em;
         margin-bottom: 0.8em;
+        height: 3em;
     }
 
     .card-estoque input, .card-estoque select {
@@ -498,13 +504,19 @@
 
     .input-barra-pesquisa input {
         padding-left: 2.2em;
+        height: 100%;;
     }
 
     .input-barra-pesquisa .icon {
         margin-left: 0.2em;
     }
 
+    .input-barra-pesquisa {
+        height: 100%;
+    }
+
     .bt-filtro {
+        height: 100%;
         padding: 0.4em;
         font-size: 0.9em;
     }
@@ -537,12 +549,6 @@
 
 /* Mobile Pequeno (até 480px) */
 @media (max-width: 480px) {
-    .pesquisa-estoque {
-        padding: 0.8em;
-        border-radius: 0.3em;
-        grid-template-rows: 10% 8% 60% 12%;
-    }
-
     .pesquisa-estoque h2 {
         font-size: 1.3em;
     }

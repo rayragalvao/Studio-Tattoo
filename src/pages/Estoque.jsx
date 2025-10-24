@@ -396,6 +396,17 @@ const Estoque = () => {
         if (informacoesItem) {
             setInformacoesItem(false);
         }
+
+        setTimeout(() => {
+            const cardAddEstoque = document.getElementById('card-add-estoque');
+            if (cardAddEstoque) {
+                cardAddEstoque.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }
+        }, 150);
         setAdicionarEstoque(true);
     }
 
@@ -408,8 +419,20 @@ const Estoque = () => {
         if (adicionarEstoque) {
             setAdicionarEstoque(false);
         }
+
         setInformacoesItem(true);
         setItemSelecionado(item);
+
+        setTimeout(() => {
+            const cardInformacoes = document.getElementById('card-informacoes-item');
+            if (cardInformacoes) {
+                cardInformacoes.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }
+        }, 150);
     }
 
     function fecharInformacoesItem() {
@@ -672,6 +695,7 @@ const Estoque = () => {
                 {adicionarEstoque && (
                     <div 
                         className="card-estoque adicionar-estoque"
+                        id="card-add-estoque"
                         role="dialog"
                         aria-labelledby="form-title"
                         aria-describedby="form-description"
@@ -832,6 +856,7 @@ const Estoque = () => {
 
                 {informacoesItem && (
                     <div 
+                        id="card-informacoes-item"
                         className="card-estoque informacoes-estoque"
                         role="dialog"
                         aria-labelledby="info-title"
@@ -966,7 +991,7 @@ const Estoque = () => {
                         Cancelar
                     </button>
                     <button 
-                        className="submit-button excluir-button"
+                        className="submit-button"
                         onClick={excluirItem}
                         disabled={carregando}
                         aria-label={`Confirmar exclusão de ${itemSelecionado.nome}`}

@@ -28,6 +28,11 @@
     border: 0;
 }
 
+/* Scroll suave para toda a página */
+html {
+    scroll-behavior: smooth;
+}
+
 .campo-obrigatorio {
     color: var(--vermelho);
     margin-left: 0.1em;
@@ -437,6 +442,11 @@
     transform: none;
 }
 
+/* Estilos específicos para o modal de confirmação */
+.modal-confirmacao-exclusao {
+    z-index: 9999 !important;
+}
+
 /* Telas Extra Grandes (1441px - 1920px) */
 @media (min-width: 1441px) and (max-width: 1920px) {
     .section-estoque {
@@ -506,7 +516,7 @@
 @media (max-width: 1024px) {
     .section-estoque {
         display: flex;
-        flex-direction: column-reverse;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 1.5em;
@@ -688,6 +698,7 @@
     .submit-button {
         padding: 0.5em;
         font-size: 0.6em;
+        height: 4em;
     }
 
     .informacoes-estoque .botoes button {
@@ -779,17 +790,11 @@
     }
 }
 
-/* Estilos específicos para o modal de confirmação */
-.modal-confirmacao-exclusao {
-    /* Garante que o modal não afete o layout da página */
-    position: fixed !important;
-    z-index: 9999 !important;
-}
-
 @media (max-width: 768px) {
     .botoes-confirmacao {
         flex-direction: column;
         align-items: center;
+        gap: 0;
     }
     
     .botoes-confirmacao .submit-button {

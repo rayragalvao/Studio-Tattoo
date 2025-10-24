@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/formulario.css';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect, useRef } from "react"; 
+import "../styles/formulario.css";
 
 const Formulario = ({
   titulo = 'Do esboço ao real: Seu projeto começa aqui.',

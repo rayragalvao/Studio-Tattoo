@@ -1,12 +1,13 @@
 package hub.orcana.service;
 
-import hub.orcana.dto.DadosCadastroMaterial;
+import hub.orcana.dto.estoque.DadosCadastroMaterial;
+import hub.orcana.dto.estoque.DetalhesMaterial;
 import hub.orcana.exception.DependenciaNaoEncontradaException;
 import hub.orcana.tables.Estoque;
 import hub.orcana.tables.repository.EstoqueRepository;
-import jakarta.validation.Valid;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,52 +20,110 @@ public class EstoqueService {
     }
 
     // Lista todos os materiais existentes
-    public List<Estoque> getEstoque() {
-        var materiais = repository.findAll();
-        if (materiais.isEmpty()) {
-            throw new DependenciaNaoEncontradaException("Nenhum material cadastrado.");
-        }
+    public List<DetalhesMaterial> getEstoque() {
+        List<DetalhesMaterial> materiais = repository.findAll().stream()
+                .map(atual -> new DetalhesMaterial(
+                        atual.getId(),
+                        atual.getNome(),
+                        atual.getQuantidade(),
+                        atual.getUnidadeMedida(),
+                        atual.getMinAviso()
+                ))
+                .toList();
         return materiais;
     }
 
     // Busca material pelo nome
-    public List<Estoque> getEstoqueByNome(@PathVariable String nomeMaterial) {
+    public List<DetalhesMaterial> getEstoqueByNome(String nomeMaterial) {
         var materiais = repository.findAll()
                 .stream()
                 .filter(atual -> nomeMaterial.equals(atual.getNome()))
+                .map(atual -> new DetalhesMaterial(
+                        atual.getId(),
+                        atual.getNome(),
+                        atual.getQuantidade(),
+                        atual.getUnidadeMedida(),
+                        atual.getMinAviso()
+                ))
                 .toList();
 
         if (materiais.isEmpty()) {
-            throw new DependenciaNaoEncontradaException("Material não encontrado.");
+            throw new DependenciaNaoEncontradaException("Material");
         }
         return materiais;
     }
 
     // Cadastra um novo material
-    public Estoque postEstoque(@RequestBody Estoque estoque) {
-        if (estoque.getId() != null) {
-            if (repository.existsById(estoque.getId())) {
-                throw new IllegalArgumentException("O ID do material já existe.");
-            } else {
-                estoque.setId(null);
-            }
+    public DetalhesMaterial postEstoque(DadosCadastroMaterial estoque) {
+        if (repository.existsByNomeIgnoreCase(estoque.nome())) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Material já cadastrado.");
         }
-        return repository.save(estoque);
+
+        Estoque novoMaterial = new Estoque(
+                estoque.nome(),
+                estoque.quantidade(),
+                estoque.unidadeMedida(),
+                estoque.minAviso()
+        );
+        repository.save(novoMaterial);
+        DetalhesMaterial detalhes = new DetalhesMaterial(
+                novoMaterial.getId(),
+                novoMaterial.getNome(),
+                novoMaterial.getQuantidade(),
+                novoMaterial.getUnidadeMedida(),
+                novoMaterial.getMinAviso()
+        );
+        return detalhes;
     }
 
     // Atualiza um material existente pelo ID
-    public Estoque putEstoqueById(@PathVariable Long id, @RequestBody Estoque estoque) {
+    public DetalhesMaterial putEstoqueById(Long id, DadosCadastroMaterial estoque) {
         if (!repository.existsById(id)) {
-            throw new DependenciaNaoEncontradaException("Material não encontrado.");
+            throw new DependenciaNaoEncontradaException("Material");
         }
-        estoque.setId(id);
-        return repository.save(estoque);
+
+        Estoque existente = repository.findById(id).orElseThrow();
+        existente = new Estoque(
+                estoque.nome(),
+                estoque.quantidade(),
+                estoque.unidadeMedida(),
+                estoque.minAviso()
+        );
+        existente.setId(id);
+        repository.save(existente);
+        DetalhesMaterial detalhes = new DetalhesMaterial(
+                existente.getId(),
+                existente.getNome(),
+                existente.getQuantidade(),
+                existente.getUnidadeMedida(),
+                existente.getMinAviso()
+        );
+        return detalhes;
+    }
+
+    public DetalhesMaterial atualizarQuantidadeById(Long id, Double qtd) {
+        if (!repository.existsById(id)) {
+            throw new DependenciaNaoEncontradaException("Material");
+        }
+
+        Estoque existente = repository.findById(id).orElseThrow();
+        existente.setQuantidade(qtd);
+        repository.save(existente);
+
+        DetalhesMaterial detalhes = new DetalhesMaterial(
+                existente.getId(),
+                existente.getNome(),
+                existente.getQuantidade(),
+                existente.getUnidadeMedida(),
+                existente.getMinAviso()
+        );
+        return detalhes;
     }
 
     // Exclui um estoque existente pelo ID
-    public void deleteEstoqueById(@PathVariable Long id) {
+    public void deleteEstoqueById(Long id) {
             if (!repository.existsById(id)) {
-                throw new DependenciaNaoEncontradaException("Material não encontrado.");
+                throw new DependenciaNaoEncontradaException("Material");
             }
             repository.deleteById(id);
 

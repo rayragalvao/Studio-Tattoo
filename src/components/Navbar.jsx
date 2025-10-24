@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.jsx";
@@ -70,7 +71,8 @@ const Navbar = () => {
     { label: "Início", to: "/" },
     { label: "Portfólio", to: "/portfolio" },
     { label: "Agendamento", to: "/agendamento" },
-    { label: "Orçamento", to: "/orcamento" }
+    { label: "Orçamento", to: "/orcamento" },
+    { label: "Estoque", to: "/estoque" }
   ];
 
   return (

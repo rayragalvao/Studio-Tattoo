@@ -28,7 +28,7 @@ public class Usuario {
     @Setter
     private String email;
 
-    @Pattern(regexp = "(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\-\\d{4})")
+    @Pattern(regexp = "^$|^\\(\\d{2}\\)\\s\\d{4,5}-\\d{4}$")
     @Setter
     private String telefone;
     @Setter

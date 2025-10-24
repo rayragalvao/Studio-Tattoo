@@ -24,6 +24,11 @@
   animation: alertaEntrada 0.3s ease-out forwards;
 }
 
+.alerta-modal.success {
+  max-width: 300px;
+  width: 80%;
+}
+
 @keyframes alertaEntrada {
   to {
     transform: scale(1);
@@ -81,6 +86,10 @@
   text-align: center;
 }
 
+.alerta-modal.success .alerta-body {
+  padding: 20px 20px 15px 20px;
+}
+
 .alerta-mensagem {
   font-family: 'Martel Sans', sans-serif;
   font-size: 16px;
@@ -90,9 +99,19 @@
   opacity: 0.8;
 }
 
+.alerta-modal.success .alerta-mensagem {
+  font-size: 15px;
+  line-height: 1.4;
+  margin: 5px 0;
+}
+
 .alerta-footer {
   padding: 0 25px 25px 25px;
   text-align: center;
+}
+
+.alerta-modal.success .alerta-footer {
+  padding: 0 20px 20px 20px;
 }
 
 .alerta-botao {
@@ -107,6 +126,12 @@
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 100px;
+}
+
+.alerta-modal.success .alerta-botao {
+  padding: 10px 25px;
+  font-size: 13px;
+  min-width: 80px;
 }
 
 .alerta-botao:hover {

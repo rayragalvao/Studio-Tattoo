@@ -117,21 +117,27 @@ public class SecurityConfiguracao {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuracao = new CorsConfiguration();
-        configuracao.applyPermitDefaultValues();
-        configuracao.setAllowedMethods(
-                Arrays.asList(
-                        HttpMethod.GET.name(),
-                        HttpMethod.POST.name(),
-                        HttpMethod.PUT.name(),
-                        HttpMethod.PATCH.name(),
-                        HttpMethod.DELETE.name(),
-                        HttpMethod.OPTIONS.name(),
-                        HttpMethod.HEAD.name(),
-                        HttpMethod.TRACE.name()
-                )
-        );
+        
+        configuracao.setAllowedOriginPatterns(Arrays.asList(
+            "http://localhost:3000", 
+            "http://localhost:5173", 
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:5173"
+        ));
+        
+        configuracao.setAllowedMethods(Arrays.asList(
+            HttpMethod.GET.name(),
+            HttpMethod.POST.name(),
+            HttpMethod.PUT.name(),
+            HttpMethod.PATCH.name(),
+            HttpMethod.DELETE.name(),
+            HttpMethod.OPTIONS.name(),
+            HttpMethod.HEAD.name()
+        ));
 
-        configuracao.setExposedHeaders(List.of(HttpHeaders.CONTENT_DISPOSITION));
+        configuracao.setAllowedHeaders(Arrays.asList("*"));
+        configuracao.setAllowCredentials(true);
+        configuracao.setExposedHeaders(Arrays.asList(HttpHeaders.CONTENT_DISPOSITION, HttpHeaders.AUTHORIZATION));
 
         UrlBasedCorsConfigurationSource origem = new UrlBasedCorsConfigurationSource();
         origem.registerCorsConfiguration("/**", configuracao);

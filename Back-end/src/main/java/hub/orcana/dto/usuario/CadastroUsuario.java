@@ -14,10 +14,10 @@ public record CadastroUsuario(
         @Email
         String email,
 
-        @NotBlank
-        @Pattern(regexp = "(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\-\\d{4})")
+        @Pattern(regexp = "^$|^\\(\\d{2}\\)\\s\\d{4,5}-\\d{4}$")
         String telefone,
 
+        @NotBlank
         String senha,
         Date dtNasc,
         boolean isAdmin

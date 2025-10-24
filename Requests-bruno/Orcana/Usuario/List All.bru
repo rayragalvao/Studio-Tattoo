@@ -1,0 +1,27 @@
+meta {
+  name: List All
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://localhost:8080/usuario
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "email": "vivi@gmail.com",
+    "senha": "senha#123"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

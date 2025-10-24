@@ -1,0 +1,27 @@
+meta {
+  name: Cadastro
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:8080/usuario/cadastro
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "nome": "Viviane dos Santos",
+    "email": "vivi@gmail.com",
+    "telefone": "(11) 94035-4566",
+    "senha": "senha#123",
+    "dtNasc": "2005-12-12",
+    "isAdmin": true
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

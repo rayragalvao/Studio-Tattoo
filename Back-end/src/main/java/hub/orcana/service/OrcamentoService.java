@@ -3,47 +3,47 @@ package hub.orcana.service;
 import hub.orcana.dto.DadosCadastroOrcamento;
 import hub.orcana.tables.Orcamento;
 import hub.orcana.tables.repository.OrcamentoRepository;
-import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class OrcamentoService {
+
     private final OrcamentoRepository repository;
+    private final GerenciadorDeArquivosService gerenciadorService;
+    private final EmailService emailService;
 
     public Orcamento postOrcamento(DadosCadastroOrcamento dados) {
-        List<String> urlImagem = new ArrayList<>();
-        Path pastaUploads = Path.of("uploads");
-        try {
-            if (!Files.exists(pastaUploads)) {
-                Files.createDirectories(pastaUploads);
+
+        List<String> urlImagens = new ArrayList<>();
+
+        if (dados.imagemReferencia() != null && !dados.imagemReferencia().isEmpty()) {
+            for (MultipartFile file : dados.imagemReferencia()) {
+                String urlImagemSalva = gerenciadorService.salvarArquivo(file);
+                urlImagens.add(urlImagemSalva);
             }
-            if (dados.imagemReferencia() != null) {
-                for (MultipartFile file : dados.imagemReferencia()) {
-                    String nomeArquivo = UUID.randomUUID() + "_" + file.getOriginalFilename();
-                    Path destino = pastaUploads.resolve(nomeArquivo);
-                    Files.copy(file.getInputStream(), destino, StandardCopyOption.REPLACE_EXISTING);
-                    urlImagem.add(destino.toString());
-                }
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Erro ao salvar imagem", e);
         }
+
         Orcamento orcamento = new Orcamento(
                 dados.email(),
                 dados.ideia(),
                 dados.tamanho(),
                 dados.cores(),
                 dados.localCorpo(),
-                urlImagem
+                urlImagens
         );
+
+        emailService.enviaEmailNovoOrcamento(dados.email(), dados.codigoOrcamento());
         return repository.save(orcamento);
+
+    }
+
+    public List<Orcamento> findAllOrcamentos() {
+        return repository.findAll();
     }
 }

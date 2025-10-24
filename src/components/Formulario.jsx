@@ -3,124 +3,155 @@ import React, { useState, useEffect, useRef } from "react";
 import "../styles/formulario.css";
 
 const Formulario = ({
-  titulo = "Do esboço ao real: Seu projeto começa aqui.",
-  subtitulo = "Conte sua ideia, nós criamos a arte.",
+  titulo = 'Do esboço ao real: Seu projeto começa aqui.',
+  subtitulo = 'Conte sua ideia, nós criamos a arte.',
   campos = [],
   onSubmit,
-  submitButtonText = "Enviar orçamento",
-  className = "",
-  isPortfolioImagem = false, 
+  submitButtonText = 'Enviar orçamento',
+  className = '',
   initialValues = {},
 }) => {
-  const [dadosFormulario, setDadosFormulario] = useState({});
-  const [previewImagem, setPreviewImagem] = useState(null);
-  const [erros, setErros] = useState({});
-  const [containerSize, setContainerSize] = useState({ width: 200, height: 230 });
-  const fileInputRef = useRef(null);
-
-  useEffect(() => {
-    const dadosIniciais = {};
+  // Estado único para o formulário
+  const [dadosFormulario, setDadosFormulario] = useState(() => {
+    const inicial = {};
     campos.forEach((campo) => {
-      if (campo.type === "file" || campo.type === "checkbox group") {
-        dadosIniciais[campo.name] = [];
-      } else {
-        dadosIniciais[campo.name] = initialValues[campo.name] || "";
-      }
-      if (campo.type === "select") {
-        dadosIniciais[`${campo.name}_outro`] = "";
-      }
+      if (campo.type === 'file') inicial[campo.name] = [];
+      else if (campo.type === 'checkbox group') inicial[campo.name] = [];
+      else inicial[campo.name] = '';
+
+      if (campo.type === 'select') inicial[`${campo.name}_outro`] = '';
     });
+    return { ...inicial, ...initialValues };
+  });
 
-    if (initialValues.imagem) {
-      fetch(initialValues.imagem)
-        .then((res) => res.blob())
-        .then((blob) => {
-          const nomeArquivo = initialValues.titulo?.replace(/\s/g, "_") || "imagem.png";
-          const file = new File([blob], nomeArquivo, { type: blob.type });
-          dadosIniciais.imagemReferencia = [file];
-          setPreviewImagem(URL.createObjectURL(file));
-        });
-    }
+  const [erros, setErros] = useState({});
 
-    setDadosFormulario(dadosIniciais);
-  }, [initialValues, campos]);
-
-  // Ajusta o tamanho do container baseado na proporção da imagem
   useEffect(() => {
-    if (previewImagem) {
-      const img = new Image();
-      img.src = previewImagem;
-      img.onload = () => {
-        const proporcao = img.width / img.height;
-        const maxWidth = 200; // largura máxima
-        setContainerSize({
-          width: maxWidth,
-          height: maxWidth / proporcao,
-        });
-      };
-    }
-  }, [previewImagem]);
+    setDadosFormulario((prev) => ({ ...prev, ...initialValues }));
+  }, [initialValues]);
 
-  const handleMudancaInput = (evento) => {
-    const { name, value } = evento.target;
+  // Handlers
+  const handleMudancaInput = (e) => {
+    const { name, value } = e.target;
     setDadosFormulario((prev) => ({ ...prev, [name]: value }));
+    if (erros[name]) setErros((prev) => ({ ...prev, [name]: '' }));
   };
 
-  const handleMudancaArquivo = (evento) => {
-    const { name, files } = evento.target;
-    if (files.length > 0) {
-      setDadosFormulario((prev) => ({ ...prev, [name]: Array.from(files) }));
-      const firstFile = files[0];
-      setPreviewImagem(URL.createObjectURL(firstFile));
-    }
+  const handleMudancaArquivo = (e) => {
+    const nome = e.target.name;
+    const arquivos = Array.from(e.target.files || []).filter((f) => f.type && f.type.startsWith('image/'));
+    if (arquivos.length > 5) arquivos.length = 5;
+    setDadosFormulario((prev) => ({ ...prev, [nome]: arquivos }));
+    if (erros[nome]) setErros((prev) => ({ ...prev, [nome]: '' }));
   };
 
-  const handleRemoverImagem = (campoNome) => {
-    if (previewImagem) URL.revokeObjectURL(previewImagem);
-    setPreviewImagem(null);
-    setDadosFormulario((prev) => ({ ...prev, [campoNome]: [] }));
-    if (fileInputRef.current) fileInputRef.current.value = "";
+  const handleMudancaCheckbox = (nomeCampo, valorOpcao) => {
+    setDadosFormulario((prev) => {
+      const atual = Array.isArray(prev[nomeCampo]) ? prev[nomeCampo] : [];
+      const existe = atual.includes(valorOpcao);
+      const atualizado = existe ? atual.filter((v) => v !== valorOpcao) : [...atual, valorOpcao];
+      return { ...prev, [nomeCampo]: atualizado };
+    });
+    if (erros[nomeCampo]) setErros((prev) => ({ ...prev, [nomeCampo]: '' }));
   };
 
   const validarFormulario = () => {
-    // Aqui você pode adicionar validação personalizada
-    return true;
+    const novosErros = {};
+    campos.forEach((campo) => {
+      if (!campo.required) return;
+      const valor = dadosFormulario[campo.name];
+
+      if (campo.type === 'select' && String(valor).toLowerCase() === 'outro') {
+        const outro = dadosFormulario[`${campo.name}_outro`];
+        if (!outro || !String(outro).trim()) novosErros[`${campo.name}_outro`] = campo.errorMessage || `Digite o ${campo.label}`;
+      } else if (!valor || (typeof valor === 'string' && !valor.trim()) || (Array.isArray(valor) && valor.length === 0)) {
+        novosErros[campo.name] = campo.errorMessage || `${campo.label} é obrigatório`;
+      } else if (campo.type === 'email' && !/\S+@\S+\.\S+/.test(valor)) {
+        novosErros[campo.name] = 'Email inválido';
+      }
+    });
+    setErros(novosErros);
+    return Object.keys(novosErros).length === 0;
   };
 
-  const enviarFormulario = (evento) => {
-    evento.preventDefault();
+  const enviarFormulario = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
     if (!validarFormulario()) return;
-    if (onSubmit) onSubmit(dadosFormulario);
+
+    const dadosEnvio = { ...dadosFormulario };
+
+    campos.forEach((campo) => {
+      if (campo.type === 'select') {
+        const val = String(dadosEnvio[campo.name] || '');
+        if (val.toLowerCase() === 'outro') dadosEnvio[campo.name] = dadosEnvio[`${campo.name}_outro`] || '';
+        delete dadosEnvio[`${campo.name}_outro`];
+      }
+
+      if (campo.type === 'checkbox group') {
+        const arr = Array.isArray(dadosEnvio[campo.name]) ? dadosEnvio[campo.name] : [];
+        dadosEnvio[campo.name] = arr.join(', ');
+      }
+    });
+
+    if (onSubmit) onSubmit(dadosEnvio);
   };
 
   const renderField = (campo) => {
-    const classeInput = erros[campo.name] ? "error" : "";
+    const classeInput = erros[campo.name] ? 'error' : '';
 
     switch (campo.type) {
-      case "file":
-        if (isPortfolioImagem) {
-          return previewImagem ? (
-            <div
-              className="file-preview-static"
-              style={{
-                width: `${containerSize.width}px`,
-                height: `${containerSize.height}px`,
-              }}
+      case 'textarea':
+        return (
+          <textarea
+            id={campo.name}
+            name={campo.name}
+            value={dadosFormulario[campo.name] || ''}
+            onChange={handleMudancaInput}
+            placeholder={campo.placeholder}
+            rows={campo.rows || 4}
+            className={classeInput}
+          />
+        );
+
+      case 'select':
+        return (
+          <>
+            <select
+              id={campo.name}
+              name={campo.name}
+              value={dadosFormulario[campo.name] || ''}
+              onChange={handleMudancaInput}
+              className={classeInput}
             >
-              <img
-                src={previewImagem}
-                alt="Referência do Portfólio"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "9px",
-                  boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
-                }}
+              {campo.options?.map((opcao, idx) => (
+                <option key={idx} value={idx === 0 ? '' : opcao}>
+                  {opcao}
+                </option>
+              ))}
+            </select>
+
+            {String(dadosFormulario[campo.name]).toLowerCase() === 'outro' && (
+              <input
+                type="text"
+                id={`${campo.name}_outro`}
+                name={`${campo.name}_outro`}
+                value={dadosFormulario[`${campo.name}_outro`] || ''}
+                onChange={handleMudancaInput}
+                placeholder={`Especifique ${campo.label.toLowerCase()}`}
+                className={classeInput}
               />
-            </div>
-          ) : null;
-        }
+            )}
+          </>
+        );
+
+      case 'file':
+        const hasFiles = Array.isArray(dadosFormulario[campo.name]) && dadosFormulario[campo.name].length > 0;
+
+        const handleRemoveFiles = () => {
+          setDadosFormulario((prev) => ({ ...prev, [campo.name]: [] }));
+        };
+
+        const isPortfolioImage = typeof dadosFormulario[campo.name]?.[0] === 'string';
 
         return (
           <div className="file-upload-container">
@@ -129,54 +160,88 @@ const Formulario = ({
               id={campo.name}
               name={campo.name}
               onChange={handleMudancaArquivo}
-              accept={campo.accept || "image/*"}
+              accept={campo.accept || 'image/*'}
               className="file-input"
-              ref={fileInputRef}
               multiple
+              style={{ display: 'none' }} 
             />
-            <label
-              htmlFor={campo.name}
-              className={`file-upload-area ${previewImagem ? "has-image" : ""}`}
-            >
-              {previewImagem ? (
-                <div className="file-preview">
-                  <img
-                    src={previewImagem}
-                    alt="Pré-visualização"
-                    className="preview-img"
-                  />
-                  <button
-                    type="button"
-                    className="remove-image-button"
-                    onClick={() => handleRemoverImagem(campo.name)}
+
+            <label htmlFor={campo.name} className="file-upload-area">
+              {!hasFiles && (
+                <div className="file-upload-placeholder">
+                  <p>{campo.fileText || 'Clique para enviar ou arraste o arquivo'}</p>
+                  <p>{campo.fileSubtext || 'Tamanho máximo 5MB'}</p>
+                </div>
+              )}
+
+              {hasFiles && (
+                <div className="file-selected">
+                  {dadosFormulario[campo.name].slice(0, 5).map((f, i) =>
+                    typeof f === 'string' ? (
+                      <img
+                        key={i}
+                        src={f}
+                        alt="Pré-visualização"
+                        className="preview-imagem"
+                      />
+                    ) : (
+                      <p key={i} className="file-name">
+                        {f.name}
+                      </p>
+                    )
+                  )}
+                  {dadosFormulario[campo.name].length > 5 && (
+                    <p className="file-name">
+                      ...mais {dadosFormulario[campo.name].length - 5} arquivos
+                    </p>
+                  )}
+                  <button 
+                    type="button" 
+                    onClick={handleRemoveFiles} 
+                    className="remove-file-button"
+                    disabled={isPortfolioImage}
                   >
                     &times;
                   </button>
                 </div>
-              ) : (
-                <div className="file-upload-placeholder">
-                  <p>{campo.fileText || "Clique para enviar sua referência"}</p>
-                  <p className="file-subtext">{campo.fileSubtext || "PNG, JPG, etc."}</p>
-                </div>
               )}
             </label>
-            {Array.isArray(dadosFormulario[campo.name]) &&
-              dadosFormulario[campo.name].length > 0 &&
-              !previewImagem && (
-                <div className="file-selected-list">
-                  <p>Arquivo: {dadosFormulario[campo.name][0].name}</p>
-                </div>
-            )}
+          </div>
+        );
+
+
+      case 'checkbox group':
+        return (
+          <div className={`checkbox-group ${classeInput}`}>
+            {campo.options?.map((opcao, idx) => {
+              const optionValue = typeof opcao === 'string' ? opcao : opcao.value;
+              const optionLabel = typeof opcao === 'string' ? opcao : opcao.label;
+              const checked =
+                Array.isArray(dadosFormulario[campo.name]) &&
+                dadosFormulario[campo.name].includes(optionValue);
+              return (
+                <label key={idx} className="checkbox-item">
+                  <input
+                    type="checkbox"
+                    name={campo.name}
+                    value={optionValue}
+                    checked={checked}
+                    onChange={() => handleMudancaCheckbox(campo.name, optionValue)}
+                  />
+                  {optionLabel}
+                </label>
+              );
+            })}
           </div>
         );
 
       default:
         return (
           <input
-            type={campo.type || "text"}
+            type={campo.type || 'text'}
             id={campo.name}
             name={campo.name}
-            value={dadosFormulario[campo.name] || ""}
+            value={dadosFormulario[campo.name] || ''}
             onChange={handleMudancaInput}
             placeholder={campo.placeholder}
             className={classeInput}
@@ -195,24 +260,28 @@ const Formulario = ({
           </div>
         )}
 
-        <form onSubmit={enviarFormulario} className="orcamento-form" noValidate>
-          {campos.map((campo) => {
-            if (isPortfolioImagem && campo.type === 'file' && !previewImagem) {
-              return null;
-            }
-            
-            return (
-              <div key={campo.name} className="form-group">
-                <label htmlFor={campo.name}>
-                  {campo.label}
-                  {campo.required && <span className="required">*</span>}
-                </label>
-                {renderField(campo)}
-                {erros[campo.name] && <span className="error-message">{erros[campo.name]}</span>}
-              </div>
-            );
-          })}
-          <button type="submit" className="submit-button">{submitButtonText}</button>
+        <form onSubmit={enviarFormulario} className="orcamento-form">
+          {campos.map((campo) => (
+            <div key={campo.name} className="form-group">
+              <label htmlFor={campo.name}>
+                {campo.label}
+                {campo.required && <span className="required">*</span>}
+              </label>
+
+              {renderField(campo)}
+
+              {erros[campo.name] && (
+                <span className="error-message">{erros[campo.name]}</span>
+              )}
+              {erros[`${campo.name}_outro`] && (
+                <span className="error-message">{erros[`${campo.name}_outro`]}</span>
+              )}
+            </div>
+          ))}
+
+          <button type="submit" className="submit-button">
+            {submitButtonText}
+          </button>
         </form>
       </div>
     </section>

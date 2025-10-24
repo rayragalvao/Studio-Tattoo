@@ -5,6 +5,7 @@
     --verde: #1D8318;
     --verde-escuro: #145214;
     --vermelho-escuro: #7A0A05;
+    --laranja-escuro: #D46B0F;
 }
 
 * {
@@ -77,33 +78,56 @@
 }
 
 .adicionar-qtd-button {
-    background: var(--verde);
-    color: var(--branco);
+    background: var(--branco);
+    color: var(--verde);
+    border: 2px solid #e1e5e9;
 }
 
-.adicionar-qtd-button:hover {
-    background-color: var(--verde-escuro);
+.campos-quantidade .botoes button:hover {
+    color: var(--branco);
+    border: 2px solid var(--laranja-escuro);
     box-shadow: 0 0 0 4px rgba(21, 82, 20, 0.2);
 }
 
 .remover-qtd-button {
+    background: var(--branco);
+    color: var(--vermelho);
+    border: 2px solid #e1e5e9;
+}
+
+.excluir-button {
     background: var(--vermelho);
     color: var(--branco);
+    border: none;
 }
 
-.remover-qtd-button:hover {
-    background-color: var(--vermelho-escuro);
-    box-shadow: 0 0 0 4px rgba(122, 10, 5, 0.2);
-}
-
-.informacoes-estoque .botoes {
-    grid-template-columns: 1fr 1fr;
+.campos-quantidade {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
 }
 
 .botoes {
     display: grid;
     grid-template-columns: 2fr 1fr;
     gap: 1em;
+}
+
+.informacoes-estoque .botoes {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
+    align-items: end;
+}
+
+.informacoes-estoque .botoes button {
+    width: 100%;
+}
+
+.campos-quantidade .botoes button {
+    width: 100%;
+    border-radius: 0.2em;
+    display: flex;
+    align-items: center;
 }
 
 .submit-button {

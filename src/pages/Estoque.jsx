@@ -15,11 +15,12 @@ const Estoque = () => {
     const [itensEstoqueExibir, setItensEstoqueExibir] = useState(itensEstoque);
     const [itemSelecionado, setItemSelecionado] = useState(null);
     const [qtdParaAtualizar, setQtdParaAtualizar] = useState(0);
+    const [tipoOperacao, setTipoOperacao] = useState("adicionar");
 
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
     const [filtros, setFiltros] = useState({
-        unidadeMedida: "todas",
-        alertaEstoque: "todos",
+        unidadeMedida: "Todas",
+        alertaEstoque: "Todos",
         ordenarPor: "nome"
     });
     const [notificacao, setNotificacao] = useState({
@@ -160,6 +161,15 @@ const Estoque = () => {
         let qtdAtualizada = Number(itemSelecionado.quantidade);
         let qtdParaAdicionar = Number(qtdParaAtualizar);
 
+        if (isNaN(qtdParaAdicionar) || qtdParaAdicionar <= 0) {
+            mostrarNotificacao(
+                'erro',
+                'Quantidade Inválida',
+                'Por favor, insira uma quantidade válida para atualizar.'
+            );
+            return;
+        }
+
         if (operacao === "soma") {
             qtdAtualizada = qtdAtualizada + qtdParaAdicionar;
         } else if (operacao === "subtrair") {
@@ -218,7 +228,7 @@ const Estoque = () => {
         }
 
         // Filtro por unidade de medida
-        if (filtros.unidadeMedida !== "todas") {
+        if (filtros.unidadeMedida !== "Todas") {
             itensFiltrados = itensFiltrados.filter(item =>
                 item.unidadeMedida?.toLowerCase() === filtros.unidadeMedida.toLowerCase()
             );
@@ -253,7 +263,7 @@ const Estoque = () => {
             setItensEstoqueExibir(itensFiltrados);
         }
 
-        if (filtros.unidadeMedida !== "todas" || filtros.alertaEstoque !== "todos") {
+        if (filtros.unidadeMedida !== "Todas" || filtros.alertaEstoque !== "Todos") {
             setFiltrosAtivos(true);
             return;
         } else {
@@ -270,8 +280,8 @@ const Estoque = () => {
 
     function limparFiltros() {
         setFiltros({
-            unidadeMedida: "todas",
-            alertaEstoque: "todos",
+            unidadeMedida: "Todas",
+            alertaEstoque: "Todos",
             ordenarPor: "nome"
         });
         document.getElementById('pesquisa').value = '';
@@ -280,7 +290,18 @@ const Estoque = () => {
         setFiltrosAtivos(false);
     }
 
-    function mostrarAdicionarEstoque() {
+    function mostrarAdicionarEstoque(tipo) {
+        setTipoOperacao(tipo);
+
+        if (tipo === "adicionar") {
+            setItemSelecionado({
+                nome: '',
+                quantidade: 0,
+                minAviso: 0,
+                unidadeMedida: 'Unidades'
+            });
+        }
+
         if (informacoesItem) {
             setInformacoesItem(false);
         }
@@ -369,7 +390,7 @@ const Estoque = () => {
                                 value={filtros.alertaEstoque}
                                 onChange={(e) => atualizarFiltro('alertaEstoque', e.target.value)}
                             >
-                                <option value="todos">Todos</option>
+                                <option value="Todos">Todos</option>
                                 <option value="alerta">Estoque Baixo</option>
                                 <option value="ok">Estoque OK</option>
                             </select>
@@ -414,13 +435,13 @@ const Estoque = () => {
                     { filtrosAtivos && (
                         <>
                             <span className="fonte-negrito">Filtros ativos: </span>
-                            {filtros.unidadeMedida !== "todas" && (
+                            {filtros.unidadeMedida !== "Todas" && (
                                 <span className="tag-filtro">{filtros.unidadeMedida}</span>
                             )}
-                            {filtros.unidadeMedida !== "todas" && filtros.alertaEstoque !== "todos" && (
+                            {filtros.unidadeMedida !== "Todas" && filtros.alertaEstoque !== "Todos" && (
                                 <span className="tag-filtro-separador"> | </span>
                             )}
-                            {filtros.alertaEstoque !== "todos" && (
+                            {filtros.alertaEstoque !== "Todos" && (
                                 <span className="tag-filtro">
                                     {filtros.alertaEstoque === "alerta" ? "Estoque Baixo" : "Estoque OK"}
                                 </span>
@@ -454,7 +475,7 @@ const Estoque = () => {
                     </div>
                 )}
 
-                <button className="submit-button" onClick={mostrarAdicionarEstoque}>
+                <button className="submit-button" onClick={() => mostrarAdicionarEstoque("adicionar")}>
                     Adicionar um novo item
                 </button>
             </div>
@@ -463,12 +484,13 @@ const Estoque = () => {
                 {adicionarEstoque && (
                     <div className="card-estoque adicionar-estoque">
                         <h2>
-                            Cadastrar material
+                            {'adicionar' === tipoOperacao ? 'Adicionar novo item' : 'Editar informações'}
                         </h2>
                         <div>
                             <label className="fonte-negrito">Nome</label>
                             <input
                                 type="text"
+                                value={itemSelecionado.nome || ''}
                                 placeholder="Digite o nome do item"
                                 required
                                 onChange={(e) => setItemSelecionado({...itemSelecionado, nome: e.target.value})}
@@ -479,6 +501,7 @@ const Estoque = () => {
                             <label className="fonte-negrito">Quantidade</label>
                             <input
                                 type="number"
+                                value={itemSelecionado.quantidade || ''}
                                 placeholder="Digite a quantidade"
                                 required
                                 onChange={(e) => setItemSelecionado({...itemSelecionado, quantidade: e.target.value})}
@@ -490,6 +513,7 @@ const Estoque = () => {
                                 <label className="fonte-negrito">Mínimo em estoque</label>
                                 <input
                                     type="number"
+                                    value={itemSelecionado.minAviso || ''}
                                     placeholder="Digite o número desejado"
                                     onChange={(e) => setItemSelecionado({...itemSelecionado, minAviso: e.target.value})}
                                 />
@@ -497,23 +521,26 @@ const Estoque = () => {
 
                             <div>
                                 <label className="fonte-negrito">Unidade de medida</label>
-                                <select id="unidadeMedida" onChange={(e) => setItemSelecionado({...itemSelecionado, unidadeMedida: e.target.value})}>
-                                    <option value="#">Selecione uma opção</option>
-                                    <option value="todas">Todas</option>
+                                <select 
+                                    id="unidadeMedida" 
+                                    value={itemSelecionado.unidadeMedida || ''} 
+                                    onChange={(e) => setItemSelecionado({...itemSelecionado, unidadeMedida: e.target.value})}
+                                >
+                                    <option value="">Selecione uma opção</option>
                                     <option value="Unidades">Unidades</option>
-                                    <option value="l">Litros</option>
-                                    <option value="ml">Mililitros</option>
+                                    <option value="Litros">Litros</option>
+                                    <option value="Mililitros">Mililitros</option>
                                     <option value="Folhas">Folhas</option>
                                     <option value="Rolos">Rolos</option>
-                                    <option value="g">Kilogramas</option>
+                                    <option value="Kilogramas">Kilogramas</option>
                                     <option value="Caixas">Caixas</option>
                                 </select>
                             </div>
                         </div>
 
                         <div className="botoes">
-                            <button className="submit-button" onClick={cadastrarItem}>
-                                Adicionar ao estoque
+                            <button className="submit-button" type="submit" onClick={tipoOperacao === "adicionar" ? cadastrarItem : atualizarItem}>
+                                {tipoOperacao === "adicionar" ? "Adicionar ao estoque" : "Salvar alterações"}
                             </button>
                             <button className="submit-button cancel-button" onClick={cancelarAdicionarEstoque}>
                                 Cancelar
@@ -564,16 +591,25 @@ const Estoque = () => {
 
                             <div className="botoes">
                                 <button className="submit-button adicionar-qtd-button" onClick={() => atualizarQuantidade("soma")}>
-                                    <span class="material-symbols-outlined">
+                                    <span className="material-symbols-outlined">
                                         add_2
                                     </span>
                                 </button>
                                 <button className="submit-button remover-qtd-button" onClick={() => atualizarQuantidade("subtrair")}>
-                                    <span class="material-symbols-outlined">
+                                    <span className="material-symbols-outlined">
                                         check_indeterminate_small
                                     </span>
                                 </button>
                             </div>
+                        </div>
+
+                        <div className="botoes">
+                            <button className="submit-button" onClick={() => mostrarAdicionarEstoque("editar")}>
+                                Editar informações
+                            </button>
+                            <button className="submit-button excluir-button" onClick={excluirItem}>
+                                Excluir item
+                            </button>
                         </div>
                     </div>
                 )}

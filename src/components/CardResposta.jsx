@@ -9,7 +9,8 @@ const CardResposta = ({
   codigo, 
   botaoTexto = 'Fechar', 
   onClose, 
-  className = '' 
+  className = '',
+  children 
 }) => {
   const location = useLocation();
   const handleOverlayClick = (e) => {
@@ -64,12 +65,16 @@ const CardResposta = ({
             </div>
           )}
           
-          <button 
-            className={`card-resposta-botao card-resposta-botao--${tipo}`}
-            onClick={onClose}
-          >
-            {botaoTexto}
-          </button>
+          {children ? (
+            children
+          ) : (
+            <button 
+              className={`card-resposta-botao card-resposta-botao--${tipo}`}
+              onClick={onClose}
+            >
+              {botaoTexto}
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import '../styles/global.css';
 import '../styles/formulario.css';
 import { useLocation } from 'react-router-dom';
+import { BarraCarregamento } from '../components/BarraCarregamento';
 
 const apiUrl = "http://localhost:8080";
 
@@ -13,8 +14,8 @@ const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
   const location = useLocation();
   const tattooData = location.state || {};
-  // guarda o código do orçamento durante o ciclo de vida do componente
   const [codigoOrcamentoState, setCodigoOrcamentoState] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const camposOrcamento = [
     {
@@ -90,6 +91,7 @@ const Orcamento = () => {
 
   const handleSubmitOrcamento = async (dados) => {
     try {
+      setIsLoading(true);
       console.log('Dados do orçamento:', dados);
 
       const formData = new FormData();
@@ -161,6 +163,8 @@ const Orcamento = () => {
         codigo: codigoOrcamentoState,
         botaoTexto: 'Tentar novamente',
       });
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -174,6 +178,7 @@ const Orcamento = () => {
         subtitulo="Conte sua ideia, nós criamos a arte."
         campos={camposOrcamento}
         onSubmit={handleSubmitOrcamento}
+        isSubmitting={isLoading}
         submitButtonText="Enviar orçamento"
         
         isPortfolioImage={!!tattooData?.imagem}
@@ -188,6 +193,8 @@ const Orcamento = () => {
           precoMax: tattooData?.precoMax || '',
         }}
       />
+
+      {/* spinner agora exibido dentro do Formulario via prop isSubmitting */}
 
       {cardResposta && (
         <CardResposta

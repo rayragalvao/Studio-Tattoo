@@ -1,23 +1,36 @@
 package hub.orcana.service;
 
+import hub.orcana.config.GerenciadorTokenJwt;
+import hub.orcana.dto.usuario.*;
 import hub.orcana.exception.QuantidadeMinimaUsuariosException;
 import hub.orcana.exception.UsuarioProtegidoException;
 import hub.orcana.tables.Orcamento;
 import hub.orcana.tables.Usuario;
 import hub.orcana.tables.repository.OrcamentoRepository;
 import hub.orcana.tables.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import hub.orcana.exception.DependenciaNaoEncontradaException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 //@RequiredArgsConstructor
 @Slf4j
 public class UsuarioService {
 
+    private final PasswordEncoder passwordEncoder;
+    private final GerenciadorTokenJwt gerenciadorTokenJwt;
+    private final AuthenticationManager authenticationManager;
     private final UsuarioRepository repository;
 
     public UsuarioService(UsuarioRepository repository, AuthenticationManager authenticationManager, GerenciadorTokenJwt gerenciadorTokenJwt, PasswordEncoder passwordEncoder) {
@@ -34,8 +47,8 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Email de usuário já cadastrado.");
         }
 
-        if (novoUsuario.getTelefone() != null && !novoUsuario.getTelefone().trim().isEmpty() 
-            && repository.existsByTelefone(novoUsuario.getTelefone())) {
+        if (novoUsuario.getTelefone() != null && !novoUsuario.getTelefone().trim().isEmpty()
+                && repository.existsByTelefone(novoUsuario.getTelefone())) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Telefone de usuário já cadastrado.");
         }
 
@@ -73,18 +86,12 @@ public class UsuarioService {
         }
     }
 
-    public List<Usuario> listar() {
-        List<Usuario> usuarios = repository.findAll();
-        log.debug("Listagem de usuários retornou {} registros", usuarios.size());
-        return usuarios;
+    public ListarUsuarios buscarById(Long id) {
+        return UsuarioMapper.of(repository.findById(id)
+                .orElseThrow(() -> new DependenciaNaoEncontradaException("Usuário")));
     }
 
-    public Usuario buscarById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new DependenciaNaoEncontradaException("Usuário"));
-    }
-
-    public Usuario atualizarById(Long id, Usuario usuario) {
+    public ListarUsuarios atualizarById(Long id, Usuario usuario) {
         validarIdUsuario(id);
 
         if (usuario.getId() != null && !usuario.getId().equals(id)) {
@@ -94,7 +101,7 @@ public class UsuarioService {
         usuario.setId(id);
         Usuario atualizado = repository.save(usuario);
         log.info("Usuário atualizado com sucesso: ID {}", atualizado.getId());
-        return atualizado;
+        return UsuarioMapper.of(atualizado);
     }
 
     public void deletarById(Long id) {
@@ -112,4 +119,3 @@ public class UsuarioService {
         log.info("Usuário deletado com sucesso: ID {}", id);
     }
 }
-

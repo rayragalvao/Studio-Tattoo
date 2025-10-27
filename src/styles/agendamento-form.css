@@ -5,10 +5,7 @@
   justify-content: center;
   align-items: center;
   padding: 40px 20px;
-  background: linear-gradient(180deg,
-      var(--cinza-escuro) 15%,
-      var(--vermelho) 70%,
-      var(--cinza-escuro) 100%);
+  background: var(--cinza-escuro);
 }
 
 .agendamento-container {
@@ -191,7 +188,7 @@
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: #ff7904;
+  background-color: #870C0E;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(220, 38, 127, 0.3);
 }

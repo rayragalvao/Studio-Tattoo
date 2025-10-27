@@ -34,8 +34,7 @@ const Instagram = () => {
         <img src={foto6} alt="Foto 3" /> 
         <img src={foto7} alt="Foto 3" /> 
         <img src={foto8} alt="Foto 3" /> 
-        <img src={foto9} alt="Foto 3" /> 
-        {/* continue adicionando */}
+        <img src={foto9} alt="Foto 3" />
       </div>
       
     </section>

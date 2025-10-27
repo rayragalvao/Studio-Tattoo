@@ -13,7 +13,7 @@ import java.util.Map;
 import hub.orcana.dto.DadosCadastroOrcamento;
 
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5174")
 @RestController
 @RequestMapping("/orcamento")
 public class OrcamentoController {

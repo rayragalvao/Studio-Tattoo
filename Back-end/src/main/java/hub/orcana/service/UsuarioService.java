@@ -2,12 +2,12 @@ package hub.orcana.service;
 
 import hub.orcana.config.GerenciadorTokenJwt;
 import hub.orcana.dto.usuario.*;
-import hub.orcana.exception.QuantidadeMinimaUsuariosException;
-import hub.orcana.exception.UsuarioProtegidoException;
+import hub.orcana.exception.*;
 import hub.orcana.tables.Orcamento;
 import hub.orcana.tables.Usuario;
 import hub.orcana.tables.repository.OrcamentoRepository;
 import hub.orcana.tables.repository.UsuarioRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,15 +16,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import hub.orcana.exception.DependenciaNaoEncontradaException;
-import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-//@RequiredArgsConstructor
 @Slf4j
 public class UsuarioService {
 
@@ -32,14 +30,24 @@ public class UsuarioService {
     private final GerenciadorTokenJwt gerenciadorTokenJwt;
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository repository;
+    private final OrcamentoRepository orcamentoRepository;
 
-    public UsuarioService(UsuarioRepository repository, AuthenticationManager authenticationManager, GerenciadorTokenJwt gerenciadorTokenJwt, PasswordEncoder passwordEncoder) {
+    @Autowired
+    public UsuarioService(
+            UsuarioRepository repository,
+            AuthenticationManager authenticationManager,
+            GerenciadorTokenJwt gerenciadorTokenJwt,
+            PasswordEncoder passwordEncoder,
+            OrcamentoRepository orcamentoRepository
+    ) {
         this.repository = repository;
         this.authenticationManager = authenticationManager;
         this.gerenciadorTokenJwt = gerenciadorTokenJwt;
         this.passwordEncoder = passwordEncoder;
+        this.orcamentoRepository = orcamentoRepository;
     }
 
+    @Transactional
     public Usuario criar(CadastroUsuario usuario) {
         Usuario novoUsuario = UsuarioMapper.of(usuario);
 
@@ -55,8 +63,47 @@ public class UsuarioService {
         String senhaCriptografada = passwordEncoder.encode(usuario.senha());
         novoUsuario.setSenha(senhaCriptografada);
 
+        Usuario salvo = repository.save(novoUsuario);
+
+        log.info("Usuário criado com sucesso: ID {}", salvo.getId());
+
+        // Associa orçamentos que possuam o mesmo email
+        associarOrcamentosAoUsuario(salvo);
+
+        return salvo;
+    }
+
+    @Transactional
+    public Usuario criar(Usuario usuario) {
+        if (usuario.getId() != null && repository.existsById(usuario.getId())) {
+            throw new DependenciaNaoEncontradaException("ID já existente");
+        }
+
+        usuario.setId(null);
+
+        Usuario novoUsuario = repository.save(usuario);
+
         log.info("Usuário criado com sucesso: ID {}", novoUsuario.getId());
-        return repository.save(novoUsuario);
+
+        associarOrcamentosAoUsuario(novoUsuario);
+
+        return novoUsuario;
+    }
+
+    private void associarOrcamentosAoUsuario(Usuario usuario) {
+        List<Orcamento> orcamentosEncontrados = orcamentoRepository.findOrcamentoByEmail(usuario.getEmail());
+
+        if (orcamentosEncontrados.isEmpty()) {
+            log.info("Nenhum orçamento encontrado para o novo usuário: {}", usuario.getEmail());
+            return;
+        }
+
+        orcamentosEncontrados.forEach(orcamento -> {
+            log.info("Associando orçamento {} ao novo usuário {}", orcamento.getId(), usuario.getEmail());
+            orcamento.setUsuario(usuario);
+        });
+
+        orcamentoRepository.saveAll(orcamentosEncontrados);
     }
 
     public UsuarioToken autenticar(LoginUsuario usuario) {

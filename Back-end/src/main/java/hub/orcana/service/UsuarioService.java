@@ -21,39 +21,50 @@ public class UsuarioService {
     private final UsuarioRepository repository;
     private final OrcamentoRepository orcamentoRepository;
 
-    public UsuarioService(UsuarioRepository repository, OrcamentoRepository orcamentoRepository) {
+    public UsuarioService(UsuarioRepository repository, AuthenticationManager authenticationManager, GerenciadorTokenJwt gerenciadorTokenJwt, PasswordEncoder passwordEncoder) {
         this.repository = repository;
-        this.orcamentoRepository = orcamentoRepository;
+        this.authenticationManager = authenticationManager;
+        this.gerenciadorTokenJwt = gerenciadorTokenJwt;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public Usuario criar(Usuario usuario) {
+    public Usuario criar(CadastroUsuario usuario) {
+        Usuario novoUsuario = UsuarioMapper.of(usuario);
 
-        if (usuario.getId() != null && repository.existsById(usuario.getId())) {
-            throw new DependenciaNaoEncontradaException("ID já existente");
+        if (repository.existsByEmail(novoUsuario.getEmail())) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Email de usuário já cadastrado.");
         }
 
-        usuario.setId(null);
+        if (repository.existsByTelefone(novoUsuario.getTelefone())) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Telefone de usuário já cadastrado.");
+        }
 
-        Usuario novoUsuario = repository.save(usuario);
+        String senhaCriptografada = passwordEncoder.encode(usuario.senha());
+        novoUsuario.setSenha(senhaCriptografada);
 
         log.info("Usuário criado com sucesso: ID {}", novoUsuario.getId());
+        return repository.save(novoUsuario);
+    }
 
-        List<Orcamento> orcamentosEncontrados = orcamentoRepository.findOrcamentoByEmail(usuario.getEmail());
-
-        if(orcamentosEncontrados.isEmpty()) {
-            log.info("Nenhum orçamento encontrado para o novo usuario: {}", usuario);
-        }
-
-        orcamentosEncontrados.forEach(
-                orcamento -> {
-                    log.info("Orçamento do novo usuario com o email={} encontrado: {}", orcamento, usuario);
-                    orcamento.setUsuario(usuario);
-                }
+    public UsuarioToken autenticar(LoginUsuario usuario) {
+        final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
+                usuario.email(),
+                usuario.senha()
         );
+        final Authentication authentication = this.authenticationManager.authenticate(credentials);
 
-        orcamentoRepository.saveAll(orcamentosEncontrados);
+        Usuario usuarioAutenticado = repository.findByEmail(usuario.email())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Email de usuário não cadastrado"));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        final String tokenJwt = gerenciadorTokenJwt.gerarToken(authentication);
 
-        return novoUsuario;
+        return UsuarioMapper.of(usuarioAutenticado, tokenJwt);
+    }
+
+    public List<ListarUsuarios> listar() {
+        List<Usuario> usuariosEncontrados = repository.findAll();
+        log.debug("Listagem de usuários retornou {} registros", usuariosEncontrados.size());
+        return usuariosEncontrados.stream().map(UsuarioMapper::of).collect(Collectors.toList());
     }
 
     private void validarIdUsuario(Long id) {

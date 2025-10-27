@@ -9,7 +9,7 @@
 }
 
 .agendamento-container {
-  max-width: 650px;
+  max-width: 900px;
   width: 100%;
   margin: 0 auto;
   display: flex;
@@ -56,11 +56,11 @@
 
 .agendamento-form {
   background: var(--branco);
-  padding: 25px;
+  padding: 30px;
   border-radius: 10px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
   width: 100%;
-  max-width: 460px;
+  max-width: 800px;
   box-sizing: border-box;
 }
 
@@ -116,9 +116,13 @@
 
 .horarios-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
   margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
 }
 
 .horario-btn {
@@ -219,6 +223,69 @@
   background-color: #fff5f5;
 }
 
+/* Layout lado a lado para calendário e horários */
+.calendario-horarios-container {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.calendario-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.horarios-group {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.selecione-data {
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  padding: 60px 20px;
+  text-align: center;
+  color: #6c757d;
+  font-style: italic;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selecione-data p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.no-horarios {
+  background: #fff3cd;
+  border: 2px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 40px 20px;
+  text-align: center;
+  color: #856404;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-horarios p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.no-horarios p:first-child {
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
 @media (max-width: 768px) {
   .agendamento-section {
     padding: 20px 10px;
@@ -238,14 +305,31 @@
     max-width: 100%;
   }
   
+  /* Layout empilhado em telas menores */
+  .calendario-horarios-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
   .horarios-grid {
     grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
     gap: 8px;
+    padding: 8px;
   }
   
   .horario-btn {
     padding: 10px 6px;
     font-size: 12px;
+  }
+  
+  .selecione-data {
+    padding: 30px 15px;
+    min-height: 150px;
+  }
+  
+  .no-horarios {
+    padding: 25px 15px;
+    min-height: 120px;
   }
 }
 
@@ -260,7 +344,27 @@
     padding: 15px;
   }
   
+  .calendario-horarios-container {
+    gap: 15px;
+  }
+  
   .horarios-grid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+  
+  .selecione-data {
+    padding: 25px 10px;
+    min-height: 120px;
+  }
+  
+  .selecione-data p {
+    font-size: 13px;
+  }
+  
+  .no-horarios {
+    padding: 20px 10px;
+    min-height: 100px;
   }
 }

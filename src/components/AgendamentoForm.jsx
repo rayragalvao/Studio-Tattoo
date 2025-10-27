@@ -146,58 +146,62 @@ const AgendamentoForm = () => {
             )}
           </div>
 
-          <div className="form-group">
-            <label>
-              Data Desejada
-              <span className="required">*</span>
-            </label>
-            <Calendario 
-              onDataSelecionada={handleDataChange}
-              dataSelecionada={dataSelecionada}
-            />
-            {errors.dataSelecionada && (
-              <span className="error-message">
-                {errors.dataSelecionada}
-              </span>
-            )}
-          </div>
+          <div className="calendario-horarios-container">
+            <div className="form-group calendario-group">
+              <label>
+                Data Desejada
+                <span className="required">*</span>
+              </label>
+              <Calendario 
+                onDataSelecionada={handleDataChange}
+                dataSelecionada={dataSelecionada}
+              />
+              {errors.dataSelecionada && (
+                <span className="error-message">
+                  {errors.dataSelecionada}
+                </span>
+              )}
+            </div>
 
-          {horariosDisponiveis.length > 0 && (
-            <div className="form-group">
+            <div className="form-group horarios-group">
               <label>
                 Horários Disponíveis
                 <span className="required">*</span>
               </label>
-              <div className="horarios-grid">
-                {horariosDisponiveis.map((horario) => (
-                  <button
-                    key={horario}
-                    type="button"
-                    className={`horario-btn ${
-                      horarioSelecionado === horario ? 'selected' : ''
-                    }`}
-                    onClick={() => handleHorarioChange(horario)}
-                  >
-                    {horario}
-                  </button>
-                ))}
-              </div>
+              {horariosDisponiveis.length > 0 ? (
+                <div className="horarios-grid">
+                  {horariosDisponiveis.map((horario) => (
+                    <button
+                      key={horario}
+                      type="button"
+                      className={`horario-btn ${
+                        horarioSelecionado === horario ? 'selected' : ''
+                      }`}
+                      onClick={() => handleHorarioChange(horario)}
+                    >
+                      {horario}
+                    </button>
+                  ))}
+                </div>
+              ) : dataSelecionada ? (
+                <div className="no-horarios">
+                  <p>Não há horários disponíveis para esta data.</p>
+                  <p>Por favor, selecione outra data.</p>
+                </div>
+              ) : (
+                <div className="selecione-data">
+                  <p>Selecione uma data para ver os horários disponíveis</p>
+                </div>
+              )}
               {errors.horarioSelecionado && (
                 <span className="error-message">
                   {errors.horarioSelecionado}
                 </span>
               )}
             </div>
-          )}
+          </div>
 
-          {dataSelecionada && horariosDisponiveis.length === 0 && (
-            <div className="form-group">
-              <div className="no-horarios">
-                <p>Não há horários disponíveis para esta data.</p>
-                <p>Por favor, selecione outra data.</p>
-              </div>
-            </div>
-          )}
+
 
           <button 
             type="submit" 

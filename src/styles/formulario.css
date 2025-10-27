@@ -8,7 +8,6 @@
   background: var(--cinza-escuro);
 }
 
-/* Container Principal */
 .orcamento-container {
   max-width: 650px;
   width: 100%;
@@ -394,6 +393,51 @@
     text-overflow: clip;
   }
 
+
+/* Spinner inline ao lado do botão */
+.submit-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.inline-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin: 0 auto;
+}
+
+.inline-spinner svg {
+  display: block;
+  width: 36px;
+  height: 36px;
+}
+
+/* Em telas grandes manter centralizado abaixo do botão */
+@media (min-width: 481px) {
+  .submit-row {
+    align-items: center;
+  }
+}
+
+/* Loading dentro do formulário (menor e centralizado) */
+.form-loading {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.form-loading .barra {
+  width: 28px;
+  height: 28px;
+  border-width: 3px;
+}
   .orcamento-header p {
     font-size: 14px;
     white-space: normal;

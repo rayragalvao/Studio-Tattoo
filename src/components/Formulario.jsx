@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/formulario.css';
+import { BarraCarregamento } from './BarraCarregamento';
 
 const Formulario = ({
   titulo = 'Do esboço ao real: Seu projeto começa aqui.',
@@ -9,8 +10,8 @@ const Formulario = ({
   submitButtonText = 'Enviar orçamento',
   className = '',
   initialValues = {},
+  isSubmitting = false,
 }) => {
-  // Estado único para o formulário
   const [dadosFormulario, setDadosFormulario] = useState(() => {
     const inicial = {};
     campos.forEach((campo) => {
@@ -75,6 +76,7 @@ const Formulario = ({
 
   const enviarFormulario = (e) => {
     if (e && e.preventDefault) e.preventDefault();
+    if (isSubmitting) return; // evita duplo envio
     if (!validarFormulario()) return;
 
     const dadosEnvio = { ...dadosFormulario };
@@ -278,9 +280,17 @@ const Formulario = ({
             </div>
           ))}
 
-          <button type="submit" className="submit-button">
-            {submitButtonText}
-          </button>
+          <div className="submit-row">
+            <button type="submit" className="submit-button" disabled={isSubmitting} aria-busy={isSubmitting}>
+              {isSubmitting ? 'Enviando...' : submitButtonText}
+            </button>
+
+            {isSubmitting && (
+              <div className="form-loading">
+                <BarraCarregamento />
+              </div>
+            )}
+          </div>
         </form>
       </div>
     </section>

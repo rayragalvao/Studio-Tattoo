@@ -49,7 +49,7 @@ public class SecurityConfiguracao {
             "/auth/**",
             "/usuario/cadastro",
             "/usuario/login",
-            "/orcamento"
+            "/orcamento/**"
     };
 
     @Bean
@@ -120,8 +120,10 @@ public class SecurityConfiguracao {
         configuracao.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:3000",
                 "http://localhost:5173",
+                "http://localhost:5174",
                 "http://127.0.0.1:3000",
-                "http://127.0.0.1:5173"
+                "http://127.0.0.1:5173",
+                "http://127.0.0.1:5174"
         ));
 
         configuracao.setAllowedMethods(Arrays.asList(

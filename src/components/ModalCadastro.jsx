@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import ModalCadastroConcluido from './ModalCadastroConcluido';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" }) => {
+  const { register } = useAuth();
+  
   const [formData, setFormData] = useState({
     nomeCompleto: '',
     dataNascimento: '',
     email: '',
+    telefone: '',
     senha: '',
     confirmacaoSenha: ''
   });
@@ -15,6 +19,7 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -25,11 +30,34 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
     }
   }, [isOpen]);
 
+  const formatPhone = (value) => {
+    const numbers = value.replace(/\D/g, '');
+    
+    if (numbers.length === 0) {
+      return '';
+    } else if (numbers.length <= 2) {
+      return `(${numbers}`;
+    } else if (numbers.length <= 6) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+    } else if (numbers.length <= 10) {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+    } else {
+      return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    let processedValue = value;
+    
+    if (name === 'telefone') {
+      processedValue = formatPhone(value);
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: processedValue
     }));
     
     if (errors[name]) {
@@ -50,7 +78,7 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
     const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     if (password.length < minLength) {
-      return 'A senha deve ter pelo menos 8 caracteres';
+      return 'A senha deve ter pelo menos 6 caracteres';
     }
     if (!hasNumbers) {
       return 'A senha deve conter pelo menos um número';
@@ -58,6 +86,20 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
     if (!hasSpecialChar) {
       return 'A senha deve conter pelo menos um caractere especial';
     }
+    return '';
+  };
+
+  const validatePhone = (phone) => {
+    if (!phone || phone.trim() === '') {
+      return '';
+    }
+    
+    const phonePattern = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
+    
+    if (!phonePattern.test(phone)) {
+      return 'Telefone deve estar no formato (11) 99999-9999';
+    }
+    
     return '';
   };
 
@@ -88,6 +130,11 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
       newErrors.email = 'Digite um email válido';
     }
 
+    const phoneError = validatePhone(formData.telefone);
+    if (phoneError) {
+      newErrors.telefone = phoneError;
+    }
+
     const passwordError = validatePassword(formData.senha);
     if (passwordError) {
       newErrors.senha = passwordError;
@@ -108,19 +155,76 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
       nomeCompleto: '',
       dataNascimento: '',
       email: '',
+      telefone: '',
       senha: '',
       confirmacaoSenha: ''
     });
     setErrors({});
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
-      console.log('Dados do cadastro:', formData);
-      
-      setShowSuccessModal(true);
+      setIsLoading(true);
+      setErrors({});
+
+      try {
+        const response = await register({
+          nomeCompleto: formData.nomeCompleto,
+          email: formData.email,
+          telefone: formData.telefone,
+          senha: formData.senha,
+          dataNascimento: formData.dataNascimento
+        });
+
+        console.log('Cadastro realizado com sucesso:', response);
+        setShowSuccessModal(true);
+      } catch (error) {
+        console.error('Erro no cadastro:', error);
+        
+        if (error.status === 409) {
+          if (error.message.includes('Email')) {
+            setErrors({
+              email: 'Este email já está em uso'
+            });
+          } else if (error.message.includes('Telefone')) {
+            setErrors({
+              telefone: 'Este telefone já está em uso'
+            });
+          } else {
+            setErrors({
+              geral: error.message || 'Dados já cadastrados'
+            });
+          }
+        } else if (error.status === 400) {
+          let errorMessage = 'Dados inválidos. Verifique:';
+          const errorDetails = error.details || error.message || '';
+          
+          if (errorDetails.includes('nome') || errorDetails.includes('NotBlank')) {
+            errorMessage += '\n• Nome completo é obrigatório';
+          }
+          if (errorDetails.includes('email') || errorDetails.includes('Email')) {
+            errorMessage += '\n• Email deve ter formato válido';
+          }
+          if (errorDetails.includes('telefone') || errorDetails.includes('Pattern')) {
+            errorMessage += '\n• Telefone deve estar no formato (11) 99999-9999';
+          }
+          if (errorDetails.includes('senha')) {
+            errorMessage += '\n• Senha é obrigatória';
+          }
+          
+          setErrors({
+            geral: errorMessage
+          });
+        } else {
+          setErrors({
+            geral: error.message || 'Erro interno do servidor. Tente novamente.'
+          });
+        }
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -133,8 +237,6 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
     clearForm();
-    onClose();
-    onSwitchToLogin();
   };
 
   const togglePasswordVisibility = () => {
@@ -198,6 +300,21 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
             </div>
 
             <div className="form-group">
+              <label htmlFor="telefone">Telefone (Opcional)</label>
+              <input
+                type="tel"
+                id="telefone"
+                name="telefone"
+                placeholder="(11) 99999-9999"
+                value={formData.telefone}
+                onChange={handleInputChange}
+                className={errors.telefone ? 'error' : ''}
+                autoComplete="off"
+              />
+              {errors.telefone && <span className="error-message">{errors.telefone}</span>}
+            </div>
+
+            <div className="form-group">
               <label htmlFor="senha">Senha</label>
               <div className="password-input">
                 <input
@@ -215,8 +332,25 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
                   type="button"
                   className="password-toggle"
                   onClick={togglePasswordVisibility}
+                  style={{ 
+                    minWidth: '24px', 
+                    minHeight: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
-                  👁️
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    {showPassword ? (
+                      <>
+                        <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.15C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
+                      </>
+                    ) : (
+                      <>
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                      </>
+                    )}
+                  </svg>
                 </button>
               </div>
               {errors.senha && <span className="error-message">{errors.senha}</span>}
@@ -240,15 +374,38 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
                   type="button"
                   className="password-toggle"
                   onClick={toggleConfirmPasswordVisibility}
+                  style={{ 
+                    minWidth: '24px', 
+                    minHeight: '24px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
-                  👁️
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    {showConfirmPassword ? (
+                      <>
+                        <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.15C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
+                      </>
+                    ) : (
+                      <>
+                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                      </>
+                    )}
+                  </svg>
                 </button>
               </div>
               {errors.confirmacaoSenha && <span className="error-message">{errors.confirmacaoSenha}</span>}
             </div>
 
-            <button type="submit" className="btn-cadastrar">
-              Cadastrar
+            {errors.geral && (
+              <div className="error-message general-error" style={{ marginBottom: '1rem', textAlign: 'center' }}>
+                {errors.geral}
+              </div>
+            )}
+
+            <button type="submit" className="btn-cadastrar" disabled={isLoading}>
+              {isLoading ? 'Cadastrando...' : 'Cadastrar'}
             </button>
           </form>
         </div>
@@ -270,7 +427,6 @@ const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" 
       <ModalCadastroConcluido
         isVisible={showSuccessModal}
         onClose={handleSuccessModalClose}
-        nomeUsuario={formData.nomeCompleto.split(' ')[0] || 'usuário'}
       />
     </Modal>
   );

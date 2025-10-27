@@ -1,0 +1,246 @@
+/* Notificação - Container Principal */
+.notificacao {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    min-width: 18em;
+    max-width: 22em;
+    border-radius: 1em;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transform: translateX(100%);
+    opacity: 1;
+}
+
+/* Animações */
+.notificacao.entrar {
+    animation: notificacaoEntrar 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.notificacao.sair {
+    animation: notificacaoSair 0.3s ease-in forwards;
+}
+
+@keyframes notificacaoEntrar {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes notificacaoSair {
+    0% {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(100%) scale(0.9);
+        opacity: 0;
+    }
+}
+
+/* Conteúdo da Notificação */
+.notificacao-conteudo {
+    display: flex;
+    align-items: flex-start;
+    padding: 16px;
+    border-radius: 8px;
+    background: white;
+    border-left: 4px solid;
+    gap: 12px;
+}
+
+/* Tipos de Notificação */
+.notificacao-sucesso .notificacao-conteudo {
+    border-left-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+}
+
+.notificacao-erro .notificacao-conteudo {
+    border-left-color: #ef4444;
+    background: linear-gradient(135deg, #fef2f2 0%, #fef2f2 100%);
+}
+
+.notificacao-aviso .notificacao-conteudo {
+    border-left-color: #f59e0b;
+    background: linear-gradient(135deg, #fffbeb 0%, #fefce8 100%);
+}
+
+/* Ícone */
+.notificacao-icone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.notificacao-icone .material-symbols-outlined {
+    font-size: 1.2em;
+}
+
+.notificacao-sucesso .notificacao-icone {
+    background: #10b981;
+    color: white;
+}
+
+.notificacao-erro .notificacao-icone {
+    background: #ef4444;
+    color: white;
+}
+
+.notificacao-aviso .notificacao-icone {
+    background: #f59e0b;
+    color: white;
+}
+
+/* Texto */
+.notificacao-texto {
+    flex: 1;
+    min-width: 0;
+}
+
+.notificacao-titulo {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1f2937;
+}
+
+.notificacao-mensagem {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #6b7280;
+}
+
+/* Cores do texto por tipo */
+.notificacao-sucesso .notificacao-titulo {
+    color: #065f46;
+}
+
+.notificacao-sucesso .notificacao-mensagem {
+    color: #047857;
+}
+
+.notificacao-erro .notificacao-titulo {
+    color: #991b1b;
+}
+
+.notificacao-erro .notificacao-mensagem {
+    color: #dc2626;
+}
+
+.notificacao-aviso .notificacao-titulo {
+    color: #92400e;
+}
+
+.notificacao-aviso .notificacao-mensagem {
+    color: #d97706;
+}
+
+/* Botão Fechar */
+.notificacao-fechar {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.notificacao-fechar:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: #6b7280;
+    transform: scale(1.1);
+}
+
+.notificacao-fechar:active {
+    transform: scale(0.95);
+}
+
+/* Responsividade */
+@media (max-width: 480px) {
+    .notificacao {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
+    
+    .notificacao-conteudo {
+        padding: 12px;
+    }
+    
+    .notificacao-titulo {
+        font-size: 13px;
+    }
+    
+    .notificacao-mensagem {
+        font-size: 12px;
+    }
+}
+
+/* Suporte para múltiplas notificações */
+.notificacao:nth-child(2) {
+    top: 100px;
+}
+
+.notificacao:nth-child(3) {
+    top: 180px;
+}
+
+.notificacao:nth-child(4) {
+    top: 260px;
+}
+
+/* Efeito hover na notificação */
+.notificacao:hover {
+    transform: translateX(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.notificacao.entrar:hover {
+    transform: translateX(-5px);
+}
+
+/* Animação sutil no ícone */
+.notificacao-icone {
+    animation: pulseIcon 2s infinite;
+}
+
+@keyframes pulseIcon {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Estados de foco para acessibilidade */
+.notificacao-fechar:focus {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}

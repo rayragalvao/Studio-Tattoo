@@ -53,4 +53,8 @@ public class Estoque {
         }
         return this.id;
     }
+
+    public void setQuantidade(Double quantidade) {
+        this.quantidade = quantidade;
+    }
 }

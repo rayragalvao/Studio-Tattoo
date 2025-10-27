@@ -8,6 +8,7 @@ import '../styles/formulario.css';
 import { useLocation } from 'react-router-dom';
 import { BarraCarregamento } from '../components/BarraCarregamento';
 
+// eslint-disable-next-line no-unused-vars
 const apiUrl = "http://localhost:8080";
 
 const Orcamento = () => {

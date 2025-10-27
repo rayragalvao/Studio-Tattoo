@@ -1,11 +1,13 @@
 import React  from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext.jsx";
 import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
 import Agendamento from "./pages/Agendamento";
 import Orcamento from "./pages/Orcamento";
 
 import "./styles/global.css";
+import Estoque from "./pages/Estoque";
 
 function App() {
   return (
@@ -15,6 +17,7 @@ function App() {
         <Route path="/portfolio" element={<Portfolio />} />
         <Route path="/agendamento" element={<Agendamento />} />
         <Route path="/orcamento" element={<Orcamento />} />
+        <Route path="/estoque" element={<Estoque />} />
       </Routes>
     </Router>
   );

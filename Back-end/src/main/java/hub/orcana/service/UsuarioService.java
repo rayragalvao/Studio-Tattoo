@@ -19,7 +19,6 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository repository;
-    private final OrcamentoRepository orcamentoRepository;
 
     public UsuarioService(UsuarioRepository repository, AuthenticationManager authenticationManager, GerenciadorTokenJwt gerenciadorTokenJwt, PasswordEncoder passwordEncoder) {
         this.repository = repository;
@@ -35,7 +34,8 @@ public class UsuarioService {
             throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Email de usuário já cadastrado.");
         }
 
-        if (repository.existsByTelefone(novoUsuario.getTelefone())) {
+        if (novoUsuario.getTelefone() != null && !novoUsuario.getTelefone().trim().isEmpty() 
+            && repository.existsByTelefone(novoUsuario.getTelefone())) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(409), "Telefone de usuário já cadastrado.");
         }
 

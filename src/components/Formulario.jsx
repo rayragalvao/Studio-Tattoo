@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import '../styles/formulario.css';
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect, useRef } from "react";
+import "../styles/formulario.css";
 import { BarraCarregamento } from './BarraCarregamento';
 
 const Formulario = ({
@@ -12,6 +13,7 @@ const Formulario = ({
   initialValues = {},
   isSubmitting = false,
 }) => {
+  // Estado único para o formulário
   const [dadosFormulario, setDadosFormulario] = useState(() => {
     const inicial = {};
     campos.forEach((campo) => {

@@ -1,10 +1,14 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext.jsx";
 import logoBranca from "../assets/img/logo-branca.png";
 import ModalCadastro from "./ModalCadastro";
 import ModalLogin from "./ModalLogin";
 
 const Navbar = () => {
+  const { isAuthenticated, user, logout } = useAuth();
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -67,7 +71,8 @@ const Navbar = () => {
     { label: "Início", to: "/" },
     { label: "Portfólio", to: "/portfolio" },
     { label: "Agendamento", to: "/agendamento" },
-    { label: "Orçamento", to: "/orcamento" }
+    { label: "Orçamento", to: "/orcamento" },
+    { label: "Estoque", to: "/estoque" }
   ];
 
   return (
@@ -95,8 +100,17 @@ const Navbar = () => {
         </ul>
         
         <div className="actions">
-          <button onClick={openCadastroModal} className="btn-cadastro">Cadastro</button>
-          <button onClick={openLoginModal} className="btn-login">Login</button>
+          {isAuthenticated ? (
+            <div className="user-info">
+              <span className="user-name">Olá, {user?.nome || 'Usuário'}</span>
+              <button onClick={logout} className="btn-logout">Sair</button>
+            </div>
+          ) : (
+            <>
+              <button onClick={openCadastroModal} className="btn-cadastro">Cadastro</button>
+              <button onClick={openLoginModal} className="btn-login">Login</button>
+            </>
+          )}
         </div>
       </nav>
       </div>

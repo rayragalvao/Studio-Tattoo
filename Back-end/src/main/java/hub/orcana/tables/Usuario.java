@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -20,12 +21,15 @@ public class Usuario {
     private Long id;
 
     @NotBlank
+    @Setter
     private String nome;
 
     @Email
+    @Setter
     private String email;
 
-    @Pattern(regexp = "(\\(?\\d{2}\\)?\\s)?(\\d{4,5}\\-\\d{4})")
+    @Pattern(regexp = "^$|^\\(\\d{2}\\)\\s\\d{4,5}-\\d{4}$")
+    @Setter
     private String telefone;
     @Setter
     private String senha;

@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext.jsx';
 
 const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
   const { login } = useAuth();
-  
+
   const [formData, setFormData] = useState({
     email: '',
     senha: '',
@@ -75,13 +75,13 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
         });
 
         console.log('Login realizado com sucesso:', response);
-        
+
         clearForm();
         onClose();
-        
+
       } catch (error) {
         console.error('Erro no login:', error);
-        
+
         if (error.status === 401 || error.status === 404) {
           setErrors({
             email: 'Email ou senha incorretos',
@@ -163,8 +163,8 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
                   type="button"
                   className="password-toggle"
                   onClick={togglePasswordVisibility}
-                  style={{ 
-                    minWidth: '24px', 
+                  style={{
+                    minWidth: '24px',
                     minHeight: '24px',
                     display: 'flex',
                     alignItems: 'center',

@@ -15,7 +15,7 @@
   position: relative;
   max-width: 800px;
   width: 90%;
-  height: 600px;
+  height: 500px;
   background: white;
   border-radius: 20px;
   overflow: hidden;
@@ -29,7 +29,7 @@
   background: none;
   border: none;
   font-size: 28px;
-  color: #ffffff;
+  color: #222222;
   cursor: pointer;
   z-index: 1001;
   transition: color 0.3s ease;
@@ -37,7 +37,7 @@
 }
 
 .modal-close:hover {
-  color: #f0f0f0;
+  color: #222222;
 }
 
 .modal-cadastro,
@@ -90,7 +90,7 @@
 
 .modal-cadastro .modal-left-form {
   flex: 1;
-  background: white;
+  background: #ffffff;
   padding: 50px 40px;
   display: flex;
   flex-direction: column;
@@ -99,7 +99,7 @@
 
 .modal-cadastro .modal-right-orange {
   flex: 1;
-  background: linear-gradient(135deg, #D46B0F, #ff8533);
+  background: #5a1414;
   color: white;
   display: flex;
   flex-direction: column;
@@ -111,7 +111,7 @@
 
 .modal-login .modal-left-orange {
   flex: 1;
-  background: linear-gradient(135deg, #D46B0F, #ff8533);
+  background: #5a1414;
   color: white;
   display: flex;
   flex-direction: column;
@@ -149,7 +149,7 @@
 .btn-fazer-login,
 .btn-fazer-cadastro {
   background: white;
-  color: #D46B0F;
+  color: #5a1414;
   border: none;
   padding: 15px 40px;
   border-radius: 10px;
@@ -178,38 +178,45 @@
 
 .form-group {
   margin-bottom: 25px;
+  color: #ffffff;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #333;
+  color: #ffffff;
   font-size: 15px;
   font-family: 'Montserrat Alternates', sans-serif;
 }
 
-.form-group input {
+.form-groupL {
+  color: #353535;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.form-groupL input {
   width: 100%;
   padding: 15px 20px;
-  border: 1px solid #E0E0E0;
+  border: 1px solid #cdcaca;
   border-radius: 10px;
   font-size: 15px;
   font-family: 'Martel Sans', sans-serif;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
-  background: #FAFAFA;
+  background: #eceaea;
   box-sizing: border-box;
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #D46B0F;
+  border-color: #5a1414;
   background: white;
   box-shadow: 0 0 0 3px rgba(212, 107, 15, 0.1);
 }
 
 .form-group input::placeholder {
-  color: #999;
+  color: #323232;
   font-size: 14px;
   font-family: 'Martel Sans', sans-serif;
 }
@@ -288,7 +295,7 @@
 }
 
 .password-toggle:hover {
-  color: #D46B0F;
+  color: #5a1414;
 }
 
 .checkbox-group {
@@ -316,7 +323,7 @@
 .btn-cadastrar,
 .btn-entrar {
   width: 100%;
-  background: #D46B0F;
+  background: #5a1414;
   color: white;
   border: none;
   padding: 18px;
@@ -331,7 +338,7 @@
 
 .btn-cadastrar:hover,
 .btn-entrar:hover {
-  background: #b85e0d;
+  background: #7a2525;
   transform: translateY(-2px);
 }
 
@@ -341,7 +348,7 @@
 }
 
 .forgot-password a {
-  color: #D46B0F;
+  color: #5a1414;
   text-decoration: none;
   font-size: 14px;
   font-family: 'Martel Sans', sans-serif;
@@ -349,7 +356,7 @@
 }
 
 .forgot-password a:hover {
-  color: #b85e0d;
+  color: #652525;
   text-decoration: underline;
 }
 

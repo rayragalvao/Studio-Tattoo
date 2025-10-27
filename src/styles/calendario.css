@@ -1,10 +1,10 @@
 .calendario-container {
   width: 100%;
-  max-width: 400px;
-  margin: 0 auto;
+  max-width: 350px;
+  margin: 0;
   background: var(--branco);
   border-radius: 8px;
-  padding: 20px;
+  padding: 15px;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   border: 2px solid #e1e5e9;
 }
@@ -178,6 +178,24 @@
 .cor-selecionado {
   background-color: var(--vermelho);
   border-color: var(--vermelho);
+}
+
+/* Ajustes para layout lado a lado no agendamento */
+.calendario-horarios-container .calendario-container {
+  max-width: 100%;
+  margin: 0;
+}
+
+@media (min-width: 769px) {
+  .calendario-horarios-container .calendario-container {
+    max-width: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  .calendario-horarios-container .calendario-container {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 480px) {

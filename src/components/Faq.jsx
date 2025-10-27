@@ -19,8 +19,8 @@ const perguntas = [
     resposta: "Durma bem, alimente-se antes e evite bebidas alcoólicas no dia da tatuagem."
   },
   {
-    pergunta: "Quais cuidados devo ter antes de tatuar?",
-    resposta: "Durma bem, alimente-se antes e evite bebidas alcoólicas no dia da tatuagem."
+    pergunta: "Quais cuidados devo ter depois de tatuar?",
+    resposta: "Beba bastante água e continue se alimentando bem, além de sempre hidratar o local da sua tattoo."
   }
 ];
 

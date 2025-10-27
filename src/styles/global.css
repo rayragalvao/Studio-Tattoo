@@ -28,9 +28,7 @@ body {
     min-height: 100vh;
     width: 100vw;
     overflow-x: hidden;
-    background: linear-gradient(180deg,
-            rgba(34, 34, 34, 0.25) 0%,
-            var(--vermelho) 100%);
+    background: var(--cinza-escuro);
     padding-bottom: 80px;
     color: var(--branco);
     font-family: 'Montserrat Alternates', sans-serif;
@@ -100,13 +98,13 @@ body {
 }
 
 .menu a:hover {
-    color: var(--laranja);
+    color: var(--vermelho);
 }
 
 .menu a.active,
 .menu a.menu-link.active {
-    color: var(--laranja) !important;
-    border-bottom: 2px solid var(--laranja);
+    color: var(--vermelho) !important;
+    border-bottom: 2px solid var(--vermelho);
     padding-bottom: 2px;
 }
 
@@ -130,7 +128,7 @@ a:hover {
 }
 
 .btn-cadastro {
-    background: var(--laranja);
+    background: var(--vermelho);
     color: var(--branco);
     padding: 7px 14px;
     border-radius: 8px;
@@ -145,7 +143,7 @@ a:hover {
 }
 
 .btn-cadastro:hover {
-    background: #b85e0d;
+    background: #b4292b;
     transform: translateY(-2px);
 }
 
@@ -157,20 +155,20 @@ a:hover {
     text-decoration: none;
     font-weight: 600;
     font-size: 13px;
-    border: 1px solid rgba(212, 107, 15, 0.95);
+    border: 1px solid #870C0E;
     transition: background 0.3s ease, transform 0.2s ease;
     cursor: pointer;
     font-family: inherit;
 }
 
 .btn-login:hover {
-    background: rgba(212, 107, 15, 0.15);
+    background: #8423253b;
     transform: translateY(-2px);
 }
 
 .btn-primary {
     display: inline-block;
-    background: var(--laranja);
+    background: var(--vermelho);
     color: var(--branco);
     padding: 12px 20px;
     border-radius: 8px;
@@ -180,7 +178,7 @@ a:hover {
 }
 
 .btn-primary:hover {
-    background: #b85e0d;
+    background: #972426;
     transform: translateY(-2px);
 }
 
@@ -217,7 +215,7 @@ a:hover {
     align-items: start;
     padding: 0 20px;
     margin: 0 auto;
-    background: var(--vermelho);
+    background: var(--cinza-escuro);
 }
 
 .foto {
@@ -261,7 +259,7 @@ a:hover {
 .geolocalizacao {
     text-align: center;
     padding: 70px 20px;
-    background: linear-gradient(to bottom, #8b0000, #1c1c1c);
+    background: var(--cinza-escuro);
     color: #fff;
 }
 
@@ -301,7 +299,7 @@ a:hover {
 .instagram {
     text-align: center;
     padding: 90px 20px;
-    background: linear-gradient(to bottom, #1c1c1c 50%, #8b0000);
+    background: var(--cinza-escuro);
     color: #fff;
 }
 
@@ -362,7 +360,7 @@ a:hover {
 .feedback {
     text-align: center;
     padding: 50px 20px;
-    background: linear-gradient(to top, #1c1c1c 50%, #8b0000);
+    background: var(--cinza-escuro);
     color: #fff;
 }
 
@@ -383,8 +381,9 @@ a:hover {
 }
 
 .card {
-    background: #fff;
+    background: #dbdbdb;
     border-radius: 12px;
+    border: solid 2px #870C0E;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     padding: 120px 55px;
     max-width: 280px;
@@ -423,7 +422,7 @@ a:hover {
 }
 
 .faq {
-    background: linear-gradient(to bottom, #1c1c1c 30%, #8b0000);
+    background: var(--cinza-escuro);
     padding: 90px 150px;
     text-align: center;
 }
@@ -465,7 +464,7 @@ a:hover {
 }
 
 .faq-pergunta:hover {
-    background: #1c1c1c;
+    background: #870C0E;
     color: #ececec;
 }
 

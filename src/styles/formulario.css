@@ -133,13 +133,44 @@
 }
 
 .checkbox-item input[type="checkbox"] {
-  width: auto;
-  height: auto;
+  /* Replace default checkbox with a custom styled box so checked state is visible */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
   margin: 0;
-  padding: 0;
-  border: none;
-  box-shadow: none;
-  background: transparent;
+  margin-right: 8px;
+  border: 2px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  background: #ffffff;
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  transition: all 0.12s ease;
+  cursor: pointer;
+}
+
+.checkbox-item input[type="checkbox"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+}
+
+.checkbox-item input[type="checkbox"]:checked {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+  box-shadow: 0 0 0 6px rgba(212, 107, 15, 0.08);
+}
+
+/* Draw a check mark when checked */
+.checkbox-item input[type="checkbox"]:checked::after {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 10px;
+  border: solid var(--branco);
+  border-width: 0 2px 2px 0;
+  transform: translate(4px, 1px) rotate(45deg);
 }
 
 .form-group textarea {

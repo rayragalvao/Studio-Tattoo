@@ -126,15 +126,16 @@ const Orcamento = () => {
 
       // Busca o token JWT do storage usando AuthStorage
       const token = AuthStorage.getToken();
-      const headers = {};
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
+      
+      // Não definimos Content-Type no headers porque o browser vai configurar automaticamente
+      // com o boundary correto para multipart/form-data
       const response = await fetch(`${apiUrl}/orcamento`, {
         method: 'POST',
-        headers,
+        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
         body: formData,
+        // Adiciona essas opções para debug e melhor tratamento de erros
+        mode: 'cors',
+        credentials: 'include'
       });
 
       const text = await response.text().catch(() => '');

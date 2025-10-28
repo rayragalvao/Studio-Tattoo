@@ -25,7 +25,7 @@ public class OrcamentoController {
 
     @PostMapping
     @Operation(summary = "Inserir orçamento no banco de dados")
-    public ResponseEntity<?> postOrcamento(@RequestBody DadosCadastroOrcamento dados) {
+    public ResponseEntity<?> postOrcamento(@ModelAttribute DadosCadastroOrcamento dados) {
         log.info(dados.toString());
         var novoOrcamento = service.postOrcamento(dados);
         return ResponseEntity.status(201).body(Map.of(

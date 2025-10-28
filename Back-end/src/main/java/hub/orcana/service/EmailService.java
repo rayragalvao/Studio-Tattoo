@@ -1,12 +1,13 @@
 package hub.orcana.service;
 
+import hub.orcana.observer.EstoqueObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailService {
+public class EmailService implements EstoqueObserver {
 
     @Autowired
     private JavaMailSender mailSender;
@@ -41,5 +42,28 @@ public class EmailService {
                 .replace("$codigoOrcamento", codigoOrcamento);
 
         enviarTextoSimples(emailCliente, assunto, textoFinal);
+    }
+    @Override
+    public void update(String materialNome, int quantidadeAtual) {
+        // Lógica para verificar se o alerta é necessário
+        int LIMITE_ALERTA = 5;
+
+        if (quantidadeAtual <= LIMITE_ALERTA) {
+            alertaEstoque(materialNome, quantidadeAtual);
+        }
+    }
+
+    private void alertaEstoque(String materialNome, int quantidadeAtual) {
+        String destinatario = "orcanatechschool@gmail.com"; // Deve ser configurável
+        String assunto = "ALERTA DE ESTOQUE BAIXO: " + materialNome;
+        String texto = String.format(
+                "Atenção! O material '%s' atingiu o limite crítico.\n" +
+                        "Quantidade atual: %d. Por favor, providencie a compra o mais rápido possível.",
+                materialNome, quantidadeAtual
+        );
+
+        // Chamamos o método existente de envio
+        enviarTextoSimples(destinatario, assunto, texto);
+        System.out.println("[EmailService] Alerta enviado para: " + destinatario); // Para debug
     }
 }

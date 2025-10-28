@@ -2,21 +2,50 @@ package hub.orcana.service;
 
 import hub.orcana.dto.DadosCadastroMaterial;
 import hub.orcana.exception.DependenciaNaoEncontradaException;
+import hub.orcana.observer.EstoqueObserver;
+import hub.orcana.observer.EstoqueSubject;
+import hub.orcana.tables.EquipamentoUso;
 import hub.orcana.tables.Estoque;
 import hub.orcana.tables.repository.EstoqueRepository;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Service
-public class EstoqueService {
+public class EstoqueService implements EstoqueSubject {
     private final EstoqueRepository repository;
+    private final List<EstoqueObserver> observers;
 
-    public EstoqueService(EstoqueRepository repository) {
+    public EstoqueService(EstoqueRepository repository, EmailService emailService) {
         this.repository = repository;
+        this.observers = new ArrayList<>();
+
+        this.attach(emailService);
+        System.out.println("EmailService registrado como Observer de Estoque.");
     }
+
+    @Override
+    public void attach(EstoqueObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void detach(EstoqueObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String materialNome, int quantidadeAtual) {
+        for (EstoqueObserver observer : observers) {
+            observer.update(materialNome, quantidadeAtual);
+        }
+    }
+
 
     // Lista todos os materiais existentes
     public List<Estoque> getEstoque() {
@@ -57,8 +86,14 @@ public class EstoqueService {
         if (!repository.existsById(id)) {
             throw new DependenciaNaoEncontradaException("Material não encontrado.");
         }
+        // Persisti a mudançaS
         estoque.setId(id);
-        return repository.save(estoque);
+        Estoque estoqueAtualizado = repository.save(estoque);
+
+        // Notifica os Observers
+        // Usamos o objeto EstoqueAtualizado, que contém o estado que mudou.
+        notifyObservers(estoqueAtualizado.getNome(), estoqueAtualizado.getQuantidade());
+        return estoqueAtualizado;
     }
 
     // Exclui um estoque existente pelo ID

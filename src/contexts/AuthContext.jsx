@@ -3,6 +3,7 @@ import AuthService from '../services/AuthService.js';
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -61,6 +62,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (userData) => {
+    // eslint-disable-next-line no-useless-catch
     try {
       const response = await AuthService.register(userData);
       return response;

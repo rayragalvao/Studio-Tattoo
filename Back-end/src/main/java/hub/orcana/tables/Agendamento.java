@@ -3,6 +3,7 @@ package hub.orcana.tables;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
@@ -10,9 +11,9 @@ import java.time.LocalDateTime;
 public class Agendamento {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @FutureOrPresent @NotNull
+    @FutureOrPresent @NotNull @Setter
     private LocalDateTime dataHora;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) @Setter
     private StatusAgendamento status;
     @ManyToOne
     @JoinColumn(name = "usuario_id")

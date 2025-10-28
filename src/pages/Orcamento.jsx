@@ -7,7 +7,7 @@ import '../styles/global.css';
 import '../styles/formulario.css';
 import { useLocation } from 'react-router-dom';
 import { BarraCarregamento } from '../components/BarraCarregamento';
-
+import AuthStorage from '../services/AuthStorage.js';
 // eslint-disable-next-line no-unused-vars
 const apiUrl = "http://localhost:8080";
 
@@ -124,8 +124,16 @@ const Orcamento = () => {
       }
       formData.append('codigoOrcamento', codigo);
 
+      // Busca o token JWT do storage usando AuthStorage
+      const token = AuthStorage.getToken();
+      const headers = {};
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
       const response = await fetch(`${apiUrl}/orcamento`, {
         method: 'POST',
+        headers,
         body: formData,
       });
 

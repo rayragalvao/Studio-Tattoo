@@ -13,6 +13,24 @@ const Navbar = () => {
   const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [transitionClass, setTransitionClass] = useState("");
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const getPrimeiroNome = (nomeCompleto) => {
+    if (!nomeCompleto) return 'Usuário';
+    return nomeCompleto.trim().split(' ')[0];
+  };
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    
+    document.body.classList.add('logging-out');
+    
+    setTimeout(() => {
+      logout();
+      setIsLoggingOut(false);
+      document.body.classList.remove('logging-out');
+    }, 800);
+  };
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -67,13 +85,21 @@ const Navbar = () => {
     }, 300);
   };
 
-  const menuItems = [
+  const baseMenuItems = [
     { label: "Início", to: "/" },
     { label: "Portfólio", to: "/portfolio" },
-    { label: "Agendamento", to: "/agendamento" },
-    { label: "Orçamento", to: "/orcamento" },
-    { label: "Estoque", to: "/estoque" }
+    { label: "Orçamento", to: "/orcamento" }
   ];
+
+  let menuItems = [...baseMenuItems];
+  
+  if (isAuthenticated) {
+    if (user?.isAdmin) {
+      menuItems.push({ label: "Estoque", to: "/estoque" });
+    } else {
+      menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
+    }
+  }
 
   return (
     <div className="nav-outer">
@@ -101,9 +127,23 @@ const Navbar = () => {
         
         <div className="actions">
           {isAuthenticated ? (
-            <div className="user-info">
-              <span className="user-name">Olá, {user?.nome || 'Usuário'}</span>
-              <button onClick={logout} className="btn-logout">Sair</button>
+            <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
+              <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>
+              <button onClick={handleLogout} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
+                {isLoggingOut ? (
+                  <span className="logout-animation">
+                    <svg className="spinner" width="16" height="16" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeDasharray="31.416" strokeDashoffset="31.416">
+                        <animate attributeName="stroke-dasharray" dur="2s" values="0 31.416;15.708 15.708;0 31.416" repeatCount="indefinite"/>
+                        <animate attributeName="stroke-dashoffset" dur="2s" values="0;-15.708;-31.416" repeatCount="indefinite"/>
+                      </circle>
+                    </svg>
+                    Saindo...
+                  </span>
+                ) : (
+                  'Sair'
+                )}
+              </button>
             </div>
           ) : (
             <>

@@ -71,7 +71,8 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
       try {
         const response = await login({
           email: formData.email,
-          senha: formData.senha
+          senha: formData.senha,
+          permanecerConectado: formData.permanecerConectado
         });
 
         console.log('Login realizado com sucesso:', response);
@@ -128,7 +129,7 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
         </div>
 
         <div className="modal-right-form">
-          <form onSubmit={handleSubmit} className="login-form">
+          <form onSubmit={handleSubmit} className="login-form" noValidate>
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
@@ -142,7 +143,6 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
                 autoComplete="off"
                 required
               />
-              {errors.email && <span className="error-message">{errors.email}</span>}
             </div>
 
             <div className="form-group">
@@ -184,7 +184,6 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
                   </svg>
                 </button>
               </div>
-              {errors.senha && <span className="error-message">{errors.senha}</span>}
             </div>
 
             <div className="form-group checkbox-group">
@@ -197,12 +196,6 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
               />
               <label htmlFor="permanecerConectado">Permanecer conectado?</label>
             </div>
-
-            {errors.geral && (
-              <div className="error-message general-error" style={{ marginBottom: '1rem', textAlign: 'center' }}>
-                {errors.geral}
-              </div>
-            )}
 
             <button type="submit" className="btn-entrar" disabled={isLoading}>
               {isLoading ? 'Entrando...' : 'Entrar'}

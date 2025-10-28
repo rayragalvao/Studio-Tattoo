@@ -10,8 +10,9 @@ class AuthService {
       });
 
       if (response.token) {
-        AuthStorage.saveToken(response.token);
-        AuthStorage.saveUser(response);
+        const rememberMe = credentials.permanecerConectado || false;
+        AuthStorage.saveToken(response.token, rememberMe);
+        AuthStorage.saveUser(response, rememberMe);
         return response;
       }
 

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import AuthStorage from '../services/AuthStorage.js';
 
 // Configuração base da API
 const api = axios.create({
@@ -10,10 +11,15 @@ const api = axios.create({
   }
 });
 
-// Interceptor para requisições (opcional - para adicionar tokens, logs, etc.)
+// Interceptor para requisições - adiciona token JWT automaticamente
 api.interceptors.request.use(
   (config) => {
-    console.log('Fazendo requisição:', config.method?.toUpperCase(), config.url);
+    // Busca o token usando AuthStorage
+    const token = AuthStorage.getToken();
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {

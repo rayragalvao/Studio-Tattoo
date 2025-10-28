@@ -15,7 +15,7 @@
   position: relative;
   max-width: 800px;
   width: 90%;
-  height: 500px;
+  height: 575px;
   background: white;
   border-radius: 20px;
   overflow: hidden;
@@ -177,17 +177,69 @@
 }
 
 .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 16px;
   color: #ffffff;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 5px;
   font-weight: 600;
   color: #ffffff;
-  font-size: 15px;
+  font-size: 14px;
   font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px 15px;
+  border: 1px solid #cdcaca;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background: #ffffff;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.form-group input:invalid,
+.form-groupL input:invalid {
+  box-shadow: none;
+}
+
+.form-group input:required:invalid,
+.form-groupL input:required:invalid {
+  box-shadow: none;
+}
+
+.form-group input:focus:invalid,
+.form-groupL input:focus:invalid {
+  outline: none;
+  box-shadow: none;
+}
+
+.form-group input,
+.form-groupL input,
+.cadastro-form input,
+.login-form input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.form-group input::-webkit-validation-bubble,
+.form-groupL input::-webkit-validation-bubble,
+.cadastro-form input::-webkit-validation-bubble,
+.login-form input::-webkit-validation-bubble {
+  display: none;
+}
+
+.form-group input::-webkit-validation-bubble-message,
+.form-groupL input::-webkit-validation-bubble-message,
+.cadastro-form input::-webkit-validation-bubble-message,
+.login-form input::-webkit-validation-bubble-message {
+  display: none;
 }
 
 .form-groupL {
@@ -298,6 +350,158 @@
   color: #5a1414;
 }
 
+.password-input-container {
+  position: relative;
+}
+
+.password-tooltip {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 15px);
+  width: 280px;
+  background: #ffffff;
+  border: 2px solid #5a1414;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  animation: tooltipFadeIn 0.3s ease-out;
+}
+
+.password-tooltip::before {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: -8px;
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #5a1414;
+}
+
+.password-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid #ffffff;
+}
+
+.password-tooltip h4 {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5a1414;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
+
+.password-tooltip ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.password-tooltip li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-family: 'Martel Sans', sans-serif;
+  transition: color 0.2s ease;
+}
+
+.password-tooltip li:last-child {
+  margin-bottom: 0;
+}
+
+.password-tooltip .icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.password-tooltip li.valid {
+  color: #28a745;
+}
+
+.password-tooltip li.valid .icon {
+  background: #28a745;
+  color: white;
+}
+
+.password-tooltip li.invalid {
+  color: #666;
+}
+
+.password-tooltip li.invalid .icon {
+  background: #ddd;
+  color: #999;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .password-tooltip {
+    top: auto;
+    bottom: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    width: auto;
+  }
+  
+  .password-tooltip::before {
+    top: auto;
+    bottom: -8px;
+    left: 20px;
+    border-top: 8px solid #5a1414;
+    border-bottom: none;
+    border-right: 8px solid transparent;
+    border-left: 8px solid transparent;
+  }
+  
+  .password-tooltip::after {
+    top: auto;
+    bottom: -6px;
+    left: 22px;
+    border-top: 6px solid #ffffff;
+    border-bottom: none;
+    border-right: 6px solid transparent;
+    border-left: 6px solid transparent;
+  }
+  
+  @keyframes tooltipFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
 .checkbox-group {
   display: flex;
   align-items: center;
@@ -326,14 +530,14 @@
   background: #5a1414;
   color: white;
   border: none;
-  padding: 18px;
-  border-radius: 10px;
-  font-size: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
   font-weight: 600;
   font-family: 'Montserrat Alternates', sans-serif;
   cursor: pointer;
   transition: background 0.3s ease, transform 0.2s ease;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .btn-cadastrar:hover,

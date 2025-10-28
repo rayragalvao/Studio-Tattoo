@@ -479,7 +479,7 @@ const Estoque = () => {
             duracao={4000}
         />
       <Navbar />
-        <h1> Estoque </h1>
+        <h1 className="h1-estoque"> Estoque </h1>
         <div className="section-estoque">
             <div className="card-estoque pesquisa-estoque">
                 <div className="div-barra-pesquisa">

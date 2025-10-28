@@ -16,7 +16,7 @@ const Home = () => {
       <Hero />
       <Sobre />
       <Geolocalizacao />
-      <Instagram />
+      {/* <Instagram /> */}
       <FeedbackClientes />
       <Faq />
       <Footer />

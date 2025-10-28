@@ -51,7 +51,7 @@ html {
     color: var(--cinza-escuro);
 }
 
-h1 {
+.h1-estoque {
     font-family: "Montserrat Alternates", sans-serif;
     font-size: 2em;
     font-weight: 800;

@@ -45,6 +45,7 @@ public class SecurityConfiguracao {
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
+            "/v3/api-docs.yaml",
             "/h2-console/**",
             "/auth/**",
             "/usuario/cadastro",
@@ -120,8 +121,8 @@ public class SecurityConfiguracao {
         configuracao.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:5173"
+                "http://localhost:5174",
+                "http://localhost:8080"
         ));
 
         configuracao.setAllowedMethods(Arrays.asList(

@@ -9,8 +9,9 @@ import java.util.List;
 @ToString
 @Entity
 public class Orcamento {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Id
+    private String codigoOrcamento;
     private String email;
     private String ideia;
     private Double valor;
@@ -26,7 +27,19 @@ public class Orcamento {
 
     public Orcamento() {}
 
-    public Orcamento(String email, String ideia, Double tamanho, String cores, String localCorpo, List<String> imagemReferencia) {
+    public Orcamento(String codigoOrcamento, String email, String ideia, Double tamanho, String cores, String localCorpo, List<String> imagemReferencia) {
+        this.codigoOrcamento = codigoOrcamento;
+        this.email = email;
+        this.ideia = ideia;
+        this.tamanho = tamanho;
+        this.cores = cores;
+        this.localCorpo = localCorpo;
+        this.imagemReferencia = imagemReferencia;
+    }
+
+    public Orcamento(String codigoOrcamento, Long id, String email, String ideia, Double tamanho, String cores, String localCorpo, List<String> imagemReferencia) {
+        this.codigoOrcamento = codigoOrcamento;
+        this.id = id;
         this.email = email;
         this.ideia = ideia;
         this.tamanho = tamanho;
@@ -43,9 +56,16 @@ public class Orcamento {
         this.usuario = usuario;
     }
 
-    public Long getId() {
-        return id;
-    }
+
+    public String getCodigoOrcamento() { return codigoOrcamento; }
+
+
+    public Long getLinhaId() { return id; }
+
+    public void setLinhaId(Long id) { this.id = id; }
+
+    // Compatibilidade: getId() retorna o id numérico como antes
+    public Long getId() { return this.id; }
 
     public String getIdeia() {
         return ideia;

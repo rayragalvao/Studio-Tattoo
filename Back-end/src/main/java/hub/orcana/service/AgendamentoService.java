@@ -54,7 +54,7 @@ public class AgendamentoService {
         if (agendamento.getOrcamento() == null || agendamento.getOrcamento().getId() == null)
             throw new IllegalArgumentException("Orçamento é obrigatório.");
 
-        Orcamento orcamento = orcamentoRepository.findById(agendamento.getOrcamento().getId())
+        Orcamento orcamento = orcamentoRepository.findById(String.valueOf(agendamento.getOrcamento().getId()))
                 .orElseThrow(() -> new IllegalArgumentException("Orçamento não encontrado."));
 
         agendamento.setUsuario(usuario);
@@ -77,7 +77,7 @@ public class AgendamentoService {
         }
 
         if (agendamento.getOrcamento() != null) {
-            Orcamento orcamento = orcamentoRepository.findById(agendamento.getOrcamento().getId())
+            Orcamento orcamento = orcamentoRepository.findById(String.valueOf(agendamento.getOrcamento().getId()))
                     .orElseThrow(() -> new IllegalArgumentException("Orçamento não encontrado."));
             existente.setOrcamento(orcamento);
         }
@@ -119,7 +119,7 @@ public class AgendamentoService {
     public Agendamento atualizarOrcamento(Long agendamentoId, Long orcamentoId) {
         Agendamento agendamento = repository.findById(agendamentoId)
                 .orElseThrow(() -> new IllegalArgumentException("Agendamento não encontrado."));
-        Orcamento orcamento = orcamentoRepository.findById(orcamentoId)
+        Orcamento orcamento = orcamentoRepository.findById(String.valueOf(orcamentoId))
                 .orElseThrow(() -> new IllegalArgumentException("Orçamento não encontrado."));
         agendamento.setOrcamento(orcamento);
         return repository.save(agendamento);

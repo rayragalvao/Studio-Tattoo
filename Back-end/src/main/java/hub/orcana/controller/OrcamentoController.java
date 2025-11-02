@@ -5,8 +5,11 @@ import hub.orcana.tables.Estoque;
 import hub.orcana.tables.Orcamento;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 import java.util.List;
 import java.util.Map;
@@ -23,14 +26,14 @@ public class OrcamentoController {
         this.service = service;
     }
 
-    @PostMapping
-    @Operation(summary = "Inserir orçamento no banco de dados")
-    public ResponseEntity<?> postOrcamento(@RequestBody DadosCadastroOrcamento dados) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Inserir orçamento no banco de dados e enviar e-mail de confirmação ao cliente")
+    public ResponseEntity<?> postOrcamento(@ModelAttribute DadosCadastroOrcamento dados) {
         log.info(dados.toString());
         var novoOrcamento = service.postOrcamento(dados);
         return ResponseEntity.status(201).body(Map.of(
                 "success", true,
-                "id", novoOrcamento.getId(),
+                "id", novoOrcamento.getCodigoOrcamento(),
                 "message", "Orçamento criado com sucesso"
         ));
     }

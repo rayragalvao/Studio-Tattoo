@@ -19,7 +19,7 @@ public class Agendamento {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
     @ManyToOne
-    @JoinColumn(name = "orcamento_id")
+    @JoinColumn(name = "orcamento_codigoOrcamento", referencedColumnName = "codigoOrcamento")
     private Orcamento orcamento;
 
     public Orcamento getOrcamento() {

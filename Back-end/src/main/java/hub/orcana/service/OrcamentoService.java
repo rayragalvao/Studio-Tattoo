@@ -8,19 +8,50 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import hub.orcana.observer.OrcamentoObserver;
+import hub.orcana.observer.OrcamentoSubject;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-public class OrcamentoService {
+//@RequiredArgsConstructor comentei devido ao construtor manual, onde implemento o attach do observer
+public class OrcamentoService implements OrcamentoSubject{
 
     private static final Logger log = LoggerFactory.getLogger(OrcamentoService.class);
 
     private final OrcamentoRepository repository;
     private final GerenciadorDeArquivosService gerenciadorService;
     private final EmailService emailService;
+    private final List<OrcamentoObserver> observers = new ArrayList<>();
+
+    public OrcamentoService(OrcamentoRepository repository, GerenciadorDeArquivosService gerenciadorService, EmailService emailService) {
+        this.repository = repository;
+        this.gerenciadorService = gerenciadorService;
+        this.emailService = emailService;
+        this.attach(emailService);
+    }
+
+    @Override
+    public void attach(OrcamentoObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void detach(OrcamentoObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(Orcamento orcamento) {
+        for (OrcamentoObserver observer : observers) {
+            observer.updateOrcamento(orcamento);
+        }
+    }
+
+
 
     public Orcamento postOrcamento(DadosCadastroOrcamento dados) {
 
@@ -61,9 +92,9 @@ public class OrcamentoService {
 
         // tenta enviar e-mail, mas não falha a criação em caso de erro no envio
         try {
-            emailService.enviaEmailNovoOrcamento(dados.email(), codigo);
+            notifyObservers(salvo);
         } catch (Exception e) {
-            log.error("Falha ao enviar email de novo orçamento para {}: {}", dados.email(), e.getMessage());
+            log.error("Falha ao notificar Observers de novo orçamento {}: {}", salvo.getCodigoOrcamento(), e.getMessage());
         }
 
         return salvo;

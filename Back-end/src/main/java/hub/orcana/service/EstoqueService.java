@@ -8,16 +8,47 @@ import hub.orcana.tables.repository.EstoqueRepository;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import hub.orcana.observer.EstoqueObserver;
+import hub.orcana.observer.EstoqueSubject;
+import java.util.ArrayList;
 
 import java.util.List;
 
 @Service
-public class EstoqueService {
+public class EstoqueService implements EstoqueSubject{
     private final EstoqueRepository repository;
+    private final List<EstoqueObserver> observers;
 
-    public EstoqueService(EstoqueRepository repository) {
+    public EstoqueService(EstoqueRepository repository, EmailService emailService) {
         this.repository = repository;
+        this.observers = new ArrayList<>();
+        this.attach(emailService);
     }
+
+
+    @Override
+    public void attach(EstoqueObserver observer) {
+        if (!observers.contains(observer)) {
+            observers.add(observer);
+        }
+    }
+
+    @Override
+    public void detach(EstoqueObserver observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String materialNome, Double quantidadeAtual, Double minAviso) {
+        for (EstoqueObserver observer : observers) {
+            observer.updateEstoque(materialNome, quantidadeAtual, minAviso);
+        }
+    }
+
+
+
+
+
 
     // Lista todos os materiais existentes
     public List<DetalhesMaterial> getEstoque() {
@@ -109,6 +140,8 @@ public class EstoqueService {
         Estoque existente = repository.findById(id).orElseThrow();
         existente.setQuantidade(qtd);
         repository.save(existente);
+
+        notifyObservers(existente.getNome(), existente.getQuantidade(), existente.getMinAviso());
 
         DetalhesMaterial detalhes = new DetalhesMaterial(
                 existente.getId(),

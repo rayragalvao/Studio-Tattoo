@@ -101,4 +101,7 @@ public class Orcamento {
 
     public List<String> getImagemReferencia() { return imagemReferencia;}
 
+    public String getLocalCorpo() {
+        return localCorpo;
+    }
 }

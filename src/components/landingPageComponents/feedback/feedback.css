@@ -1,0 +1,63 @@
+.feedback {
+    text-align: center;
+    padding: 50px 20px;
+    background: var(--cinza-escuro);
+    color: #fff;
+}
+
+.feedback h1 {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: 32px;
+    margin-bottom: 4rem;
+    color: #fff;
+    font-weight: 800;
+}
+
+.feedback-cards {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.card {
+    background: #dbdbdb;
+    border-radius: 12px;
+    border: solid 2px #870C0E;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 120px 55px;
+    max-width: 280px;
+    flex: 1;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-top: -20px;
+    position: relative;
+    z-index: 1;
+    object-fit: cover;
+}
+
+.legenda {
+    font-style: italic;
+    color: #555;
+    margin-top: 40px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.nome {
+    font-weight: 600;
+    color: #222;
+    margin-top: 10px;
+}

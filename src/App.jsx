@@ -1,15 +1,15 @@
 import React  from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
-import AdminRoute from "./components/AdminRoute.jsx";
-import UserRoute from "./components/UserRoute.jsx";
-import Home from "./pages/Home";
-import Portfolio from "./pages/Portfolio";
-import Agendamento from "./pages/Agendamento";
-import Orcamento from "./pages/Orcamento";
+import AdminRoute from "./routes/AdminRoute.jsx";
+import UserRoute from "./routes/UserRoute.jsx";
+import { Home } from "./pages/Home/Home.jsx";
+import { Portfolio } from "./pages/portifolio/Portfolio.jsx";
+import { Agendamento } from "./pages/agendamento/Agendamento.jsx";
+import { Orcamento } from "./pages/orcamento/Orcamento.jsx";
 
 // Páginas protegidas
-import Estoque from "./pages/Estoque";
+import { Estoque } from "./pages/Estoque/Estoque.jsx";
 
 import "./styles/global.css";
 

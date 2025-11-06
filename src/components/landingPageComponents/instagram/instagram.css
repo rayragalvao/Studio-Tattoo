@@ -1,0 +1,60 @@
+.instagram {
+    text-align: center;
+    padding: 90px 20px;
+    background: var(--cinza-escuro);
+    color: #fff;
+}
+
+.instagram .texto {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.instagram .texto h1 {
+    font-size: 30px;
+}
+
+.instagram .logo {
+    width: 70px;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+.instagram .logo-insta {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    justify-content: flex-start;
+    padding-left: 250px;
+    margin-top: 30px;
+}
+
+.instagram .logo-insta img {
+    width: 65px;
+    height: auto;
+    border-radius: 50%;
+}
+
+.instagram .logo-insta h3 {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: 18px;
+}
+
+.instagram .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.instagram .grid img {
+    width: 90%;
+    height: 190px;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #fff;
+}

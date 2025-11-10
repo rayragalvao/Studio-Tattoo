@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
-import { useAuth } from '../contexts/AuthContext.jsx';
+import { useAuth } from '../../../contexts/AuthContext.jsx';
 import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../firebaseConfig";
-import GoogleLogo from '../assets/img/google.png'; 
-import ModalLoginConcluido from './ModalLoginConcluido'; // import do modal de sucesso
+import { auth, provider } from "../../../firebaseConfig";
+import GoogleLogo from '../../../assets/img/google.png'; 
+import ModalLoginConcluido from './ModalLoginConcluido';
 
 export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
   const { login } = useAuth();

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Modal = ({ isOpen, onClose, children, transitionClass = "" }) => {
+const Modal = ({ isOpen, onClose, children, transitionClass = "" }) => {
   if (!isOpen) return null;
 
   const handleOverlayClick = (e) => {
@@ -18,3 +18,5 @@ export const Modal = ({ isOpen, onClose, children, transitionClass = "" }) => {
     </div>
   );
 };
+
+export default Modal;

@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext.jsx";
 import logoBranca from "../../../assets/img/logo-branca.png";
-import { ModalCadastro } from "../modal/ModalCadastro.jsx";
-import { ModalLogin } from "../modal/ModalLogin.jsx";
-import "./navbar.css";
+import ModalCadastro from "../modal/ModalCadastro.jsx";
+import ModalLogin from "../modal/ModalLogin.jsx";
+import "./navBar.css";
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();

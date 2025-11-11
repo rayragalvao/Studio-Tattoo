@@ -1,0 +1,12 @@
+.grafico-wrapper {
+    flex-grow: 1;
+    position: relative;
+    height: 250px; 
+    max-height: 250px;
+}
+
+@media (max-width: 900px) {
+    .grafico-wrapper {
+        height: 300px; 
+    }
+}

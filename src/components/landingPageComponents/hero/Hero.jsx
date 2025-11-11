@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./hero.css";
-import { ModalCadastro } from "../../generalComponents/modal/ModalCadastro.jsx";
-import { ModalLogin } from "../../generalComponents/modal/ModalLogin.jsx";
+import ModalCadastro from "../../generalComponents/modal/ModalCadastro.jsx";
+import ModalLogin from "../../generalComponents/modal/ModalLogin.jsx";
 
 export const Hero = () => {
   const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);

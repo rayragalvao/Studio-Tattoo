@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Modal } from './Modal.jsx';
-import { ModalCadastroConcluido } from './ModalCadastroConcluido.jsx';
+import Modal from './Modal.jsx';
+import ModalCadastroConcluido from './ModalCadastroConcluido.jsx';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 
-export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" }) => {
+const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" }) => {
   const { register } = useAuth();
   
   const [formData, setFormData] = useState({
@@ -486,3 +486,5 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
     </Modal>
   );
 };
+
+export default ModalCadastro;

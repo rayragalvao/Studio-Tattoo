@@ -1,0 +1,276 @@
+.h1-dashboard {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--branco);
+    padding: 20px 40px 0;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-container {
+    padding: 20px 40px;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.dashboard-row-kpis,
+.dashboard-row-listas {
+    display: flex;
+    gap: 20px;
+}
+
+.dashboard-card {
+    background: var(--branco);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    flex: 1;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-card h3 {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--cinza-escuro);
+}
+
+.faturamento-card {
+    flex: 1;
+}
+
+.grafico-wrapper {
+    flex-grow: 1;
+    position: relative;
+    height: 250px; 
+    max-height: 250px;
+}
+
+.kpi-principal {
+    flex: 1.5; 
+    min-height: 250px;
+}
+
+.agendamento-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    flex-grow: 1;
+}
+
+.proximo-agendamento-card {
+    padding: 15px;
+    background-color: var(--branco); 
+    border-radius: 8px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.proximo-agendamento-card h3 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: #444;
+    font-weight: 500;
+}
+
+.proximo-agendamento-bloco-destaque {
+    background-color: var(--laranja); 
+    color: var(--branco);
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-top: 5px;
+    position: relative;
+    box-shadow: none; 
+}
+
+.proximo-agendamento-bloco-destaque .nome-cliente {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--branco);
+    margin: 5px 0;
+}
+
+.proximo-agendamento-bloco-destaque .data-hora {
+    font-size: 0.9rem;
+    color: var(--cinza-claro); 
+}
+
+.proximo-agendamento-bloco-destaque .btn-agendar-action {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--branco); 
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.agendamentos-dia-card .item-agendamento .btn-agendar-action {
+    position: static;
+    color: var(--cinza-escuro); 
+    margin-left: auto;
+}
+
+.orcamentos-pendentes-card {
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+}
+
+.orcamentos-pendentes-card h3 {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.numero-pendentes {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--laranja);
+}
+
+.agendamentos-dia-card {
+    flex: 1.5;
+}
+
+.alerta-estoque-card {
+    flex: 1;
+}
+
+.lista-agendamentos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item-agendamento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px; 
+    border-bottom: none; 
+    background-color: #bdbdbd;
+    border-radius: 6px; 
+    margin-bottom: 8px; 
+}
+
+.item-agendamento:last-child {
+    border-bottom: none;
+}
+
+.info-principal {
+    font-weight: 600;
+    display: block;
+    color: var(--cinza-escuro); 
+    font-size: 1rem;
+}
+
+.info-secundaria {
+    font-size: 0.8rem;
+    color: #666;
+    display: block;
+}
+
+.alertas-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    max-height: 200px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--vermelho) transparent;
+}
+
+.alertas-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.alertas-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.alertas-scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--vermelho);
+    border-radius: 3px;
+}
+
+.alerta-item-destaque {
+    background-color: var(--vermelho);
+    color: var(--branco);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.alerta-item-destaque:last-child {
+    margin-bottom: 0;
+}
+
+.item-nome-alerta {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.item-quantidade-alerta {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.btn-ver-estoque {
+    background: var(--branco);
+    color: var(--vermelho);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-ver-estoque:hover {
+    background: #f0f0f0;
+    transform: translateY(-1px);
+}
+
+/* Media Queries para responsividade */
+@media (max-width: 900px) {
+    .dashboard-row-kpis,
+    .dashboard-row-listas {
+        flex-direction: column;
+    }
+
+    .agendamento-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .kpi-principal, .faturamento-card, .agendamentos-dia-card, .alerta-estoque-card {
+        flex: 1;
+        min-height: auto;
+    }
+
+    /* Aumenta a altura do gráfico em telas menores */
+    .grafico-wrapper {
+        height: 300px; 
+    }
+}

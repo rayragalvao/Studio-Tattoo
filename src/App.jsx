@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import UserRoute from "./routes/UserRoute.jsx";
-import { Home } from "./pages/Home/Home.jsx";
+import { Home } from "./pages/home/Home.jsx";
 import { Portfolio } from "./pages/portifolio/Portfolio.jsx";
 import { Agendamento } from "./pages/agendamento/Agendamento.jsx";
 import { Orcamento } from "./pages/orcamento/Orcamento.jsx";
 
 // Páginas protegidas
-import { Estoque } from "./pages/Estoque/Estoque.jsx";
+import { Estoque } from "./pages/estoque/Estoque.jsx";
+import Dashboard from "./pages/dashboard/Dashboard.jsx";
 
 import "./styles/global.css";
 
@@ -26,6 +27,11 @@ function App() {
             </UserRoute>
           } />
           <Route path="/orcamento" element={<Orcamento />} />
+          <Route path="/dashboard" element={
+            <UserRoute>
+              <Dashboard />
+            </UserRoute>
+          } />
           <Route path="/estoque" element={
             <AdminRoute>
               <Estoque />

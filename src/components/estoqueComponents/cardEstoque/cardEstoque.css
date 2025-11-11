@@ -1,0 +1,296 @@
+/* CSS específico para os componentes CardEstoque */
+
+.card-estoque {
+    background-color: var(--branco);
+    border-radius: 0.5em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2em;
+}
+
+.adicionar-estoque {
+    max-height: fit-content;
+    width: 35em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.informacoes-estoque {
+    max-height: fit-content;
+    width: 30em;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.card-estoque h2 {
+    font-size: 1.5em;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 1em;
+    margin-top: 0em;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.linha {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 1em;
+}
+
+.linha div {
+    width: 50%;
+}
+
+.card-estoque input, .card-estoque select {
+    width: 100%;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    border: 2px solid #e1e5e9;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Martel Sans', sans-serif;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: var(--cinza-claro);
+    color: var(--cinza-escuro);
+}
+
+.campos-quantidade input {
+    margin-bottom: 0;
+}
+
+.card-estoque input::placeholder {
+    color: #adadad;
+    font-weight: 400;
+}
+
+.card-estoque input:focus, .card-estoque select:focus {
+    outline: none;
+    border-color: var(--laranja);
+    box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
+    transform: translateY(-1px);
+}
+
+.input-duplo {
+    display: flex;
+    gap: 1em;
+}
+
+.campos-quantidade {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+}
+
+.botoes {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1em;
+}
+
+.informacoes-estoque .botoes {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
+    align-items: end;
+}
+
+.informacoes-estoque .botoes button {
+    width: 100%;
+}
+
+.campos-quantidade .botoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5em;
+}
+
+.campos-quantidade .botoes button {
+    width: 100%;
+    border-radius: 0.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.adicionar-qtd-button {
+    background: var(--cinza-claro);
+    color: var(--verde);
+    border: 2px solid #e1e5e9;
+}
+
+.remover-qtd-button {
+    background: var(--cinza-claro);
+    color: var(--vermelho);
+    border: 2px solid #e1e5e9;
+}
+
+.campos-quantidade .botoes button:hover {
+    color: var(--branco);
+    border: 2px solid var(--vermelho-escuro);
+    box-shadow: 0 0 0 4px rgba(21, 82, 20, 0.2);
+}
+
+.submit-button {
+    height: auto;
+}
+
+.cancel-button {
+    height: auto;
+    background: var(--cinza);
+    color: var(--branco);
+}
+
+.excluir-button {
+    background: var(--vermelho);
+    color: var(--branco);
+    border: none;
+}
+
+.campo-obrigatorio {
+    color: var(--vermelho);
+    margin-left: 0.1em;
+}
+
+.fonte-negrito {
+    font-weight: 700;
+}
+
+/* Classe para elementos visíveis apenas para leitores de tela */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Responsividade - Telas Extra Grandes (1441px - 1920px) */
+@media (min-width: 1500px) and (max-width: 1920px) {
+    .card-estoque h2 {
+        font-size: 2em;
+        margin-bottom: 1em;
+    }
+
+    .card-estoque input, .card-estoque select {
+        font-size: 1em;
+    }
+
+    .submit-button {
+        height: 100%;
+        padding: 0.5em;
+        font-size: 0.8em;
+        border-radius: 0.4em;
+    }
+
+    .campos-quantidade .botoes button {
+        padding: 0.7em 1em;
+        height: 5em;
+    }
+}
+
+@media (max-width: 1024px) {
+    .adicionar-estoque {
+        width: 100%;
+        max-width: 70vw;
+        height: auto;
+        min-height: 30vh;
+    }
+
+    .card-estoque h2 {
+        font-size: 2em;
+        margin-bottom: 0.5em;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 0.5em;
+        font-size: 0.8em;
+        height: 3em;
+    }
+}
+
+/* Mobile Grande (481px - 767px) */
+@media (max-width: 767px) {
+    .card-estoque {
+        width: 100%;
+        max-width: none;
+        padding: 1em;
+        height: auto;
+    }
+
+    .adicionar-estoque {
+        min-height: 30vh;
+    }
+
+    .card-estoque h2 {
+        font-size: 1.1em;
+        margin-bottom: 0.5em;
+    }
+
+    .card-estoque input, .card-estoque select {
+        font-size: 12px;
+        padding: 6px 8px;
+    }
+
+    .input-duplo {
+        flex-direction: column;
+    }
+
+    .submit-button {
+        padding: 0.6em;
+        font-size: 0.9em;
+    }
+}
+
+/* Mobile Pequeno (até 480px) */
+@media (max-width: 480px) {
+    .card-estoque input, .card-estoque select {
+        font-size: 11px;
+        padding: 5px 6px;
+    }
+
+    .submit-button {
+        padding: 0.5em;
+        font-size: 0.6em;
+        height: 4em;
+    }
+
+    .informacoes-estoque .botoes button {
+        font-size: 0.6em;
+    }
+
+    .campos-quantidade .botoes span {
+        font-size: 2em;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .adicionar-estoque {
+        max-width: 60vw;
+        min-height: auto;
+    }
+}
+
+/* Ajustes para telas muito pequenas */
+@media (max-width: 380px) {
+    .card-estoque input, .card-estoque select {
+        font-size: 10px;
+        padding: 4px 5px;
+    }
+
+    .submit-button {
+        font-size: 0.8em;
+    }
+
+    .card-estoque h2 {
+        font-size: 1.2em;
+    }
+}

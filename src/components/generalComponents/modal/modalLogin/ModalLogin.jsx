@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal } from './Modal';
-import { useAuth } from '../../../contexts/AuthContext.jsx';
+import './modalLogin.css';
+import { Modal } from '../Modal.jsx';
+import { useAuth } from '../../../../contexts/AuthContext.jsx';
 import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "../../../firebaseConfig";
-import GoogleLogo from '../../../assets/img/google.png'; 
-import { ModalLoginConcluido } from './ModalLoginConcluido'; // import do modal de sucesso
+import { auth, provider } from "../../../../firebaseConfig.js";
+import GoogleLogo from '../../../../assets/img/google.png'; 
+import { ModalLoginConcluido } from '../ModalLoginConcluido.jsx'; // import do modal de sucesso
+import { Notificacao } from '../../notificacao/Notificacao.jsx';
 
 export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
   const { login } = useAuth();
@@ -19,13 +21,36 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [loginConcluido, setLoginConcluido] = useState(false); // controla modal de sucesso
+  const [notificacao, setNotificacao] = useState({
+    visivel: false,
+    tipo: 'sucesso',
+    titulo: '',
+    mensagem: ''
+  });
 
   useEffect(() => {
     if (isOpen) {
       clearForm();
       setShowPassword(false);
+      setNotificacao({ visivel: false, tipo: 'sucesso', titulo: '', mensagem: '' });
     }
   }, [isOpen]);
+
+  const mostrarNotificacao = (tipo, titulo, mensagem) => {
+    setNotificacao({
+      visivel: true,
+      tipo,
+      titulo,
+      mensagem
+    });
+  };
+
+  const fecharNotificacao = () => {
+    setNotificacao(prev => ({
+      ...prev,
+      visivel: false
+    }));
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -69,6 +94,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
       });
 
       console.log('Login realizado com sucesso:', response);
+      mostrarNotificacao('sucesso', 'Login Realizado!', 'Seja bem-vindo de volta!');
       clearForm();
       onClose();
 
@@ -76,11 +102,13 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
     } catch (error) {
       console.error('Erro no login:', error);
       if (error.status === 401 || error.status === 404) {
+        mostrarNotificacao('erro', 'Credenciais Inválidas', 'Email ou senha incorretos. Verifique seus dados.');
         setErrors({ email: 'Email ou senha incorretos', senha: 'Email ou senha incorretos' });
       } else if (error.status === 409) {
+        mostrarNotificacao('erro', 'Conflito nos Dados', error.message || 'Conflito nos dados informados.');
         setErrors({ email: error.message || 'Conflito nos dados' });
       } else {
-        setErrors({ geral: error.message || 'Erro interno do servidor. Tente novamente.' });
+        mostrarNotificacao('erro', 'Erro no Login', error.message || 'Erro interno do servidor. Tente novamente.');
       }
     } finally {
       setIsLoading(false);
@@ -95,13 +123,14 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
       login({ email: user.email, nome: user.displayName, uid: user.uid, permanecerConectado: true });
 
       console.log('Login Google realizado com sucesso:', user);
+      mostrarNotificacao('sucesso', 'Login com Google Realizado!', `Bem-vindo, ${user.displayName || user.email}!`);
       clearForm();
       onClose();
 
       setLoginConcluido(true); // abre modal de login concluído
     } catch (error) {
       console.error('Erro no login com Google:', error);
-      setErrors({ geral: 'Não foi possível realizar login com Google.' });
+      mostrarNotificacao('erro', 'Erro no Login Google', 'Não foi possível realizar login com Google. Tente novamente.');
     }
   };
 
@@ -156,13 +185,13 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
                     required
                   />
                   <button type="button" className="password-toggle" onClick={togglePasswordVisibility} style={{ minWidth:'24px', minHeight:'24px', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <span class="material-symbols-outlined">
                       {showPassword ? (
-                        <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.15C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
+                        'visibility_off'
                       ) : (
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                        'visibility'
                       )}
-                    </svg>
+                    </span>
                   </button>
                 </div>
               </div>
@@ -213,9 +242,9 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
                 Entrar com Google
               </button>
 
-              <div className="forgot-password">
+              {/* <div className="forgot-password">
                 <a href="#esqueci-senha">A tinta apagou na memória? Redefina sua senha</a>
-              </div>
+              </div> */}
             </form>
           </div>
         </div>
@@ -226,6 +255,16 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
         isVisible={loginConcluido} 
         onClose={() => setLoginConcluido(false)} 
         emailUsuario={formData.email} 
+      />
+      
+      <Notificacao
+        tipo={notificacao.tipo}
+        titulo={notificacao.titulo}
+        mensagem={notificacao.mensagem}
+        visivel={notificacao.visivel}
+        onFechar={fecharNotificacao}
+        duracao={5000}
+        posicao={1}
       />
     </>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Modal from './Modal';
+import { Modal } from './Modal';
 import { useAuth } from '../../../contexts/AuthContext.jsx';
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../../firebaseConfig";

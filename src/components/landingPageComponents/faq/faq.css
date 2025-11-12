@@ -17,6 +17,22 @@
     gap: 20px;
 }
 
+.faq {
+    color: #fff;
+}
+
+.faq h1 {
+    max-width: 68ch;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.faq-lista {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .faq-item {
     background: #ececec;
     border-radius: 10px;
@@ -58,4 +74,40 @@
     font-size: 15px;
     color: #333;
     line-height: 1.6;
+}
+
+/* Responsive adjustments for FAQ */
+@media (max-width: 1024px) {
+    .faq {
+        padding: 80px 40px;
+    }
+    .faq h1 {
+        font-size: 28px;
+        margin-bottom: 40px;
+    }
+}
+
+@media (max-width: 768px) {
+    .faq {
+        padding: 60px 18px;
+    }
+    .faq h1 {
+        font-size: 24px;
+        text-align: center;
+    }
+    .faq-lista {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .faq {
+        padding: 40px 12px;
+    }
+    .faq h1 {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
 }

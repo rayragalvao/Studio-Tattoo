@@ -21,3 +21,5 @@ export const Modal = ({ isOpen, onClose, children, transitionClass = ""}) => {
     </div>
   );
 };
+
+export default Modal;

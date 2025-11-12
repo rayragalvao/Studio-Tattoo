@@ -45,3 +45,5 @@ export const ModalLoginConcluido = ({
     </div>
   );
 };
+
+export default ModalLoginConcluido;

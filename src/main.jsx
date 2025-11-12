@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import './styles/global.css'
-import './components/generalComponents/modal/Modal.css'
+import './components/generalComponents/modal/modal.css'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 

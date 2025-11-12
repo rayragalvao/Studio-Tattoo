@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext.jsx";
 import logoBranca from "../../../assets/img/logo-branca.png";
@@ -36,6 +36,14 @@ export const Navbar = () => {
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.classList.add('menu-open');
+    } else {
+      document.body.classList.remove('menu-open');
+    }
+  }, [isMenuOpen]);
 
   const closeMenu = () => {
     setIsMenuOpen(false);
@@ -112,7 +120,25 @@ export const Navbar = () => {
           </Link>
         </div>
         
-        <ul className={`menu ${isMenuOpen ? 'open' : ''}`}>
+        <button
+          className={`nav-toggle ${isMenuOpen ? 'open' : ''}`}
+          aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+          aria-expanded={isMenuOpen}
+          aria-controls="main-menu"
+          onClick={toggleMenu}
+        >
+          <span className="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <ul id="main-menu" className={`menu ${isMenuOpen ? 'open' : ''}`}>
+          {/* close button visible on mobile inside the drawer */}
+          <li className="menu-close-wrapper">
+            <button className="menu-close" aria-label="Fechar menu" onClick={closeMenu}>✕</button>
+          </li>
           {menuItems.map((item, index) => (
             <li key={index}>
               <NavLink 
@@ -124,6 +150,24 @@ export const Navbar = () => {
               </NavLink>
             </li>
           ))}
+          {/* mobile actions - shown only on small screens via CSS */}
+          <li className="mobile-actions">
+            <div className="actions-mobile">
+              {isAuthenticated ? (
+                <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
+                  <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>
+                  <button onClick={() => { handleLogout(); closeMenu(); }} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
+                    {isLoggingOut ? 'Saindo...' : 'Sair'}
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <button onClick={() => { openCadastroModal(); closeMenu(); }} className="btn-cadastro">Cadastro</button>
+                  <button onClick={() => { openLoginModal(); closeMenu(); }} className="btn-login">Login</button>
+                </>
+              )}
+            </div>
+          </li>
         </ul>
         
         <div className="actions">

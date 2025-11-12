@@ -5,6 +5,14 @@
     color: #fff;
 }
 
+.geolocalizacao .texto {
+    text-align: center;
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+}
+
 .geolocalizacao .texto h1 {
     font-size: 32px;
     font-weight: 700;

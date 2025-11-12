@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal.jsx';
 import { ModalCadastroConcluido } from './ModalCadastroConcluido.jsx';
-import { useAuth } from '../../../contexts/AuthContext.jsx';
+import api from "../../../services/api.js";
 
 export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" }) => {
-  const { register } = useAuth();
+  const url = "/usuario";
   
   const [formData, setFormData] = useState({
     nomeCompleto: '',
@@ -175,56 +175,73 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
       setErrors({});
 
       try {
-        const response = await register({
-          nomeCompleto: formData.nomeCompleto,
+        const userData = {
+          nome: formData.nomeCompleto,
           email: formData.email,
           telefone: formData.telefone,
           senha: formData.senha,
-          dataNascimento: formData.dataNascimento
-        });
+          dtNasc: formData.dataNascimento
+        };
 
-        console.log('Cadastro realizado com sucesso:', response);
+        const response = await api.post(url + "/cadastro", userData);
+        
+        console.log('Cadastro realizado com sucesso:', response.data);
         setShowSuccessModal(true);
       } catch (error) {
         console.error('Erro no cadastro:', error);
         
-        if (error.status === 409) {
-          if (error.message.includes('Email')) {
+        // Tratar erros baseados na resposta da API
+        if (error.response) {
+          const { status, data } = error.response;
+          
+          if (status === 409) {
+            if (data.message && data.message.includes('Email')) {
+              setErrors({
+                email: 'Este email já está em uso'
+              });
+            } else if (data.message && data.message.includes('Telefone')) {
+              setErrors({
+                telefone: 'Este telefone já está em uso'
+              });
+            } else {
+              setErrors({
+                geral: data.message || 'Dados já cadastrados'
+              });
+            }
+          } else if (status === 400) {
+            let errorMessage = 'Dados inválidos. Verifique:';
+            const errorDetails = data.message || data.details || '';
+            
+            if (errorDetails.includes('nome') || errorDetails.includes('NotBlank')) {
+              errorMessage += '\n• Nome completo é obrigatório';
+            }
+            if (errorDetails.includes('email') || errorDetails.includes('Email')) {
+              errorMessage += '\n• Email deve ter formato válido';
+            }
+            if (errorDetails.includes('telefone') || errorDetails.includes('Pattern')) {
+              errorMessage += '\n• Telefone deve estar no formato (11) 99999-9999';
+            }
+            if (errorDetails.includes('senha')) {
+              errorMessage += '\n• Senha é obrigatória';
+            }
+            
             setErrors({
-              email: 'Este email já está em uso'
-            });
-          } else if (error.message.includes('Telefone')) {
-            setErrors({
-              telefone: 'Este telefone já está em uso'
+              geral: errorMessage
             });
           } else {
             setErrors({
-              geral: error.message || 'Dados já cadastrados'
+              geral: data.message || 'Erro interno do servidor. Tente novamente.'
             });
           }
-        } else if (error.status === 400) {
-          let errorMessage = 'Dados inválidos. Verifique:';
-          const errorDetails = error.details || error.message || '';
-          
-          if (errorDetails.includes('nome') || errorDetails.includes('NotBlank')) {
-            errorMessage += '\n• Nome completo é obrigatório';
-          }
-          if (errorDetails.includes('email') || errorDetails.includes('Email')) {
-            errorMessage += '\n• Email deve ter formato válido';
-          }
-          if (errorDetails.includes('telefone') || errorDetails.includes('Pattern')) {
-            errorMessage += '\n• Telefone deve estar no formato (11) 99999-9999';
-          }
-          if (errorDetails.includes('senha')) {
-            errorMessage += '\n• Senha é obrigatória';
-          }
-          
+        } else if (error.request) {
+          // Erro de rede
           setErrors({
-            geral: errorMessage
+            geral: 'Erro de conexão. Verifique sua internet e tente novamente.'
           });
         } else {
+          // Outros erros
           setErrors({
-            geral: error.message || 'Erro interno do servidor. Tente novamente.'
+            geral: 'Erro inesperado. Tente novamente.'
           });
         }
       } finally {

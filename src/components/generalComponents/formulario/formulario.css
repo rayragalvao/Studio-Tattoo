@@ -115,6 +115,7 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 10px 16px;
+  margin-bottom: 10px;
   align-items: center;
 }
 
@@ -300,6 +301,21 @@
 .error {
   border-color: var(--vermelho) !important;
   box-shadow: 0 0 0 4px rgba(135, 12, 14, 0.2) !important;
+}
+
+.campo-outro {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #e1e5e9;
+}
+
+.campo-outro label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--cinza-escuro);
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
 }
 
 .error-message {

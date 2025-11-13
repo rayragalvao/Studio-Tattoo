@@ -1,10 +1,12 @@
+import { Modal } from '../Modal.jsx';
+import './modalCadastro.css';
 import React, { useState, useEffect } from 'react';
-import { Modal } from './Modal.jsx';
-import { ModalCadastroConcluido } from './ModalCadastroConcluido.jsx';
-import { useAuth } from '../../../contexts/AuthContext.jsx';
+import { ModalCadastroConcluido } from '../ModalCadastroConcluido.jsx';
+import { Notificacao } from '../../notificacao/Notificacao.jsx';
+import api from "../../../../services/api.js";
 
 export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClass = "" }) => {
-  const { register } = useAuth();
+  const url = "/usuario";
   
   const [formData, setFormData] = useState({
     nomeCompleto: '',
@@ -21,6 +23,12 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordTooltip, setShowPasswordTooltip] = useState(false);
+  const [notificacao, setNotificacao] = useState({
+    visivel: false,
+    tipo: 'sucesso',
+    titulo: '',
+    mensagem: ''
+  });
 
   useEffect(() => {
     if (isOpen) {
@@ -28,8 +36,25 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
       setShowPassword(false);
       setShowConfirmPassword(false);
       setShowSuccessModal(false);
+      setNotificacao({ visivel: false, tipo: 'sucesso', titulo: '', mensagem: '' });
     }
   }, [isOpen]);
+
+  const mostrarNotificacao = (tipo, titulo, mensagem) => {
+    setNotificacao({
+      visivel: true,
+      tipo,
+      titulo,
+      mensagem
+    });
+  };
+
+  const fecharNotificacao = () => {
+    setNotificacao(prev => ({
+      ...prev,
+      visivel: false
+    }));
+  };
 
   const formatPhone = (value) => {
     const numbers = value.replace(/\D/g, '');
@@ -175,57 +200,63 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
       setErrors({});
 
       try {
-        const response = await register({
-          nomeCompleto: formData.nomeCompleto,
+        const userData = {
+          nome: formData.nomeCompleto,
           email: formData.email,
           telefone: formData.telefone,
           senha: formData.senha,
-          dataNascimento: formData.dataNascimento
-        });
+          dtNasc: formData.dataNascimento
+        };
 
-        console.log('Cadastro realizado com sucesso:', response);
+        const response = await api.post(url + "/cadastro", userData);
+        
+        console.log('Cadastro realizado com sucesso:', response.data);
+        mostrarNotificacao('sucesso', 'Cadastro Realizado!', 'Sua conta foi criada com sucesso. Bem-vindo!');
         setShowSuccessModal(true);
       } catch (error) {
         console.error('Erro no cadastro:', error);
         
-        if (error.status === 409) {
-          if (error.message.includes('Email')) {
-            setErrors({
-              email: 'Este email já está em uso'
-            });
-          } else if (error.message.includes('Telefone')) {
-            setErrors({
-              telefone: 'Este telefone já está em uso'
-            });
+        // Tratar erros baseados na resposta da API
+        if (error.response) {
+          const { status, data } = error.response;
+          
+          if (status === 409) {
+            if (data.message && data.message.includes('Email')) {
+              mostrarNotificacao('erro', 'Email já em uso', 'Este email já está cadastrado no sistema.');
+              setErrors({ email: 'Este email já está em uso' });
+            } else if (data.message && data.message.includes('Telefone')) {
+              mostrarNotificacao('erro', 'Telefone já em uso', 'Este telefone já está cadastrado no sistema.');
+              setErrors({ telefone: 'Este telefone já está em uso' });
+            } else {
+              mostrarNotificacao('erro', 'Dados já cadastrados', data.message || 'Os dados informados já estão em uso.');
+            }
+          } else if (status === 400) {
+            const errorDetails = data.message || data.details || '';
+            let errorMessage = 'Verifique os dados informados:';
+            
+            if (errorDetails.includes('nome') || errorDetails.includes('NotBlank')) {
+              errorMessage += '\n• Nome completo é obrigatório';
+            }
+            if (errorDetails.includes('email') || errorDetails.includes('Email')) {
+              errorMessage += '\n• Email deve ter formato válido';
+            }
+            if (errorDetails.includes('telefone') || errorDetails.includes('Pattern')) {
+              errorMessage += '\n• Telefone deve estar no formato (11) 99999-9999';
+            }
+            if (errorDetails.includes('senha')) {
+              errorMessage += '\n• Senha é obrigatória';
+            }
+            
+            mostrarNotificacao('erro', 'Dados Inválidos', errorMessage);
           } else {
-            setErrors({
-              geral: error.message || 'Dados já cadastrados'
-            });
+            mostrarNotificacao('erro', 'Erro no Cadastro', data.message || 'Erro interno do servidor. Tente novamente.');
           }
-        } else if (error.status === 400) {
-          let errorMessage = 'Dados inválidos. Verifique:';
-          const errorDetails = error.details || error.message || '';
-          
-          if (errorDetails.includes('nome') || errorDetails.includes('NotBlank')) {
-            errorMessage += '\n• Nome completo é obrigatório';
-          }
-          if (errorDetails.includes('email') || errorDetails.includes('Email')) {
-            errorMessage += '\n• Email deve ter formato válido';
-          }
-          if (errorDetails.includes('telefone') || errorDetails.includes('Pattern')) {
-            errorMessage += '\n• Telefone deve estar no formato (11) 99999-9999';
-          }
-          if (errorDetails.includes('senha')) {
-            errorMessage += '\n• Senha é obrigatória';
-          }
-          
-          setErrors({
-            geral: errorMessage
-          });
+        } else if (error.request) {
+          // Erro de rede
+          mostrarNotificacao('erro', 'Erro de Conexão', 'Verifique sua internet e tente novamente.');
         } else {
-          setErrors({
-            geral: error.message || 'Erro interno do servidor. Tente novamente.'
-          });
+          // Outros erros
+          mostrarNotificacao('erro', 'Erro Inesperado', 'Algo deu errado. Tente novamente.');
         }
       } finally {
         setIsLoading(false);
@@ -279,8 +310,9 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass}>
-      <div className="modal-cadastro">
+    <>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass}>
+        <div className="modal-cadastro">
         <div className="modal-left-form">
           <form onSubmit={handleSubmit} className="cadastro-form" noValidate>
             <div className="form-group">
@@ -371,17 +403,13 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                       justifyContent: 'center'
                     }}
                   >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <span class="material-symbols-outlined">
                       {showPassword ? (
-                        <>
-                          <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.15C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
-                        </>
+                        'visibility_off'
                       ) : (
-                        <>
-                          <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                        </>
+                        'visibility'
                       )}
-                    </svg>
+                    </span>
                   </button>
                 </div>
                 
@@ -444,17 +472,13 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                     justifyContent: 'center'
                   }}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    {showConfirmPassword ? (
-                      <>
-                        <path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.15C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>
-                      </>
-                    ) : (
-                      <>
-                        <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                      </>
-                    )}
-                  </svg>
+                  <span class="material-symbols-outlined">
+                      {showConfirmPassword ? (
+                        'visibility_off'
+                      ) : (
+                        'visibility'
+                      )}
+                    </span>
                 </button>
               </div>
             </div>
@@ -483,6 +507,17 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
         isVisible={showSuccessModal}
         onClose={handleSuccessModalClose}
       />
-    </Modal>
+      </Modal>
+      
+      <Notificacao
+        tipo={notificacao.tipo}
+        titulo={notificacao.titulo}
+        mensagem={notificacao.mensagem}
+        visivel={notificacao.visivel}
+        onFechar={fecharNotificacao}
+        duracao={5000}
+        posicao={1}
+      />
+    </>
   );
 };

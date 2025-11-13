@@ -1,8 +1,8 @@
-/* CSS específico para o componente PainelFiltros */
-
 .painel-filtros {
     position: absolute;
-    margin-top: 4.5em;
+    z-index: 10;
+    margin-top: 6em;
+    margin-right: 2em;
     width: 20em;
     height: fit-content;
     justify-self: end;
@@ -12,7 +12,7 @@
     padding: 1em;
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 0.5em;
     margin-bottom: 1em;
     font-size: 0.8em;
 }
@@ -90,14 +90,16 @@
 /* Responsividade */
 @media (min-width: 1500px) and (max-width: 1920px) {
     .painel-filtros {
-        margin-top: 4.5em;
+        margin-top: 7em;
+        margin-right: 3em;
     }
 }
 
 @media (max-width: 767px) {
     .painel-filtros {
-        width: 18em;
+        width: 20em;
         font-size: 0.75em;
+        margin-right: 0;
     }
     
     .painel-filtros input, .painel-filtros select {
@@ -108,7 +110,7 @@
 
 @media (max-width: 480px) {
     .painel-filtros {
-        width: 15em;
+        width: 18em;
         font-size: 0.7em;
     }
     
@@ -120,6 +122,6 @@
 
 @media (max-width: 380px) {
     .painel-filtros {
-        width: 12em;
+        width: 17em;
     }
 }

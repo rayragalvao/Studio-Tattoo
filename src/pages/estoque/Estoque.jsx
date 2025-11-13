@@ -43,7 +43,7 @@ export const Estoque = () => {
             setCarregando(true);
         }
         api.get(url)
-            .then(response => {
+            .then(response => {                
                 setItensEstoque(response.data);
                 setItensEstoqueExibir(response.data);
 
@@ -332,15 +332,23 @@ export const Estoque = () => {
             );
         } 
 
-        // Ordenação
+        // Ordenação com prioridade para itens em alerta
         itensFiltrados.sort((a, b) => {
+            // Prioridade 1: Itens com quantidade menor que o mínimo aparecem primeiro
+            const aEmAlerta = a.quantidade <= (a.minAviso || 0);
+            const bEmAlerta = b.quantidade <= (b.minAviso || 0);
+            
+            if (aEmAlerta && !bEmAlerta) return -1;
+            if (!aEmAlerta && bEmAlerta) return 1;
+            
+            // Prioridade 2: Dentro do mesmo grupo (alerta ou não), aplicar ordenação escolhida
             switch (filtros.ordenarPor) {
                 case "nome":
                     return a.nome.localeCompare(b.nome);
                 case "quantidade":
                     return b.quantidade - a.quantidade;
                 case "alerta":
-                    return (a.quantidade < a.minAviso) ? -1 : 1;
+                    return (a.quantidade <= (a.minAviso || 0)) ? -1 : 1;
                 default:
                     return 0;
             }

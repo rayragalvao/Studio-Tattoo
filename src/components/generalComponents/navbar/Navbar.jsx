@@ -137,7 +137,7 @@ export const Navbar = () => {
         <ul id="main-menu" className={`menu ${isMenuOpen ? 'open' : ''}`}>
           {/* close button visible on mobile inside the drawer */}
           <li className="menu-close-wrapper">
-            <button className="menu-close" aria-label="Fechar menu" onClick={closeMenu}>✕</button>
+            <button className="menu-close" aria-label="Fechar menu" onClick={closeMenu}>X</button>
           </li>
           {menuItems.map((item, index) => (
             <li key={index}>

@@ -15,7 +15,6 @@
     font-family: 'Martel Sans', sans-serif;
 }
 
-/* Classe para elementos visíveis apenas para leitores de tela */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -28,14 +27,8 @@
     border: 0;
 }
 
-/* Scroll suave para toda a página */
 html {
     scroll-behavior: smooth;
-}
-
-.campo-obrigatorio {
-    color: var(--vermelho);
-    margin-left: 0.1em;
 }
 
 .section-estoque {
@@ -53,12 +46,12 @@ html {
 
 .h1-estoque {
     font-family: "Montserrat Alternates", sans-serif;
-    font-size: 2em;
+    font-size: 26px;
     font-weight: 800;
     text-align: center;
     color: var(--branco);
     line-height: 1.1;
-    margin-top: 0;
+    margin-top: 20px;
     margin-bottom: 6px;
     white-space: nowrap;
     overflow: hidden;
@@ -70,120 +63,16 @@ html {
     min-width: 35em;
 }
 
-.card-estoque {
-    background-color: var(--branco);
-    border-radius: 0.5em;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 2em;
-}
-
 .pesquisa-estoque {
     width: 30em;
     min-height: 40em;
     max-height: 100vh;    
     display: grid;
     grid-template-rows: auto auto auto 1fr auto;
-}
-
-.adicionar-estoque {
-    max-height: fit-content;
-    width: 35em;
-
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.informacoes-estoque {
-    max-height: fit-content;
-    width: 30em;
-
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-}
-
-.linha {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    gap: 1em;
-}
-
-.linha div {
-    width: 50%;
-}
-
-.adicionar-qtd-button {
-    background: var(--cinza-claro);
-    color: var(--verde);
-    border: 2px solid #e1e5e9;
-}
-
-.campos-quantidade .botoes button:hover {
-    color: var(--branco);
-    border: 2px solid var(--vermelho-escuro);
-    box-shadow: 0 0 0 4px rgba(21, 82, 20, 0.2);
-}
-
-.remover-qtd-button {
-    background: var(--cinza-claro);
-    color: var(--vermelho);
-    border: 2px solid #e1e5e9;
-}
-
-.excluir-button {
-    background: var(--vermelho);
-    color: var(--branco);
-    border: none;
-}
-
-.campos-quantidade {
-    display: flex;
-    flex-direction: row;
-    gap: 0.5em;
-}
-
-.botoes {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 1em;
-}
-
-.informacoes-estoque .botoes {
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5em;
-    align-items: end;
-}
-
-.informacoes-estoque .botoes button {
-    width: 100%;
-}
-
-.campos-quantidade .botoes button {
-    width: 100%;
-    border-radius: 0.2em;
-    display: flex;
-    align-items: center;
-}
-
-.submit-button {
-    height: auto;
-}
-
-.cancel-button {
-    height: auto;
-    background: var(--cinza);
-    color: var(--branco);
-}
-
-.card-estoque h2 {
-    font-size: 1.5em;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 1em;
-    margin-top: 0em;
-    font-family: 'Montserrat', sans-serif;
+    background-color: var(--branco);
+    border-radius: 0.5em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2em;
 }
 
 .div-barra-pesquisa {
@@ -198,6 +87,7 @@ html {
     display: flex;
     align-items: center;
     width: 100%;
+    margin-bottom: 0;
 }
 
 .div-barra-pesquisa .icon {
@@ -209,9 +99,10 @@ html {
     position: absolute;
 }
 
-.card-estoque input, .card-estoque select {
+.pesquisa-estoque input, .pesquisa-estoque select {
     width: 100%;
     padding: 8px 10px;
+    margin-bottom: 10px;
     border: 2px solid #e1e5e9;
     border-radius: 5px;
     font-size: 13px;
@@ -221,19 +112,19 @@ html {
     box-sizing: border-box;
     background: var(--cinza-claro);
     color: var(--cinza-escuro);
-    box-sizing: border-box;
 }
 
 .input-barra-pesquisa input {
     padding-left: 2.5em;
+    margin-bottom: 0;
 }
 
-.card-estoque input::placeholder {
+.pesquisa-estoque input::placeholder {
     color: #adadad;
     font-weight: 400;
 }
 
-.card-estoque input:focus, .card-estoque select:focus {
+.pesquisa-estoque input:focus, .pesquisa-estoque select:focus {
     outline: none;
     border-color: var(--laranja);
     box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
@@ -262,6 +153,7 @@ html {
 }
 
 .container-itens {
+    position: relative;
     width: 100%;
     max-height: 100%;
     display: flex;
@@ -285,126 +177,11 @@ html {
     background-color: var(--vermelho);
 }
 
-.item {
-    width: 100%;
-    box-sizing: border-box;
-    background-color: var(--cinza);
-    color: var(--branco);
-    border-radius: 0.3em;
-    padding: 1em;
-
-    font-size: 0.8em;
-
-    display: flex;
-    flex-direction: row;
-    gap: 1em;
-    align-items: center;
-    justify-content: space-between
-}
-
-.item-alerta {
-    background-color: var(--vermelho);
-}
-
-.input-duplo {
-    display: flex;
-    gap: 1em;
-}
-
 .fonte-negrito {
     font-weight: 700;
 }
 
-.bt-info {
-    background-color: var(--branco);
-    color: var(--cinza);
-    border: none;
-    border-radius: 0.1em;
-    padding: 0.5em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.bt-info:hover {
-    box-shadow: 0 0 0 4px rgba(27, 16, 6, 0.2);
-    transform: translateY(-1px);
-}
-
-.bt-info:disabled {
-    cursor: auto;
-    box-shadow: none;
-    transform: none;
-}
-
-.item-alerta .bt-info {
-    color: var(--vermelho);
-}
-
-.painel-filtros {
-    position: absolute;
-    margin-top: 10.5em;
-
-    width: 20em;
-    height: fit-content;
-    justify-self: end;
-    background-color: #ffffff;
-    border-radius: 0.5em;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 1em;
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    margin-bottom: 1em;
-    font-size: 0.8em;
-}
-
-.filtro-acoes {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1em;
-}
-
-.btn-limpar-filtros {
-    width: 100%;
-    background: var(--cinza);
-    color: var(--branco);
-    border: none;
-    border-radius: 0.2em;
-    padding: 0.5em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-limpar-filtros:hover {
-    box-shadow: 0 0 0 4px rgba(120, 120, 120, 0.2);
-    transform: translateY(-1px);
-}
-
-.btn-filtrar {
-    width: 100%;
-    background: var(--laranja);
-    color: var(--branco);
-    border: none;
-    border-radius: 0.2em;
-    padding: 0.5em;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-filtrar:hover {
-    background-color: #D46B0F;
-    box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
-    transform: translateY(-1px);
-}
-
-.painel-filtros input, .painel-filtros select {
-    font-size: 0.8em;
-    padding: 6px 8px;
-}
 
 .filtros-ativos {
     height: fit-content;
@@ -430,25 +207,7 @@ html {
     transition: all 0.3s ease;
 }
 
-.cancel-button {
-    background-color: var(--cinza) !important;
-    color: white !important;
-}
 
-.cancel-button:hover:not(:disabled) {
-    background-color: #666 !important;
-    transform: translateY(-2px);
-}
-
-.excluir-button {
-    background-color: var(--vermelho) !important;
-    color: white !important;
-}
-
-.excluir-button:hover:not(:disabled) {
-    background-color: var(--vermelho-escuro) !important;
-    transform: translateY(-2px);
-}
 
 .botoes-confirmacao .submit-button:disabled {
     opacity: 0.7;
@@ -456,13 +215,12 @@ html {
     transform: none;
 }
 
-/* Estilos específicos para o modal de confirmação */
 .modal-confirmacao-exclusao {
     z-index: 9999 !important;
 }
 
 /* Telas Extra Grandes (1441px - 1920px) */
-@media (min-width: 1441px) and (max-width: 1920px) {
+@media (min-width: 1500px) and (max-width: 1920px) {
     .section-estoque {
         gap: 2em;
     }
@@ -473,19 +231,13 @@ html {
         padding: 2.5em;
     }
 
-    .card-estoque h2 {
-        font-size: 2em;
-        margin-bottom: 1em;
-    }
-
     .div-barra-pesquisa {
         grid-template-columns: 90% 10%;
         margin-bottom: 1.5em;
     }
 
-    .card-estoque input, .card-estoque select {
+    .pesquisa-estoque input, .pesquisa-estoque select {
         font-size: 1em;
-        padding: 1em 1.5em;
     }
 
     .input-barra-pesquisa input {
@@ -498,32 +250,6 @@ html {
 
     .container-itens {
         gap: 1.2em;
-    }
-
-    .item {
-        padding: 1em;
-        font-size: 1em;
-        border-radius: 0.4em;
-    }
-
-    .bt-info .icon {
-        font-size: 1.8em;
-    }
-
-    .submit-button {
-        height: 100%;
-        padding: 0.5em;
-        font-size: 0.8em;
-        border-radius: 0.4em;
-    }
-
-    .campos-quantidade .botoes button {
-        padding: 0.7em 1em;
-        height: 5em;
-    }
-
-    .painel-filtros {
-        margin-top: 13em;
     }
 }
 
@@ -546,60 +272,21 @@ html {
         gap: 1em;
     }
 
-    .card-estoque h2 {
-        font-size: 2em;
-        margin-bottom: 0.5em;
-    }
-
-    .adicionar-estoque {
-        width: 100%;
-        max-width: 70vw;
-        height: auto;
-        min-height: 30vh;
-    }
-
     .div-barra-pesquisa {
         grid-template-columns: 90% 10%;
-    }
-
-    .submit-button {
-        width: 100%;
-        padding: 0.5em;
-        font-size: 0.8em;
-        height: 3em;
-    }
-
-    .painel-filtros {
-        margin-top: 11em;
     }
 }
 
 /* Mobile Grande (481px - 767px) */
 @media (max-width: 767px) {
-    .card-estoque {
-        width: 100%;
-        max-width: none;
-        padding: 1em;
-        height: auto;
-    }
-
     .pesquisa-estoque {
         padding: 0.8em;
         border-radius: 0.3em;
         grid-template-rows: auto auto auto 1fr auto;
     }
 
-    .adicionar-estoque {
-        min-height: 30vh;
-    }
-
     .container-cards {
         width: 100%;
-    }
-
-    .card-estoque h2 {
-        font-size: 1.1em;
-        margin-bottom: 0.5em;
     }
 
     .div-barra-pesquisa {
@@ -607,15 +294,6 @@ html {
         gap: 0.3em;
         margin-bottom: 0.8em;
         height: 3em;
-    }
-
-    .card-estoque input, .card-estoque select {
-        font-size: 12px;
-        padding: 6px 8px;
-    }
-
-    .input-duplo {
-        flex-direction: column;
     }
 
     .input-barra-pesquisa input {
@@ -641,26 +319,7 @@ html {
         gap: 0.8em;
     }
 
-    .item {
-        padding: 0.8em;
-        font-size: 0.75em;
-        align-items: flex-start;
-        gap: 0.5em;
-    }
 
-    .item > div:first-child {
-        width: 100%;
-    }
-
-    .bt-info {
-        align-self: flex-end;
-        padding: 0.4em;
-    }
-
-    .submit-button {
-        padding: 0.6em;
-        font-size: 0.9em;
-    }
 }
 
 /* Mobile Pequeno (até 480px) */
@@ -672,11 +331,6 @@ html {
     .div-barra-pesquisa {
         grid-template-columns: 80% 20%;
         gap: 0.2em;
-    }
-
-    .card-estoque input, .card-estoque select {
-        font-size: 11px;
-        padding: 5px 6px;
     }
 
     .input-barra-pesquisa input {
@@ -694,37 +348,6 @@ html {
 
     .bt-filtro .icon {
         font-size: 16px;
-    }
-
-    .item {
-        padding: 0.6em;
-        font-size: 0.7em;
-    }
-
-    .bt-info {
-        padding: 0.3em;
-    }
-
-    .bt-info .icon {
-        font-size: 16px;
-    }
-
-    .submit-button {
-        padding: 0.5em;
-        font-size: 0.6em;
-        height: 4em;
-    }
-
-    .informacoes-estoque .botoes button {
-        font-size: 0.6em;
-    }
-
-    .campos-quantidade .botoes span {
-        font-size: 2em;
-    }
-
-    .painel-filtros {
-        margin-top: 9em;
     }
 }
 
@@ -744,15 +367,6 @@ html {
         min-height: auto;
     }
 
-    .adicionar-estoque {
-        max-width: 60vw;
-        min-height: auto;
-    }
-
-    .painel-filtros {
-        margin-top: 11em;
-    }
-
     .container-itens {
         overflow-y: auto;
     }
@@ -765,6 +379,7 @@ html {
 
 /* Ajustes para telas muito pequenas */
 @media (max-width: 380px) {
+
     .pesquisa-estoque {
         padding: 0.5em;
     }
@@ -774,33 +389,11 @@ html {
     }
 
     .div-barra-pesquisa {
-        grid-template-columns: 70% 30%;
-    }
-
-    .card-estoque input, .card-estoque select {
-        font-size: 10px;
-        padding: 4px 5px;
+        grid-template-columns: 80% 20%;
     }
 
     .input-barra-pesquisa input {
-        padding-left: 1.8em;
-    }
-
-    .item {
-        font-size: 0.65em;
-        padding: 0.5em;
-    }
-
-    .submit-button {
-        font-size: 0.8em;
-    }
-
-    .painel-filtros {
-        margin-top: 8em;
-    }
-
-    .card-estoque h2 {
-        font-size: 1.2em;
+        padding-left: 3em;
     }
 }
 

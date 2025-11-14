@@ -1,7 +1,7 @@
 import React from "react";
 import "../alertaCustomizado/alertaCustomizado.css";
 
-export const ModalCadastroConcluido = ({ 
+const ModalCadastroConcluido = ({ 
   isVisible, 
   onClose
 }) => {
@@ -34,3 +34,5 @@ export const ModalCadastroConcluido = ({
     </div>
   );
 };
+
+export default ModalCadastroConcluido;

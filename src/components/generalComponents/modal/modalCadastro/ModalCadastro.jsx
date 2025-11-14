@@ -521,3 +521,5 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
     </>
   );
 };
+
+export default ModalCadastro;

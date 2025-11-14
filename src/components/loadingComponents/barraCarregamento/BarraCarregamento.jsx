@@ -1,5 +1,5 @@
 import React from 'react';
-import './BarraCarregamento.css';
+import './barraCarregamento.css';
 
 export const BarraCarregamento = () => {
   return (

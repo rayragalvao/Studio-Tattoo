@@ -9,14 +9,14 @@ import { useLocation } from 'react-router-dom';
 import { BarraCarregamento } from '../../components/loadingComponents/barraCarregamento/BarraCarregamento.jsx';
 import AuthStorage from '../../services/AuthStorage.js';
 import './orcamento.css';
-// eslint-disable-next-line no-unused-vars
-const apiUrl = "http://localhost:8080";
+import apiService from '../../services/ApiService.js';
+import axios from 'axios';
 
 export const Orcamento = () => {
   const [cardResposta, setCardResposta] = useState(null);
   const location = useLocation();
   const tattooData = location.state || {};
-  const [codigoOrcamentoState, setCodigoOrcamentoState] = useState(null);
+  const [limparForms, setLimparForms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const camposOrcamento = [
@@ -126,65 +126,62 @@ export const Orcamento = () => {
         }
       });
 
-     const codigo = `ORC-${Math.floor(Math.random() * 10000).toString().padStart(5, '0')}`;
-      setCodigoOrcamentoState(codigo);
-      formData.append('codigoOrcamento', codigo);
-
       // Busca o token JWT do storage usando AuthStorage
       const token = AuthStorage.getToken();
-      
+      console.log('Token JWT obtido:', token);
+
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
       // Não definimos Content-Type no headers porque o browser vai configurar automaticamente
       // com o boundary correto para multipart/form-data
-      const response = await fetch(`${apiUrl}/orcamento`, {
-        method: 'POST',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : undefined,
-        body: formData,
-        // Adiciona essas opções para debug e melhor tratamento de erros
-        mode: 'cors',
-        credentials: 'include'
-      });
+      const response = await axios.post(
+        `${apiService.baseURL}/orcamento/cadastro`,
+        formData,
+        { headers }
+      );
 
-      const text = await response.text().catch(() => '');
-      let backendResponse = {};
-      if (text) {
-        try {
-          backendResponse = JSON.parse(text);
-        } catch (e) {
-          backendResponse = { message: text };
-        }
-      }
-
-      if (!response.ok) {
-        console.error('Erro HTTP ao enviar orçamento:', response.status, backendResponse);
-        setCardResposta({ tipo: 'erro', titulo: 'Erro ao enviar orçamento', mensagem: backendResponse.message || `Servidor retornou status ${response.status}`, codigo, botaoTexto: 'Tentar novamente' });
-        return;
-      }
-
+      const backendResponse = response.data;
       const sucesso = backendResponse.success !== false;
-      const codigoRetornado = backendResponse.codigo || backendResponse.codigoOrcamento || codigo;
+      const codigoRetornado = backendResponse.codigo || null;
 
+      setCardResposta(
+        sucesso
+          ? {
+            tipo: 'sucesso',
+            titulo: 'Sua ideia já chegou até nós!',
+            mensagem: 'Em breve entraremos em contato por e-mail.',
+            codigo: codigoRetornado,
+            botaoTexto: 'Continuar navegando'
+          }
+          : {
+            tipo: 'erro',
+            titulo: backendResponse.title || 'Erro ao enviar orçamento',
+            mensagem: backendResponse.message || 'Falha ao processar sua solicitação.',
+            botaoTexto: 'Tentar novamente'
+          }
+      );
       if (sucesso) {
-        setCardResposta({ tipo: 'sucesso', titulo: 'Sua ideia já chegou até nós!', mensagem: 'Em breve entraremos em contato para conversar sobre valores e próximos passos. Aguarde a resposta por e-mail.', codigo: codigoRetornado, botaoTexto: 'Continuar navegando' });
-      } else {
-        setCardResposta({ tipo: 'erro', titulo: backendResponse.title || 'Erro ao enviar orçamento', mensagem: backendResponse.message || 'O servidor retornou erro ao processar sua solicitação.', codigo: codigoRetornado, botaoTexto: 'Tentar novamente' });
+        setLimparForms(true);
       }
 
     } catch (error) {
-      console.error('Erro ao enviar orçamento:', error);
       setCardResposta({
         tipo: 'erro',
         titulo: 'Erro ao enviar orçamento',
-        mensagem:
-          error.message || 'Ocorreu um problema ao processar sua solicitação.',
-        codigo: codigoOrcamentoState,
-        botaoTexto: 'Tentar novamente',
+        mensagem: error.response?.data?.message || error.message || 'Problema inesperado.',
+        codigo: null,
+        botaoTexto: 'Tentar novamente'
       });
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   const handleFecharCard = () => setCardResposta(null);
+  const handleLimparForms = () => setLimparForms(false);
 
   return (
     <>
@@ -196,21 +193,21 @@ export const Orcamento = () => {
         onSubmit={handleSubmitOrcamento}
         isSubmitting={isLoading}
         submitButtonText="Enviar orçamento"
-        
+        limparForms={limparForms}
+        onLimparForms={handleLimparForms}
+
         isPortfolioImage={!!tattooData?.imagem}
         initialValues={{
           tamanho: tattooData?.tamanho || '',
           ideia: tattooData?.titulo
             ? `Fiquei interessado(a) na tatuagem com o desenho "${tattooData.titulo}".`
             : '',
-          imagemReferencia: tattooData?.imagem ? [tattooData.imagem] : [], // 👈 coloca no container de upload
+          imagemReferencia: tattooData?.imagem ? [tattooData.imagem] : [],
           titulo: tattooData?.titulo || '',
           precoMin: tattooData?.precoMin || '',
           precoMax: tattooData?.precoMax || '',
         }}
       />
-
-      {/* spinner agora exibido dentro do Formulario via prop isSubmitting */}
 
       {cardResposta && (
         <CardResposta

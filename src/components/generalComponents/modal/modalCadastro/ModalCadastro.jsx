@@ -1,7 +1,7 @@
 import { Modal } from '../Modal.jsx';
 import './modalCadastro.css';
 import React, { useState, useEffect } from 'react';
-import { ModalCadastroConcluido } from '../ModalCadastroConcluido.jsx';
+import ModalCadastroConcluido from '../ModalCadastroConcluido.jsx';
 import { Notificacao } from '../../notificacao/Notificacao.jsx';
 import api from "../../../../services/api.js";
 

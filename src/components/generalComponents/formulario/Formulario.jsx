@@ -134,15 +134,21 @@ export const Formulario = ({
             </select>
 
             {String(dadosFormulario[campo.name]).toLowerCase() === 'outro' && (
-              <input
-                type="text"
-                id={`${campo.name}_outro`}
-                name={`${campo.name}_outro`}
-                value={dadosFormulario[`${campo.name}_outro`] || ''}
-                onChange={handleMudancaInput}
-                placeholder={`Especifique ${campo.label.toLowerCase()}`}
-                className={classeInput}
-              />
+              <div className="campo-outro">
+                <label htmlFor={`${campo.name}_outro`}>
+                  Especifique o local do corpo
+                  {campo.required && <span className="required">*</span>}
+                </label>
+                <input
+                  type="text"
+                  id={`${campo.name}_outro`}
+                  name={`${campo.name}_outro`}
+                  value={dadosFormulario[`${campo.name}_outro`] || ''}
+                  onChange={handleMudancaInput}
+                  placeholder="Digite o local específico"
+                  className={classeInput}
+                />
+              </div>
             )}
           </>
         );

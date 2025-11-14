@@ -21,6 +21,14 @@ export const Orcamento = () => {
 
   const camposOrcamento = [
     {
+      name: 'nome',
+      type: 'text',
+      label: 'Nome completo',
+      placeholder: 'Digite seu nome completo',
+      required: true,
+      errorMessage: 'Nome é obrigatório',
+    },
+    {
       name: 'email',
       type: 'email',
       label: 'Email para contato',

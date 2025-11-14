@@ -1,0 +1,127 @@
+.painel-filtros {
+    position: absolute;
+    z-index: 10;
+    margin-top: 6em;
+    margin-right: 2em;
+    width: 20em;
+    height: fit-content;
+    justify-self: end;
+    background-color: #ffffff;
+    border-radius: 0.5em;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-bottom: 1em;
+    font-size: 0.8em;
+}
+
+.filtro-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+
+.filtro-acoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+}
+
+.btn-limpar-filtros {
+    width: 100%;
+    background: var(--cinza);
+    color: var(--branco);
+    border: none;
+    border-radius: 0.2em;
+    padding: 0.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-limpar-filtros:hover {
+    box-shadow: 0 0 0 4px rgba(120, 120, 120, 0.2);
+    transform: translateY(-1px);
+}
+
+.btn-filtrar {
+    width: 100%;
+    background: var(--vermelho);
+    color: var(--branco);
+    border: none;
+    border-radius: 0.2em;
+    padding: 0.5em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-filtrar:hover {
+    box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
+    transform: translateY(-1px);
+}
+
+.painel-filtros input, .painel-filtros select {
+    width: 100%;
+    padding: 6px 8px;
+    margin-bottom: 10px;
+    border: 2px solid #e1e5e9;
+    border-radius: 5px;
+    font-size: 0.8em;
+    font-weight: 500;
+    font-family: 'Martel Sans', sans-serif;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    background: var(--cinza-claro);
+    color: var(--cinza-escuro);
+}
+
+.painel-filtros input:focus, .painel-filtros select:focus {
+    outline: none;
+    border-color: var(--laranja);
+    box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
+    transform: translateY(-1px);
+}
+
+.fonte-negrito {
+    font-weight: 700;
+}
+
+/* Responsividade */
+@media (min-width: 1500px) and (max-width: 1920px) {
+    .painel-filtros {
+        margin-top: 7em;
+        margin-right: 3em;
+    }
+}
+
+@media (max-width: 767px) {
+    .painel-filtros {
+        width: 20em;
+        font-size: 0.75em;
+        margin-right: 0;
+    }
+    
+    .painel-filtros input, .painel-filtros select {
+        font-size: 0.75em;
+        padding: 5px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .painel-filtros {
+        width: 18em;
+        font-size: 0.7em;
+    }
+    
+    .painel-filtros input, .painel-filtros select {
+        font-size: 0.7em;
+        padding: 4px 5px;
+    }
+}
+
+@media (max-width: 380px) {
+    .painel-filtros {
+        width: 17em;
+    }
+}

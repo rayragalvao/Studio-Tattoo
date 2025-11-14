@@ -3,6 +3,9 @@ import { Navbar } from "../../components/generalComponents/navbar/Navbar";
 import { Footer } from "../../components/generalComponents/footer/Footer";
 import { Notificacao } from "../../components/generalComponents/notificacao/Notificacao";
 import { CardResposta } from "../../components/generalComponents/cardResposta/CardResposta";
+import { ItemEstoque } from "../../components/estoqueComponents/itemEstoque/ItemEstoque";
+import { CardEstoque } from "../../components/estoqueComponents/cardEstoque/CardEstoque";
+import { PainelFiltros } from "../../components/estoqueComponents/painelFiltros/PainelFiltros";
 import "../../styles/global.css";
 import "./estoque.css";
 import React, { useEffect, useState, useCallback } from "react";
@@ -40,7 +43,7 @@ export const Estoque = () => {
             setCarregando(true);
         }
         api.get(url)
-            .then(response => {
+            .then(response => {                
                 setItensEstoque(response.data);
                 setItensEstoqueExibir(response.data);
 
@@ -329,15 +332,23 @@ export const Estoque = () => {
             );
         } 
 
-        // Ordenação
+        // Ordenação com prioridade para itens em alerta
         itensFiltrados.sort((a, b) => {
+            // Prioridade 1: Itens com quantidade menor que o mínimo aparecem primeiro
+            const aEmAlerta = a.quantidade <= (a.minAviso || 0);
+            const bEmAlerta = b.quantidade <= (b.minAviso || 0);
+            
+            if (aEmAlerta && !bEmAlerta) return -1;
+            if (!aEmAlerta && bEmAlerta) return 1;
+            
+            // Prioridade 2: Dentro do mesmo grupo (alerta ou não), aplicar ordenação escolhida
             switch (filtros.ordenarPor) {
                 case "nome":
                     return a.nome.localeCompare(b.nome);
                 case "quantidade":
                     return b.quantidade - a.quantidade;
                 case "alerta":
-                    return (a.quantidade < a.minAviso) ? -1 : 1;
+                    return (a.quantidade <= (a.minAviso || 0)) ? -1 : 1;
                 default:
                     return 0;
             }
@@ -521,97 +532,14 @@ export const Estoque = () => {
                 </div>
 
                 {/* Painel de Filtros */}
-                { filtrosAbertos && (
-                    <div 
-                        className="painel-filtros"
-                        id="painel-filtros"
-                        role="region"
-                        aria-label="Painel de filtros do estoque"
-                    >
-                        <div className="filtro-grupo">
-                            <label 
-                                className="fonte-negrito"
-                                htmlFor="filtro-unidade-medida"
-                            >
-                                Unidade de Medida
-                            </label>
-                            <select 
-                                id="filtro-unidade-medida"
-                                value={filtros.unidadeMedida}
-                                onChange={(e) => atualizarFiltro('unidadeMedida', e.target.value)}
-                                aria-label="Filtrar por unidade de medida"
-                            >
-                                <option value="Todas">Todas</option>
-                                <option value="Unidades">Unidades</option>
-                                <option value="Litros">Litros</option>
-                                <option value="Mililitros">Mililitros</option>
-                                <option value="Folhas">Folhas</option>
-                                <option value="Rolos">Rolos</option>
-                                <option value="Kilogramas">Kilogramas</option>
-                                <option value="Caixas">Caixas</option>
-                            </select>
-                        </div>
-
-                        <div className="filtro-grupo">
-                            <label 
-                                className="fonte-negrito"
-                                htmlFor="filtro-status-estoque"
-                            >
-                                Status do Estoque
-                            </label>
-                            <select 
-                                id="filtro-status-estoque"
-                                value={filtros.alertaEstoque}
-                                onChange={(e) => atualizarFiltro('alertaEstoque', e.target.value)}
-                                aria-label="Filtrar por status do estoque"
-                            >
-                                <option value="Todos">Todos</option>
-                                <option value="alerta">Estoque Baixo</option>
-                                <option value="ok">Estoque OK</option>
-                            </select>
-                        </div>
-
-                        <div className="filtro-grupo">
-                            <label 
-                                className="fonte-negrito"
-                                htmlFor="filtro-ordenacao"
-                            >
-                                Ordenar Por
-                            </label>
-                            <select 
-                                id="filtro-ordenacao"
-                                value={filtros.ordenarPor}
-                                onChange={(e) => atualizarFiltro('ordenarPor', e.target.value)}
-                                aria-label="Ordenar lista de itens"
-                            >
-                                <option value="Nome">Nome (A-Z)</option>
-                                <option value="Quantidade">Quantidade (Maior)</option>
-                                <option value="Alerta">Alertas Primeiro</option>
-                            </select>
-                        </div>
-
-                        <div className="filtro-acoes">
-                            <button 
-                                className="btn-filtrar"
-                                onClick={() => {
-                                    aplicarFiltros();
-                                    setFiltrosAbertos(false);
-                                }}
-                                aria-label="Aplicar filtros selecionados e fechar painel"
-                            >
-                                Aplicar Filtros
-                            </button>
-
-                            <button 
-                                className="btn-limpar-filtros"
-                                onClick={limparFiltros}
-                                aria-label="Remover todos os filtros aplicados"
-                            >
-                                Limpar Filtros
-                            </button>
-                        </div>
-                    </div>
-                )}
+                <PainelFiltros
+                    filtrosAbertos={filtrosAbertos}
+                    filtros={filtros}
+                    onAtualizarFiltro={atualizarFiltro}
+                    onAplicarFiltros={aplicarFiltros}
+                    onLimparFiltros={limparFiltros}
+                    onFechar={() => setFiltrosAbertos(false)}
+                />
 
                 
                 {/* Indicador de filtros ativos */}
@@ -648,36 +576,12 @@ export const Estoque = () => {
                         aria-label={`Lista de itens do estoque - ${itensEstoqueExibir.length} itens encontrados`}
                     >
                         {itensEstoqueExibir.map((item, index) => (
-                            <div 
-                                className={`item ${item.quantidade <= item.minAviso ? "item-alerta" : ""}`} 
+                            <ItemEstoque
                                 key={index}
-                                role="listitem"
-                            >
-                                <div>
-                                    <p className="fonte-negrito">{item.nome}</p>
-                                    <p>
-                                        <span className="sr-only">Quantidade em estoque: </span>
-                                        {item.quantidade} {item.unidadeMedida}
-                                        {item.quantidade <= item.minAviso && (
-                                            <span className="sr-only"> - Estoque baixo</span>
-                                        )}
-                                    </p>
-                                </div>
-                                <button 
-                                    className="bt-info" 
-                                    onClick={() => { mostrarInformacoesItem(item) }} 
-                                    disabled={filtrosAbertos}
-                                    aria-label={`Ver informações detalhadas de ${item.nome}`}
-                                    title={`Ver detalhes de ${item.nome}`}
-                                >
-                                    <span 
-                                        className="icon material-symbols-outlined"
-                                        aria-hidden="true"
-                                    >
-                                        info
-                                    </span>
-                                </button>
-                            </div>
+                                item={item}
+                                onMostrarInformacoes={mostrarInformacoesItem}
+                                filtrosAbertos={filtrosAbertos}
+                            />
                         ))}
                     </div>
                 )}
@@ -693,280 +597,27 @@ export const Estoque = () => {
 
             
                 {adicionarEstoque && (
-                    <div 
-                        className="card-estoque adicionar-estoque"
-                        id="card-add-estoque"
-                        role="dialog"
-                        aria-labelledby="form-title"
-                        aria-describedby="form-description"
-                    >
-                        <h2 id="form-title">
-                            {'adicionar' === tipoOperacao ? 'Adicionar novo item' : 'Editar informações'}
-                        </h2>
-                        <p id="form-description" className="sr-only">
-                            {tipoOperacao === 'adicionar' 
-                                ? 'Formulário para adicionar um novo item ao estoque' 
-                                : 'Formulário para editar informações de um item existente'
-                            }
-                        </p>
-                        <form 
-                            onSubmit={(e) => {
-                                e.preventDefault();
-                                tipoOperacao === "adicionar" ? cadastrarItem() : atualizarItem();
-                            }}
-                            noValidate
-                        >
-                        <div>
-                            <label 
-                                className="fonte-negrito"
-                                htmlFor="item-nome"
-                            >
-                                Nome<span className="campo-obrigatorio">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="item-nome"
-                                value={itemSelecionado.nome || ''}
-                                placeholder="Digite o nome do item"
-                                required
-                                minLength="2"
-                                maxLength="100"
-                                aria-required="true"
-                                aria-describedby="nome-help"
-                                disabled={carregando}
-                                onChange={(e) => setItemSelecionado({...itemSelecionado, nome: e.target.value})}
-                            />
-                            <span id="nome-help" className="sr-only">
-                                Campo obrigatório. Digite o nome do material ou ferramenta.
-                            </span>
-                        </div>
-
-                        <div>
-                            <label 
-                                className="fonte-negrito"
-                                htmlFor="item-quantidade"
-                            >
-                                Quantidade<span className="campo-obrigatorio">*</span>
-                            </label>
-                            <input
-                                type="number"
-                                id="item-quantidade"
-                                value={itemSelecionado.quantidade || ''}
-                                placeholder="Digite a quantidade"
-                                required
-                                min="0"
-                                max="999999"
-                                step="1"
-                                aria-required="true"
-                                aria-describedby="quantidade-help"
-                                disabled={carregando}
-                                onChange={(e) => setItemSelecionado({...itemSelecionado, quantidade: Number(e.target.value)})}
-                            />
-                            <span id="quantidade-help" className="sr-only">
-                                Campo obrigatório. Digite a quantidade atual em estoque.
-                            </span>
-                        </div>
-
-                        <div className="input-duplo">
-                            <div>
-                                <label 
-                                    className="fonte-negrito"
-                                    htmlFor="item-minimo"
-                                >
-                                    Mínimo em estoque<span className="campo-obrigatorio">*</span>
-                                </label>
-                                <input
-                                    type="number"
-                                    id="item-minimo"
-                                    value={itemSelecionado.minAviso || ''}
-                                    placeholder="Digite o número desejado"
-                                    min="0"
-                                    max="999999"
-                                    step="1"
-                                    required
-                                    aria-required="true"
-                                    aria-describedby="minimo-help"
-                                    disabled={carregando}
-                                    onChange={(e) => setItemSelecionado({...itemSelecionado, minAviso: Number(e.target.value)})}
-                                />
-                                <span id="minimo-help" className="sr-only">
-                                    Quantidade mínima antes de exibir alerta de estoque baixo.
-                                </span>
-                            </div>
-
-                            <div>
-                                <label 
-                                    className="fonte-negrito"
-                                    htmlFor="item-unidade-medida"
-                                >
-                                    Unidade de medida<span className="campo-obrigatorio">*</span>
-                                </label>
-                                <select 
-                                    id="item-unidade-medida" 
-                                    value={itemSelecionado.unidadeMedida || ''} 
-                                    required
-                                    aria-required="true"
-                                    aria-describedby="unidade-help"
-                                    disabled={carregando}
-                                    onChange={(e) => setItemSelecionado({...itemSelecionado, unidadeMedida: e.target.value})}
-                                >
-                                    <span id="unidade-help" className="sr-only">
-                                        Campo obrigatório. Selecione como o item é medido.
-                                    </span>
-                                    <option value="">Selecione uma opção</option>
-                                    <option value="Unidades">Unidades</option>
-                                    <option value="Litros">Litros</option>
-                                    <option value="Mililitros">Mililitros</option>
-                                    <option value="Folhas">Folhas</option>
-                                    <option value="Rolos">Rolos</option>
-                                    <option value="Kilogramas">Kilogramas</option>
-                                    <option value="Caixas">Caixas</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div className="botoes">
-                            <button 
-                                className="submit-button" 
-                                type="submit"
-                                disabled={carregando}
-                                aria-label={tipoOperacao === "adicionar" 
-                                    ? "Adicionar item ao estoque" 
-                                    : "Salvar alterações do item"
-                                }
-                            >
-                                {carregando 
-                                    ? (tipoOperacao === "adicionar" ? "Adicionando..." : "Salvando...")
-                                    : (tipoOperacao === "adicionar" ? "Adicionar ao estoque" : "Salvar alterações")
-                                }
-                            </button>
-                            <button 
-                                className="submit-button cancel-button" 
-                                type="button"
-                                onClick={cancelarAdicionarEstoque}
-                                disabled={carregando}
-                                aria-label="Cancelar e fechar formulário"
-                            >
-                                Cancelar
-                            </button>
-                        </div>
-                        </form>
-                    </div>
+                    <CardEstoque
+                        tipo={tipoOperacao}
+                        item={itemSelecionado}
+                        onSubmit={tipoOperacao === "adicionar" ? cadastrarItem : atualizarItem}
+                        onCancel={cancelarAdicionarEstoque}
+                        carregando={carregando}
+                        setItemSelecionado={setItemSelecionado}
+                    />
                 )}
 
                 {informacoesItem && (
-                    <div 
-                        id="card-informacoes-item"
-                        className="card-estoque informacoes-estoque"
-                        role="dialog"
-                        aria-labelledby="info-title"
-                        aria-describedby="info-description"
-                    >
-                        <h2 id="info-title">
-                            Atualizar item
-                        </h2>
-                        <p id="info-description" className="sr-only">
-                            Informações detalhadas e opções para atualizar {itemSelecionado?.nome}
-                        </p>
-                        <div className="linha">
-                            <div>
-                                <p className="fonte-negrito">Nome do item</p>
-                                <p>{itemSelecionado.nome}</p>
-                            </div>
-
-                            <div>
-                                <p className="fonte-negrito">Minimo em estoque</p>
-                                <p>{itemSelecionado.minAviso == null ? "Não definido" : itemSelecionado.minAviso}</p>
-                            </div>
-                        </div>
-
-                        <div className="linha">
-                            <div>
-                                <p className="fonte-negrito">Unidade de medida</p>
-                                <p>{itemSelecionado.unidadeMedida}</p>
-                            </div>
-
-                            <div>
-                                <p className="fonte-negrito">Em estoque</p>
-                                <p>{itemSelecionado.quantidade}</p>
-                            </div>
-                        </div>
-
-                        <div className="campos-quantidade">
-                            <div>
-                                <label 
-                                    className="fonte-negrito"
-                                    htmlFor="inputAtualizarQtd"
-                                >
-                                    Quantidade para adicionar/remover
-                                </label>
-                                <input
-                                    type="number"
-                                    placeholder="Digite a quantidade desejada"
-                                    id="inputAtualizarQtd"
-                                    min="1"
-                                    aria-describedby="quantidade-update-help"
-                                    onChange={(e) => setQtdParaAtualizar(e.target.value)}
-                                />
-                                <span id="quantidade-update-help" className="sr-only">
-                                    Digite a quantidade que deseja adicionar ou remover do estoque atual.
-                                </span>
-                            </div>
-
-                            <div className="botoes" role="group" aria-label="Ações de quantidade">
-                                <button 
-                                    className="submit-button adicionar-qtd-button" 
-                                    onClick={() => atualizarQuantidade("soma")}
-                                    aria-label={`Adicionar ${qtdParaAtualizar || 0} unidades ao estoque de ${itemSelecionado?.nome || 'item'}`}
-                                    disabled={!qtdParaAtualizar || qtdParaAtualizar <= 0}
-                                >
-                                    <span 
-                                        className="material-symbols-outlined"
-                                        aria-hidden="true"
-                                    >
-                                        add_2
-                                    </span>
-                                    <span className="sr-only">Adicionar ao estoque</span>
-                                </button>
-                                <button 
-                                    className="submit-button remover-qtd-button" 
-                                    onClick={() => atualizarQuantidade("subtrair")}
-                                    aria-label={`Remover ${qtdParaAtualizar || 0} unidades do estoque de ${itemSelecionado?.nome || 'item'}`}
-                                    disabled={!qtdParaAtualizar || qtdParaAtualizar <= 0}
-                                >
-                                    <span 
-                                        className="material-symbols-outlined"
-                                        aria-hidden="true"
-                                    >
-                                        check_indeterminate_small
-                                    </span>
-                                    <span className="sr-only">Remover do estoque</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div className="botoes" role="group" aria-label="Ações do item">
-                            <button 
-                                className="submit-button" 
-                                onClick={() => mostrarAdicionarEstoque("editar")}
-                                aria-label={`Editar informações de ${itemSelecionado?.nome}`}
-                            >
-                                Editar informações
-                            </button>
-                            <button 
-                                className="submit-button excluir-button" 
-                                onClick={mostrarConfirmacaoExcluir}
-                                disabled={carregando}
-                                aria-label={`Excluir ${itemSelecionado?.nome} do estoque`}
-                                aria-describedby="delete-warning"
-                            >
-                                Excluir item
-                            </button>
-                            <span id="delete-warning" className="sr-only">
-                                Atenção: Esta ação não pode ser desfeita.
-                            </span>
-                        </div>
-                    </div>
+                    <CardEstoque
+                        tipo="informacoes"
+                        item={itemSelecionado}
+                        onEditar={() => mostrarAdicionarEstoque("editar")}
+                        onExcluir={mostrarConfirmacaoExcluir}
+                        onAtualizarQuantidade={atualizarQuantidade}
+                        qtdParaAtualizar={qtdParaAtualizar}
+                        setQtdParaAtualizar={setQtdParaAtualizar}
+                        carregando={carregando}
+                    />
                 )}
             
         </div>

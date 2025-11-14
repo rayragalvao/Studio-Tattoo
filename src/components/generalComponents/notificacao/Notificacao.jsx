@@ -7,7 +7,8 @@ export const Notificacao = ({
     mensagem, 
     visivel = false, 
     onFechar, 
-    duracao = 4000 
+    duracao = 4000,
+    posicao = 1
 }) => {
     const [mostrar, setMostrar] = useState(visivel);
     const [animacao, setAnimacao] = useState('');
@@ -58,8 +59,14 @@ export const Notificacao = ({
         return null;
     }
 
+    // Calcular posição dinâmica
+    const topPosition = 20 + (posicao - 1) * 80;
+
     return (
-        <div className={`notificacao notificacao-${tipo} ${animacao}`}>
+        <div 
+            className={`notificacao notificacao-${tipo} ${animacao}`}
+            style={{ top: `${topPosition}px` }}
+        >
             <div className="notificacao-conteudo">
                 <div className="notificacao-icone">
                     <span className="material-symbols-outlined">

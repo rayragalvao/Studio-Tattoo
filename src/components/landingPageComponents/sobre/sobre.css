@@ -26,10 +26,10 @@
 
 .texto h1 {
     font-size: 36px;
-    line-height: 1.02;
     font-weight: 800;
     margin-bottom: 18px;
     font-family: 'Montserrat Alternates', sans-serif;
+    white-space: nowrap;
 }
 
 .texto h3 {
@@ -41,7 +41,54 @@
 .texto p {
     font-family: 'Montserrat Alternates', sans-serif;
     color: rgba(255, 255, 255, 0.92);
-    font-size: 17px;
-    margin-bottom: 40px;
-    line-height: 1.7;
+    font-size: 18px;
+    margin-bottom: 32px;
+    line-height: 1.6;
+}
+
+.texto {
+    max-width: 68ch;
+}
+
+/* Responsive adjustments for Sobre */
+@media (max-width: 1024px) {
+    .sobre {
+        grid-template-columns: 1fr;
+        padding: 30px 24px;
+    }
+    .foto {
+        margin-bottom: 12px;
+    }
+    .foto img {
+        max-width: 380px;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .sobre {
+        padding: 20px 16px;
+        gap: 14px;
+        margin-top: -380px;
+    }
+    .texto h1 {
+        font-size: 28px;
+        text-align: center;
+    }
+    .texto p {
+        font-size: 1rem;
+        text-align: center;
+    }
+    .foto img {
+        max-width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .texto h1 {
+        font-size: 22px;
+    }
+    .texto p {
+        font-size: 14px;
+    }
 }

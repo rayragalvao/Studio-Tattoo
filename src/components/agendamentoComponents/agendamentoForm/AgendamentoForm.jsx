@@ -18,8 +18,6 @@ export const AgendamentoForm = () => {
     titulo: "",
     mensagem: ""
   });
-  const [validandoCodigo, setValidandoCodigo] = useState(false);
-  const [codigoValidado, setCodigoValidado] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
   const gerarHorariosDisponiveis = (data) => {
@@ -34,56 +32,12 @@ export const AgendamentoForm = () => {
   const handleCodigoChange = (e) => {
     const valor = e.target.value;
     setCodigoOrcamento(valor);
-    setCodigoValidado(false);
     
     if (errors.codigoOrcamento) {
       setErrors(prev => ({
         ...prev,
         codigoOrcamento: ""
       }));
-    }
-  };
-
-  const validarCodigo = async () => {
-    if (!codigoOrcamento.trim()) {
-      setErrors(prev => ({
-        ...prev,
-        codigoOrcamento: "Digite um código de orçamento"
-      }));
-      return;
-    }
-
-    try {
-      setValidandoCodigo(true);
-      const isValido = await AgendamentoService.validarCodigoOrcamento(codigoOrcamento);
-      
-      if (isValido) {
-        setCodigoValidado(true);
-        setErrors(prev => ({
-          ...prev,
-          codigoOrcamento: ""
-        }));
-        setAlertaConfig({
-          tipo: "success",
-          titulo: "Código Válido!",
-          mensagem: "O código do orçamento foi validado com sucesso. Você pode prosseguir com o agendamento."
-        });
-        setShowAlerta(true);
-      } else {
-        setCodigoValidado(false);
-        setErrors(prev => ({
-          ...prev,
-          codigoOrcamento: "Código de orçamento inválido ou já possui agendamento"
-        }));
-      }
-    } catch (error) {
-      setCodigoValidado(false);
-      setErrors(prev => ({
-        ...prev,
-        codigoOrcamento: "Erro ao validar código. Tente novamente."
-      }));
-    } finally {
-      setValidandoCodigo(false);
     }
   };
 
@@ -122,8 +76,6 @@ export const AgendamentoForm = () => {
 
     if (!codigoOrcamento.trim()) {
       newErrors.codigoOrcamento = "Código do orçamento é obrigatório";
-    } else if (!codigoValidado) {
-      newErrors.codigoOrcamento = "Por favor, valide o código do orçamento";
     }
 
     if (!dataSelecionada) {
@@ -144,7 +96,6 @@ export const AgendamentoForm = () => {
     setHorarioSelecionado("");
     setHorariosDisponiveis([]);
     setErrors({});
-    setCodigoValidado(false);
   };
 
   const handleSubmit = async (e) => {
@@ -166,6 +117,23 @@ export const AgendamentoForm = () => {
 
     try {
       setEnviando(true);
+
+      // Primeiro valida o código de orçamento
+      const isCodigoValido = await AgendamentoService.validarCodigoOrcamento(codigoOrcamento);
+      
+      if (!isCodigoValido) {
+        setErrors({
+          codigoOrcamento: "Código de orçamento inválido ou já possui agendamento"
+        });
+        setAlertaConfig({
+          tipo: "error",
+          titulo: "Código Inválido",
+          mensagem: "O código do orçamento não foi encontrado ou já possui um agendamento cadastrado."
+        });
+        setShowAlerta(true);
+        setEnviando(false);
+        return;
+      }
 
       // Combina data e horário no formato LocalDateTime esperado pelo backend
       const [hora, minuto] = horarioSelecionado.split(':');
@@ -190,8 +158,28 @@ export const AgendamentoForm = () => {
       console.error('Erro ao criar agendamento:', error);
       
       let mensagemErro = "Ocorreu um erro ao criar o agendamento. Tente novamente.";
+      let tituloErro = "Erro ao Agendar";
       
-      if (error.message) {
+      // Tratamento específico de erros
+      if (error.response?.status === 409) {
+        // Conflito - código já possui agendamento
+        tituloErro = "Código Já Agendado";
+        mensagemErro = "Este código de orçamento já possui um agendamento cadastrado.";
+        setErrors({
+          codigoOrcamento: "Este código já possui agendamento"
+        });
+      } else if (error.response?.status === 404 || error.message?.includes("não encontrado")) {
+        // Código não encontrado
+        tituloErro = "Código Não Encontrado";
+        mensagemErro = "O código do orçamento informado não foi encontrado no sistema. Verifique se digitou corretamente.";
+        setErrors({
+          codigoOrcamento: "Código não encontrado"
+        });
+      } else if (error.response?.status === 400) {
+        // Erro de validação
+        tituloErro = "Dados Inválidos";
+        mensagemErro = error.response.data || "Os dados do agendamento são inválidos. Verifique as informações e tente novamente.";
+      } else if (error.message) {
         mensagemErro = error.message;
       } else if (error.response?.data) {
         mensagemErro = error.response.data;
@@ -199,7 +187,7 @@ export const AgendamentoForm = () => {
       
       setAlertaConfig({
         tipo: "error",
-        titulo: "Erro ao Agendar",
+        titulo: tituloErro,
         mensagem: mensagemErro
       });
       setShowAlerta(true);
@@ -210,7 +198,7 @@ export const AgendamentoForm = () => {
 
   const handleCloseAlerta = () => {
     setShowAlerta(false);
-    if (alertaConfig.tipo === "success" && !alertaConfig.titulo.includes("Válido")) {
+    if (alertaConfig.tipo === "success") {
       limparFormulario();
     }
   };
@@ -229,35 +217,19 @@ export const AgendamentoForm = () => {
               Código do Orçamento
               <span className="required">*</span>
             </label>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <input
-                type="text"
-                id="codigoOrcamento"
-                name="codigoOrcamento"
-                autoComplete="off"
-                value={codigoOrcamento}
-                onChange={handleCodigoChange}
-                placeholder="Digite o código do seu orçamento"
-                className={errors.codigoOrcamento ? 'error' : codigoValidado ? 'valid' : ''}
-                disabled={validandoCodigo}
-              />
-              <button
-                type="button"
-                onClick={validarCodigo}
-                disabled={validandoCodigo || !codigoOrcamento.trim()}
-                className="validar-button"
-              >
-                {validandoCodigo ? 'Validando...' : codigoValidado ? 'Validado ✓' : 'Validar'}
-              </button>
-            </div>
+            <input
+              type="text"
+              id="codigoOrcamento"
+              name="codigoOrcamento"
+              autoComplete="off"
+              value={codigoOrcamento}
+              onChange={handleCodigoChange}
+              placeholder="Digite o código do seu orçamento"
+              className={errors.codigoOrcamento ? 'error' : ''}
+            />
             {errors.codigoOrcamento && (
               <span className="error-message">
                 {errors.codigoOrcamento}
-              </span>
-            )}
-            {codigoValidado && !errors.codigoOrcamento && (
-              <span className="success-message">
-                ✓ Código validado com sucesso
               </span>
             )}
           </div>
@@ -320,7 +292,7 @@ export const AgendamentoForm = () => {
           <button 
             type="submit" 
             className="submit-button"
-            disabled={!codigoValidado || !dataSelecionada || !horarioSelecionado || enviando}
+            disabled={!codigoOrcamento || !dataSelecionada || !horarioSelecionado || enviando}
           >
             {enviando ? 'Confirmando...' : 'Confirmar Agendamento'}
           </button>

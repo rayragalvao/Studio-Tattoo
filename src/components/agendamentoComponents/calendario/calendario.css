@@ -9,6 +9,16 @@
   border: 2px solid #e1e5e9;
 }
 
+.calendario-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  font-family: 'Martel Sans', sans-serif;
+  color: var(--cinza-escuro);
+  font-size: 14px;
+}
+
 .calendario-header {
   display: flex;
   justify-content: space-between;

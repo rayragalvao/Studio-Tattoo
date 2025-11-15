@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const Modal = ({ isOpen, onClose, children, transitionClass = ""}) => {
+export const Modal = ({ isOpen, onClose, children, transitionClass = "", closeButtonColor = "#222222" }) => {
   if (!isOpen) return null;
 
   const handleOverlayClick = (e) => {
@@ -15,6 +15,7 @@ export const Modal = ({ isOpen, onClose, children, transitionClass = ""}) => {
         <button 
           className="modal-close" 
           onClick={onClose}
+          style={{ color: closeButtonColor }}
         >×</button>
         {children}
       </div>

@@ -311,7 +311,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass}>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass} closeButtonColor="#ffffff">
         <div className="modal-cadastro">
         <div className="modal-left-form">
           <form onSubmit={handleSubmit} className="cadastro-form" noValidate>

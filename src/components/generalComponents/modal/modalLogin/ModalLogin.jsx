@@ -143,7 +143,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass}>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass} closeButtonColor="#dc3545">
         <div className="modal-login">
           <div className="modal-left-orange">
             <div className="welcome-text">

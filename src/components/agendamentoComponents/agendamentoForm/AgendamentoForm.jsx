@@ -2,37 +2,88 @@ import React, { useState } from "react";
 import "./agendamentoForm.css";
 import { Calendario } from "../calendario/Calendario";
 import { AlertaCustomizado } from "../../generalComponents/alertaCustomizado/AlertaCustomizado";
+import AgendamentoService from "../../../services/AgendamentoService";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export const AgendamentoForm = () => {
+  const { user } = useAuth();
   const [codigoOrcamento, setCodigoOrcamento] = useState("");
   const [dataSelecionada, setDataSelecionada] = useState("");
   const [horarioSelecionado, setHorarioSelecionado] = useState("");
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
   const [errors, setErrors] = useState({});
   const [showAlerta, setShowAlerta] = useState(false);
+  const [alertaConfig, setAlertaConfig] = useState({
+    tipo: "success",
+    titulo: "",
+    mensagem: ""
+  });
+  const [validandoCodigo, setValidandoCodigo] = useState(false);
+  const [codigoValidado, setCodigoValidado] = useState(false);
+  const [enviando, setEnviando] = useState(false);
 
   const gerarHorariosDisponiveis = (data) => {
     const horariosBase = [
       "09:00", "10:00", "11:00", "13:00", "14:00", 
       "15:00", "16:00", "17:00", "18:00"
     ];
-
-    const horariosOcupados = ["10:00", "15:00", "17:00"];
     
-    return horariosBase.filter(horario => !horariosOcupados.includes(horario));
+    return horariosBase;
   };
-
-
 
   const handleCodigoChange = (e) => {
     const valor = e.target.value;
     setCodigoOrcamento(valor);
+    setCodigoValidado(false);
     
     if (errors.codigoOrcamento) {
       setErrors(prev => ({
         ...prev,
         codigoOrcamento: ""
       }));
+    }
+  };
+
+  const validarCodigo = async () => {
+    if (!codigoOrcamento.trim()) {
+      setErrors(prev => ({
+        ...prev,
+        codigoOrcamento: "Digite um código de orçamento"
+      }));
+      return;
+    }
+
+    try {
+      setValidandoCodigo(true);
+      const isValido = await AgendamentoService.validarCodigoOrcamento(codigoOrcamento);
+      
+      if (isValido) {
+        setCodigoValidado(true);
+        setErrors(prev => ({
+          ...prev,
+          codigoOrcamento: ""
+        }));
+        setAlertaConfig({
+          tipo: "success",
+          titulo: "Código Válido!",
+          mensagem: "O código do orçamento foi validado com sucesso. Você pode prosseguir com o agendamento."
+        });
+        setShowAlerta(true);
+      } else {
+        setCodigoValidado(false);
+        setErrors(prev => ({
+          ...prev,
+          codigoOrcamento: "Código de orçamento inválido ou já possui agendamento"
+        }));
+      }
+    } catch (error) {
+      setCodigoValidado(false);
+      setErrors(prev => ({
+        ...prev,
+        codigoOrcamento: "Erro ao validar código. Tente novamente."
+      }));
+    } finally {
+      setValidandoCodigo(false);
     }
   };
 
@@ -71,6 +122,8 @@ export const AgendamentoForm = () => {
 
     if (!codigoOrcamento.trim()) {
       newErrors.codigoOrcamento = "Código do orçamento é obrigatório";
+    } else if (!codigoValidado) {
+      newErrors.codigoOrcamento = "Por favor, valide o código do orçamento";
     }
 
     if (!dataSelecionada) {
@@ -91,6 +144,7 @@ export const AgendamentoForm = () => {
     setHorarioSelecionado("");
     setHorariosDisponiveis([]);
     setErrors({});
+    setCodigoValidado(false);
   };
 
   const handleSubmit = async (e) => {
@@ -100,19 +154,65 @@ export const AgendamentoForm = () => {
       return;
     }
 
-    const dadosAgendamento = {
-      codigoOrcamento,
-      data: dataSelecionada,
-      horario: horarioSelecionado
-    };
+    if (!user?.email) {
+      setAlertaConfig({
+        tipo: "error",
+        titulo: "Erro de Autenticação",
+        mensagem: "Você precisa estar logado para fazer um agendamento."
+      });
+      setShowAlerta(true);
+      return;
+    }
 
-    console.log("Dados do agendamento:", dadosAgendamento);
-    setShowAlerta(true);
+    try {
+      setEnviando(true);
+
+      // Combina data e horário no formato LocalDateTime esperado pelo backend
+      const [hora, minuto] = horarioSelecionado.split(':');
+      const dataHoraCompleta = `${dataSelecionada}T${hora.padStart(2, '0')}:${minuto.padStart(2, '0')}:00`;
+
+      const dadosAgendamento = {
+        emailUsuario: user.email,
+        codigoOrcamento: codigoOrcamento,
+        dataHora: dataHoraCompleta
+      };
+
+      await AgendamentoService.criarAgendamento(dadosAgendamento);
+      
+      setAlertaConfig({
+        tipo: "success",
+        titulo: "Agendamento Confirmado!",
+        mensagem: `Sua sessão foi agendada para o dia ${new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR')} às ${horarioSelecionado}. Você receberá uma confirmação em breve.`
+      });
+      setShowAlerta(true);
+      
+    } catch (error) {
+      console.error('Erro ao criar agendamento:', error);
+      
+      let mensagemErro = "Ocorreu um erro ao criar o agendamento. Tente novamente.";
+      
+      if (error.message) {
+        mensagemErro = error.message;
+      } else if (error.response?.data) {
+        mensagemErro = error.response.data;
+      }
+      
+      setAlertaConfig({
+        tipo: "error",
+        titulo: "Erro ao Agendar",
+        mensagem: mensagemErro
+      });
+      setShowAlerta(true);
+    } finally {
+      setEnviando(false);
+    }
   };
 
   const handleCloseAlerta = () => {
     setShowAlerta(false);
-    limparFormulario();
+    if (alertaConfig.tipo === "success" && !alertaConfig.titulo.includes("Válido")) {
+      limparFormulario();
+    }
   };
 
   return (
@@ -129,19 +229,35 @@ export const AgendamentoForm = () => {
               Código do Orçamento
               <span className="required">*</span>
             </label>
-            <input
-              type="text"
-              id="codigoOrcamento"
-              name="codigoOrcamento"
-              autoComplete="off"
-              value={codigoOrcamento}
-              onChange={handleCodigoChange}
-              placeholder="Digite o código do seu orçamento"
-              className={errors.codigoOrcamento ? 'error' : ''}
-            />
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <input
+                type="text"
+                id="codigoOrcamento"
+                name="codigoOrcamento"
+                autoComplete="off"
+                value={codigoOrcamento}
+                onChange={handleCodigoChange}
+                placeholder="Digite o código do seu orçamento"
+                className={errors.codigoOrcamento ? 'error' : codigoValidado ? 'valid' : ''}
+                disabled={validandoCodigo}
+              />
+              <button
+                type="button"
+                onClick={validarCodigo}
+                disabled={validandoCodigo || !codigoOrcamento.trim()}
+                className="validar-button"
+              >
+                {validandoCodigo ? 'Validando...' : codigoValidado ? 'Validado ✓' : 'Validar'}
+              </button>
+            </div>
             {errors.codigoOrcamento && (
               <span className="error-message">
                 {errors.codigoOrcamento}
+              </span>
+            )}
+            {codigoValidado && !errors.codigoOrcamento && (
+              <span className="success-message">
+                ✓ Código validado com sucesso
               </span>
             )}
           </div>
@@ -201,14 +317,12 @@ export const AgendamentoForm = () => {
             </div>
           </div>
 
-
-
           <button 
             type="submit" 
             className="submit-button"
-            disabled={!codigoOrcamento || !dataSelecionada || !horarioSelecionado}
+            disabled={!codigoValidado || !dataSelecionada || !horarioSelecionado || enviando}
           >
-            Confirmar Agendamento
+            {enviando ? 'Confirmando...' : 'Confirmar Agendamento'}
           </button>
         </form>
       </div>
@@ -216,9 +330,9 @@ export const AgendamentoForm = () => {
       <AlertaCustomizado
         isVisible={showAlerta}
         onClose={handleCloseAlerta}
-        tipo="success"
-        titulo="Agendamento Confirmado!"
-        mensagem={`Sua sessão foi agendada para o dia ${dataSelecionada ? new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR') : ''} às ${horarioSelecionado}. Você receberá uma confirmação em breve.`}
+        tipo={alertaConfig.tipo}
+        titulo={alertaConfig.titulo}
+        mensagem={alertaConfig.mensagem}
         botaoTexto="Entendi"
       />
     </section>

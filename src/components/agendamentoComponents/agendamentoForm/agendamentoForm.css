@@ -106,12 +106,57 @@
   background-color: #fff5f5;
 }
 
+.form-group input.valid {
+  border-color: #28a745;
+  background-color: #f0fff4;
+}
+
 .error-message {
   color: var(--vermelho);
   font-size: 12px;
   font-family: 'Martel Sans', sans-serif;
   margin-top: 3px;
   display: block;
+}
+
+.success-message {
+  color: #28a745;
+  font-size: 12px;
+  font-family: 'Martel Sans', sans-serif;
+  margin-top: 3px;
+  display: block;
+  font-weight: 600;
+}
+
+.validar-button {
+  padding: 8px 16px;
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border: none;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Martel Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.validar-button:hover:not(:disabled) {
+  background-color: #870C0E;
+  transform: translateY(-1px);
+}
+
+.validar-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.validar-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 127, 0.3);
 }
 
 .horarios-grid {

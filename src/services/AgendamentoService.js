@@ -45,9 +45,13 @@ class AgendamentoService {
     } catch (error) {
       console.error('Erro ao criar agendamento:', error);
       
-      // Trata mensagens de erro do backend
       if (error.response?.data) {
-        throw new Error(error.response.data);
+        if (typeof error.response.data === 'string') {
+          throw new Error(error.response.data);
+        }
+        if (error.response.data.message) {
+          throw new Error(error.response.data.message);
+        }
       }
       
       throw error;
@@ -55,8 +59,7 @@ class AgendamentoService {
   }
 
   /**
-   * Lista todos os agendamentos
-   * @returns {Promise<Array>} - Array com todos os agendamentos
+   * @returns {Promise<Array>}
    */
   async listarAgendamentos() {
     try {
@@ -69,9 +72,8 @@ class AgendamentoService {
   }
 
   /**
-   * Busca um agendamento por ID
-   * @param {number} id - ID do agendamento
-   * @returns {Promise<Object>} - Dados do agendamento
+   * @param {number} id
+   * @returns {Promise<Object>}
    */
   async buscarAgendamentoPorId(id) {
     try {

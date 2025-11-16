@@ -5,7 +5,6 @@ import { useAuth } from '../../../../contexts/AuthContext.jsx';
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../../../firebaseConfig.js";
 import GoogleLogo from '../../../../assets/img/google.png'; 
-import ModalLoginConcluido from '../ModalLoginConcluido.jsx'; // import do modal de sucesso
 import { Notificacao } from '../../notificacao/Notificacao.jsx';
 
 export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
@@ -20,7 +19,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [loginConcluido, setLoginConcluido] = useState(false); // controla modal de sucesso
+  const [isClosing, setIsClosing] = useState(false);
   const [notificacao, setNotificacao] = useState({
     visivel: false,
     tipo: 'sucesso',
@@ -94,11 +93,13 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
       });
 
       console.log('Login realizado com sucesso:', response);
-      mostrarNotificacao('sucesso', 'Login Realizado!', 'Seja bem-vindo de volta!');
       clearForm();
-      onClose();
-
-      setLoginConcluido(true); // abre modal de login concluído
+      
+      setIsClosing(true);
+      setTimeout(() => {
+        setIsClosing(false);
+        onClose();
+      }, 300);
     } catch (error) {
       console.error('Erro no login:', error);
       if (error.status === 401 || error.status === 404) {
@@ -115,7 +116,6 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
     }
   };
 
-  // Login com Google
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
@@ -126,8 +126,6 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
       mostrarNotificacao('sucesso', 'Login com Google Realizado!', `Bem-vindo, ${user.displayName || user.email}!`);
       clearForm();
       onClose();
-
-      setLoginConcluido(true); // abre modal de login concluído
     } catch (error) {
       console.error('Erro no login com Google:', error);
       mostrarNotificacao('erro', 'Erro no Login Google', 'Não foi possível realizar login com Google. Tente novamente.');
@@ -143,7 +141,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass} closeButtonColor="#dc3545">
+      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={`${transitionClass} ${isClosing ? 'modal-closing' : ''}`} closeButtonColor="#dc3545">
         <div className="modal-login">
           <div className="modal-left-orange">
             <div className="welcome-text">
@@ -249,13 +247,6 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
           </div>
         </div>
       </Modal>
-
-      {/* Modal de login concluído */}
-      <ModalLoginConcluido 
-        isVisible={loginConcluido} 
-        onClose={() => setLoginConcluido(false)} 
-        emailUsuario={formData.email} 
-      />
       
       <Notificacao
         tipo={notificacao.tipo}

@@ -67,6 +67,21 @@
   animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.modal-content.modal-closing {
+  animation: modalFadeOut 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
 @keyframes modalSlideOut {
   0% {
     opacity: 1;

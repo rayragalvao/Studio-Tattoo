@@ -93,6 +93,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
       });
 
       console.log('Login realizado com sucesso:', response);
+      mostrarNotificacao('sucesso', 'Login Realizado!', `Bem-vindo de volta, ${response.nome || response.email}!`);
       clearForm();
       
       setIsClosing(true);
@@ -183,7 +184,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
                     required
                   />
                   <button type="button" className="password-toggle" onClick={togglePasswordVisibility} style={{ minWidth:'24px', minHeight:'24px', display:'flex', alignItems:'center', justifyContent:'center'}}>
-                    <span class="material-symbols-outlined">
+                    <span className="material-symbols-outlined">
                       {showPassword ? (
                         'visibility_off'
                       ) : (

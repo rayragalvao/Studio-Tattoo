@@ -33,10 +33,10 @@ export function VLibras() {
       id="vlibras-container"
       dangerouslySetInnerHTML={{
         __html: `
-          <div vw class="enabled">
-            <div vw-access-button class="active"></div>
+          <div vw className="enabled">
+            <div vw-access-button className="active"></div>
             <div vw-plugin-wrapper>
-              <div class="vw-plugin-top-wrapper"></div>
+              <div className="vw-plugin-top-wrapper"></div>
             </div>
           </div>
         `,

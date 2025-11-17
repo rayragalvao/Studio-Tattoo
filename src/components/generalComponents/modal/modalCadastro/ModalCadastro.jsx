@@ -387,7 +387,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                       justifyContent: 'center'
                     }}
                   >
-                    <span class="material-symbols-outlined">
+                    <span className="material-symbols-outlined">
                       {showPassword ? (
                         'visibility_off'
                       ) : (
@@ -456,7 +456,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                     justifyContent: 'center'
                   }}
                 >
-                  <span class="material-symbols-outlined">
+                  <span className="material-symbols-outlined">
                       {showConfirmPassword ? (
                         'visibility_off'
                       ) : (

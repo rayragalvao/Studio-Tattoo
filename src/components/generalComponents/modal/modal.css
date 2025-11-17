@@ -35,7 +35,7 @@
   right: 15px;
   width: 20px;
   height: 20px;
-  background-color: #fff;
+  background-color: transparent;
   border: none;
   font-size: 32px;
   z-index: 1000;
@@ -44,6 +44,7 @@
   align-items: center;
   justify-content: center;
   color: #222222 !important;
+  transition: opacity 0.3s ease;
 }
 
 .modal-close:hover {
@@ -64,6 +65,21 @@
 
 .modal-content.transitioning-in {
   animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-content.modal-closing {
+  animation: modalFadeOut 0.3s ease-out forwards;
+}
+
+@keyframes modalFadeOut {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.98);
+  }
 }
 
 @keyframes modalSlideOut {

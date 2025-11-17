@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "./calendario.css";
+import AgendamentoService from "../../../services/AgendamentoService";
 
-export const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
+export const Calendario = ({ onDataSelecionada, dataSelecionada, recarregarDatas }) => {
   const [mesAtual, setMesAtual] = useState(new Date());
   const [datasDisponiveis, setDatasDisponiveis] = useState(new Set());
+  const [datasOcupadas, setDatasOcupadas] = useState(new Set());
+  const [carregando, setCarregando] = useState(true);
 
   const meses = [
     "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
@@ -12,10 +15,26 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
 
   const diasSemana = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
 
+  useEffect(() => {
+    const buscarDatasOcupadas = async () => {
+      try {
+        setCarregando(true);
+        const datas = await AgendamentoService.getDatasOcupadas();
+        console.log('Datas ocupadas recebidas do backend:', datas);
+        setDatasOcupadas(new Set(datas));
+      } catch (error) {
+        console.error('Erro ao buscar datas ocupadas:', error);
+      } finally {
+        setCarregando(false);
+      }
+    };
+
+    buscarDatasOcupadas();
+  }, [recarregarDatas]);
+
   const gerarDatasDisponiveis = (mes, ano) => {
     const datasLivres = new Set();
     const hoje = new Date();
-    const primeiroDiaMes = new Date(ano, mes, 1);
     const ultimoDiaMes = new Date(ano, mes + 1, 0);
 
     for (let dia = 1; dia <= ultimoDiaMes.getDate(); dia++) {
@@ -32,13 +51,13 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
       if (data > tresMesesFuturo) continue;
 
       const diaSemana = data.getDay();
-      
       if (diaSemana === 0) continue;
       
-      const datasOcupadas = [5, 12, 19, 26];
-      if (datasOcupadas.includes(dia)) continue;
-
-      datasLivres.add(`${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`);
+      const dataFormatada = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+      
+      if (!datasOcupadas.has(dataFormatada)) {
+        datasLivres.add(dataFormatada);
+      }
     }
 
     return datasLivres;
@@ -48,8 +67,10 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
     const mes = mesAtual.getMonth();
     const ano = mesAtual.getFullYear();
     const novasDatasDisponiveis = gerarDatasDisponiveis(mes, ano);
+    console.log('Datas disponíveis geradas:', Array.from(novasDatasDisponiveis));
+    console.log('Datas ocupadas no state:', Array.from(datasOcupadas));
     setDatasDisponiveis(novasDatasDisponiveis);
-  }, [mesAtual]);
+  }, [mesAtual, datasOcupadas]);
 
   const obterPrimeiroDiaSemana = () => {
     const primeiroDia = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1);
@@ -82,7 +103,7 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
 
   const formatarDataParaComparacao = (dia) => {
     const ano = mesAtual.getFullYear();
-    const mes = mesAtual.getMonth();
+    const mes = mesAtual.getMonth() + 1;
     return `${ano}-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
   };
 
@@ -121,6 +142,16 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada }) => {
 
     return dias;
   };
+
+  if (carregando) {
+    return (
+      <div className="calendario-container">
+        <div className="calendario-loading">
+          <p>Carregando calendário...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="calendario-container">

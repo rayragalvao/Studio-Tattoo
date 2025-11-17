@@ -1,7 +1,6 @@
 import { Modal } from '../Modal.jsx';
 import './modalCadastro.css';
 import React, { useState, useEffect } from 'react';
-import ModalCadastroConcluido from '../ModalCadastroConcluido.jsx';
 import { Notificacao } from '../../notificacao/Notificacao.jsx';
 import api from "../../../../services/api.js";
 
@@ -20,7 +19,6 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showPasswordTooltip, setShowPasswordTooltip] = useState(false);
   const [notificacao, setNotificacao] = useState({
@@ -35,7 +33,6 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
       clearForm();
       setShowPassword(false);
       setShowConfirmPassword(false);
-      setShowSuccessModal(false);
       setNotificacao({ visivel: false, tipo: 'sucesso', titulo: '', mensagem: '' });
     }
   }, [isOpen]);
@@ -91,10 +88,6 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
         ...prev,
         [name]: ''
       }));
-    }
-    
-    if (showSuccessModal) {
-      setShowSuccessModal(false);
     }
   };
 
@@ -212,11 +205,10 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
         
         console.log('Cadastro realizado com sucesso:', response.data);
         mostrarNotificacao('sucesso', 'Cadastro Realizado!', 'Sua conta foi criada com sucesso. Bem-vindo!');
-        setShowSuccessModal(true);
+        clearForm();
       } catch (error) {
         console.error('Erro no cadastro:', error);
         
-        // Tratar erros baseados na resposta da API
         if (error.response) {
           const { status, data } = error.response;
           
@@ -252,10 +244,8 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
             mostrarNotificacao('erro', 'Erro no Cadastro', data.message || 'Erro interno do servidor. Tente novamente.');
           }
         } else if (error.request) {
-          // Erro de rede
           mostrarNotificacao('erro', 'Erro de Conexão', 'Verifique sua internet e tente novamente.');
         } else {
-          // Outros erros
           mostrarNotificacao('erro', 'Erro Inesperado', 'Algo deu errado. Tente novamente.');
         }
       } finally {
@@ -265,14 +255,8 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
   };
 
   const handleCloseModal = () => {
-    setShowSuccessModal(false);
     clearForm();
     onClose();
-  };
-
-  const handleSuccessModalClose = () => {
-    setShowSuccessModal(false);
-    clearForm();
   };
 
   const togglePasswordVisibility = () => {
@@ -311,7 +295,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass}>
+      <Modal isOpen={isOpen} onClose={handleCloseModal} transitionClass={transitionClass} closeButtonColor="#ffffff">
         <div className="modal-cadastro">
         <div className="modal-left-form">
           <form onSubmit={handleSubmit} className="cadastro-form" noValidate>
@@ -502,11 +486,6 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
           </div>
         </div>
       </div>
-
-      <ModalCadastroConcluido
-        isVisible={showSuccessModal}
-        onClose={handleSuccessModalClose}
-      />
       </Modal>
       
       <Notificacao
@@ -515,7 +494,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
         mensagem={notificacao.mensagem}
         visivel={notificacao.visivel}
         onFechar={fecharNotificacao}
-        duracao={5000}
+        duracao={4000}
         posicao={1}
       />
     </>

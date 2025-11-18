@@ -2,7 +2,7 @@ import React  from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import AdminRoute from "./routes/AdminRoute.jsx";
 import UserRoute from "./routes/UserRoute.jsx";
-import { Home } from "./pages/Home/Home.jsx";
+import { Home } from "./pages/home/Home.jsx";
 import { Portfolio } from "./pages/portifolio/Portfolio.jsx";
 import { Agendamento } from "./pages/agendamento/Agendamento.jsx";
 import { Orcamento } from "./pages/orcamento/Orcamento.jsx";

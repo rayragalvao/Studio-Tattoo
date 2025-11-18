@@ -5,7 +5,7 @@ import { useAuth } from "../../../contexts/AuthContext.jsx";
 import logoBranca from "../../../assets/img/logo-branca.png";
 import { ModalCadastro } from "../modal/modalCadastro/ModalCadastro.jsx";
 import { ModalLogin } from "../modal/modalLogin/ModalLogin.jsx";
-import "./navbar.css";
+import "./navBar.css";
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -104,6 +104,7 @@ export const Navbar = () => {
   
   if (isAuthenticated) {
     if (user?.isAdmin) {
+      menuItems.push({ label: "Dashboard", to: "/dashboard" });
       menuItems.push({ label: "Estoque", to: "/estoque" });
     } else {
       menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });

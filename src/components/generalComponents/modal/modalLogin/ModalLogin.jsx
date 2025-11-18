@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import './modalLogin.css';
+import './ModalLogin.css';
 import { Modal } from '../Modal.jsx';
 import { useAuth } from '../../../../contexts/AuthContext.jsx';
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../../../firebaseConfig.js";
 import GoogleLogo from '../../../../assets/img/google.png'; 
-import { ModalLoginConcluido } from '../ModalLoginConcluido.jsx'; // import do modal de sucesso
+import ModalLoginConcluido from '../ModalLoginConcluido.jsx'; // import do modal de sucesso
 import { Notificacao } from '../../notificacao/Notificacao.jsx';
 
 export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {

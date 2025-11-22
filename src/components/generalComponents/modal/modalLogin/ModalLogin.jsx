@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './modalLogin.css';
+import './ModalLogin.css';
 import { Modal } from '../Modal.jsx';
 import { useAuth } from '../../../../contexts/AuthContext.jsx';
 import { signInWithPopup } from "firebase/auth";
@@ -8,7 +8,7 @@ import GoogleLogo from '../../../../assets/img/google.png';
 import { Notificacao } from '../../notificacao/Notificacao.jsx';
 
 export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
-  const { login } = useAuth();
+  const { loginWithGoogle } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -118,18 +118,28 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
   };
 
   const handleGoogleLogin = async () => {
+    setIsLoading(true);
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      login({ email: user.email, nome: user.displayName, uid: user.uid, permanecerConectado: true });
 
-      console.log('Login Google realizado com sucesso:', user);
+      // Use loginWithGoogle do contexto para permitir fallback/local storage
+      const response = await loginWithGoogle({
+        email: user.email,
+        displayName: user.displayName,
+        uid: user.uid,
+        photoURL: user.photoURL
+      });
+
+      console.log('Login Google realizado com sucesso:', user, 'response:', response);
       mostrarNotificacao('sucesso', 'Login com Google Realizado!', `Bem-vindo, ${user.displayName || user.email}!`);
       clearForm();
       onClose();
     } catch (error) {
       console.error('Erro no login com Google:', error);
       mostrarNotificacao('erro', 'Erro no Login Google', 'Não foi possível realizar login com Google. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 

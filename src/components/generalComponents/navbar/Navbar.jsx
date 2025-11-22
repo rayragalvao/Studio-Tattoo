@@ -2,13 +2,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext.jsx";
+import { useIsMobile } from "../../../hooks/useIsMobile.js";
 import logoBranca from "../../../assets/img/logo-branca.png";
 import { ModalCadastro } from "../modal/modalCadastro/ModalCadastro.jsx";
 import { ModalLogin } from "../modal/modalLogin/ModalLogin.jsx";
-import "./navbar.css";
+import "./navBar.css";
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
+  const isMobile = useIsMobile(768);
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);
@@ -104,6 +106,7 @@ export const Navbar = () => {
   
   if (isAuthenticated) {
     if (user?.isAdmin) {
+      menuItems.push({ label: "Dashboard", to: "/dashboard" });
       menuItems.push({ label: "Estoque", to: "/estoque" });
     } else {
       menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
@@ -150,24 +153,26 @@ export const Navbar = () => {
               </NavLink>
             </li>
           ))}
-          {/* mobile actions - shown only on small screens via CSS */}
-          <li className="mobile-actions">
-            <div className="actions-mobile">
-              {isAuthenticated ? (
-                <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
-                  <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>
-                  <button onClick={() => { handleLogout(); closeMenu(); }} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
-                    {isLoggingOut ? 'Saindo...' : 'Sair'}
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <button onClick={() => { openCadastroModal(); closeMenu(); }} className="btn-cadastro">Cadastro</button>
-                  <button onClick={() => { openLoginModal(); closeMenu(); }} className="btn-login">Login</button>
-                </>
-              )}
-            </div>
-          </li>
+          {/* mobile actions - rendered only on mobile screens */}
+          {isMobile && (
+            <li className="mobile-actions">
+              <div className="actions-mobile">
+                {isAuthenticated ? (
+                  <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
+                    <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>
+                    <button onClick={() => { handleLogout(); closeMenu(); }} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
+                      {isLoggingOut ? 'Saindo...' : 'Sair'}
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <button onClick={() => { openCadastroModal(); closeMenu(); }} className="btn-cadastro">Cadastro</button>
+                    <button onClick={() => { openLoginModal(); closeMenu(); }} className="btn-login">Login</button>
+                  </>
+                )}
+              </div>
+            </li>
+          )}
         </ul>
         
         <div className="actions">

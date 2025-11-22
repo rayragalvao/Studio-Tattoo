@@ -55,6 +55,21 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginWithGoogle = async (googleUser) => {
+    try {
+      const response = await AuthService.loginWithGoogle(googleUser);
+      console.log('Google login bem-sucedido:', response);
+      setUser(response);
+      setIsAuthenticated(true);
+      return response;
+    } catch (error) {
+      console.error('Erro no Google login:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+      throw error;
+    }
+  };
+
   const logout = () => {
     AuthService.logout();
     setUser(null);
@@ -80,6 +95,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     isLoading,
     login,
+    loginWithGoogle,
     logout,
     register,
     isAdmin

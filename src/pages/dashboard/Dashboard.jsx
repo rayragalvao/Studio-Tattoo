@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react'; 
 import { Bar } from 'react-chartjs-2';
 import { 
     Chart as ChartJS, 
@@ -16,6 +16,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import DashboardCard from '../../components/generalComponents/dashboardCard/DashboardCard';
 import "./dashboard.css";
 import { useNavigate } from 'react-router-dom';
+import api from '../../services/api';
+import LoadingSpinner from '../../components/loadingComponents/loadingSpinner/LoadingSpinner'; 
 
 ChartJS.register(
     CategoryScale, 
@@ -26,31 +28,7 @@ ChartJS.register(
     Legend
 );
 
-const dados = [
-    5000, 7500, 12000, 8500, 15000, 9000, 
-    11000, 13500, 16000, 14000, 18000, 20000
-];
-
-const chartData = {
-    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-    datasets: [
-        {
-            label: 'Faturamento',
-            data: dados,
-            backgroundColor: function(context) {
-                const index = context.dataIndex;
-                const currentMonth = new Date().getMonth();
-                return index === currentMonth ? '#fb923c' : '#7c3aed';
-            },
-            borderRadius: 8,
-            borderSkipped: false,
-            barThickness: 24,
-            maxBarThickness: 32,
-        },
-    ],
-};
-
-
+// As opções do gráfico podem continuar fora, pois são estáticas
 const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -120,29 +98,129 @@ const chartOptions = {
 
 
 const Dashboard = () => {
-    const proximoAgendamento = {
-        nome: 'Eduarda',
-        valor: 'R$ 100,00',
-        data: '12/10/2025',
-        horario: '10:30'
-    };
-
-    const agendamentosDia = [
-        { nome: 'Eduarda', valor: 'R$ 100,00', horario: '10:30' },
-        { nome: 'João', valor: 'R$ 40,00', horario: '14:00' },
-    ];
-
-    const alertasEstoque = [
-        { item: 'Luvas', unidades: 2 },
-        { item: 'Agulhas', unidades: 5 },
-        { item: 'Tinta Preta', unidades: 3 },
-        { item: 'Papel Toalha', unidades: 4 }
-    ];
-
-    const orcamentosPendentes = 2;
     
     const { user } = useAuth();
     const navigate = useNavigate();
+
+    const [kpis, setKpis] = useState(null); 
+    const [faturamentoDados, setFaturamentoDados] = useState([]); 
+    const [loading, setLoading] = useState(true); 
+    
+    const chartData = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        datasets: [
+            {
+                label: 'Faturamento',
+                data: faturamentoDados, 
+                backgroundColor: function(context) {
+                    const index = context.dataIndex;
+                    const currentMonth = new Date().getMonth();
+                    return index === currentMonth ? '#fb923c' : '#7c3aed';
+                },
+                borderRadius: 8,
+                borderSkipped: false,
+                barThickness: 24,
+                maxBarThickness: 32,
+            },
+        ],
+    };
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            setLoading(true);
+            try {
+                console.log('Buscando dados do dashboard...');
+                
+                const kpiResponse = await api.get('/dashboard/kpis');
+                console.log('KPIs recebidos:', kpiResponse.data);
+                setKpis(kpiResponse.data);
+
+                const faturamentoResponse = await api.get('/dashboard/faturamento-anual');
+                console.log('Faturamento recebido:', faturamentoResponse.data);
+                setFaturamentoDados(faturamentoResponse.data);
+
+            } catch (error) {
+                console.error("Erro ao buscar dados do dashboard:", error);
+                
+                setKpis({
+                    proximoAgendamento: null,
+                    orcamentosPendentes: 0,
+                    agendamentosDoDia: [],
+                    alertasEstoque: []
+                });
+                setFaturamentoDados(Array(12).fill(0)); 
+                
+                console.warn('Usando dados vazios devido a erro na API');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []); 
+    
+
+    if (loading) {
+        return (
+            <>
+                <Navbar />
+                <div className="dashboard-container" style={{ display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
+                    <LoadingSpinner /> 
+                    <p style={{ marginTop: '20px', color: '#666' }}>Carregando dados do dashboard...</p>
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
+    if (!kpis) {
+        return (
+            <>
+                <Navbar />
+                <div className="dashboard-container" style={{ display: 'grid', placeItems: 'center', minHeight: '60vh' }}>
+                    <div style={{ textAlign: 'center' }}>
+                        <h3>⚠️ Erro ao carregar dados</h3>
+                        <p>Não foi possível conectar com o servidor.</p>
+                        <button 
+                            onClick={() => window.location.reload()}
+                            style={{ 
+                                padding: '10px 20px', 
+                                backgroundColor: '#fb923c', 
+                                color: 'white', 
+                                border: 'none', 
+                                borderRadius: '5px',
+                                cursor: 'pointer',
+                                marginTop: '10px'
+                            }}
+                        >
+                            Tentar Novamente
+                        </button>
+                    </div>
+                </div>
+                <Footer />
+            </>
+        );
+    }
+
+    const { 
+        proximoAgendamento = null,
+        orcamentosPendentes = 0, 
+        agendamentosDoDia = [], 
+        alertasEstoque = [] 
+    } = kpis;
+
+    const proximoAgendamentoFormatado = proximoAgendamento ? {
+        nome: proximoAgendamento.usuario?.nome || 'Cliente', 
+        valor: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proximoAgendamento.valor || 0),
+        data: new Date(proximoAgendamento.dataHorario).toLocaleDateString('pt-BR'),
+        horario: new Date(proximoAgendamento.dataHorario).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+    } : { 
+        nome: 'Nenhum', 
+        valor: 'R$ 0,00', 
+        data: 'Sem data', 
+        horario: '' 
+    };
+
 
     return (
         <>
@@ -156,16 +234,17 @@ const Dashboard = () => {
                     
                     <DashboardCard className="kpi-principal">
                         <div className="agendamento-info-grid">
-                   <div className="proximo-agendamento-card">
-    <h3>Próximo agendamento</h3>
-    <div className="proximo-agendamento-bloco-destaque"> 
-        <p className="nome-cliente">{proximoAgendamento.nome} - {proximoAgendamento.valor}</p>
-        <p className="data-hora">{proximoAgendamento.data} - {proximoAgendamento.horario}</p>
-        <button className="btn-agendar-action">▶</button>
-    </div>
-</div>
+                           <div className="proximo-agendamento-card">
+                                <h3>Próximo agendamento</h3>
+                                <div className="proximo-agendamento-bloco-destaque"> 
+                                    <p className="nome-cliente">{proximoAgendamentoFormatado.nome} - {proximoAgendamentoFormatado.valor}</p>
+                                    <p className="data-hora">{proximoAgendamentoFormatado.data} - {proximoAgendamentoFormatado.horario}</p>
+                                    <button className="btn-agendar-action">▶</button>
+                                </div>
+                            </div>
                             <div className="orcamentos-pendentes-card">
                                 <h3>Orçamentos aguardando resposta</h3>
+                                {/* DADO DINÂMICO */}
                                 <p className="numero-pendentes">{orcamentosPendentes}</p>
                             </div>
                         </div>
@@ -184,15 +263,23 @@ const Dashboard = () => {
                 <div className="dashboard-row-listas">
                     <DashboardCard titulo="Agendamentos do dia" className="agendamentos-dia-card">
                         <ul className="lista-agendamentos">
-                            {agendamentosDia.map((ag, index) => (
-                                <li key={index} className="item-agendamento">
-                                    <div>
-                                        <span className="info-principal">{ag.nome} - {ag.valor}</span>
-                                        <span className="info-secundaria">{proximoAgendamento.data} - {ag.horario}</span>
-                                    </div>
-                                    <button className="btn-agendar-action">🕒</button>
-                                </li>
-                            ))}
+                            {agendamentosDoDia.length === 0 ? (
+                                <li className="item-agendamento-vazio">Nenhum agendamento hoje.</li>
+                            ) : (
+                                agendamentosDoDia.map((ag) => (
+                                    <li key={ag.id} className="item-agendamento">
+                                        <div>
+                                            <span className="info-principal">
+                                                {ag.usuario?.nome || 'Cliente'} - {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(ag.valor || 0)}
+                                            </span>
+                                            <span className="info-secundaria">
+                                                {new Date(ag.dataHorario).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                        </div>
+                                        <button className="btn-agendar-action">🕒</button>
+                                    </li>
+                                ))
+                            )}
                         </ul>
                     </DashboardCard>
                     
@@ -201,12 +288,16 @@ const Dashboard = () => {
                         className="alerta-estoque-card"
                     >
                         <div className="alertas-scroll-container">
-                            {alertasEstoque.map((alerta, index) => (
-                                <div key={index} className="alerta-item-destaque">
-                                    <p className="item-nome-alerta">{alerta.item}</p>
-                                    <p className="item-quantidade-alerta">{alerta.unidades} unidades sobrando</p>
-                                </div>
-                            ))}
+                            {alertasEstoque.length === 0 ? (
+                                <div className="alerta-item-vazio">Estoque em ordem!</div>
+                            ) : (
+                                alertasEstoque.map((alerta) => (
+                                    <div key={alerta.id} className="alerta-item-destaque">
+                                        <p className="item-nome-alerta">{alerta.nome}</p>
+                                        <p className="item-quantidade-alerta">{alerta.quantidade} unidades sobrando</p>
+                                    </div>
+                                ))
+                            )}
                         </div>
                         <button 
                             className="btn-ver-estoque"

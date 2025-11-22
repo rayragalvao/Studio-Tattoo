@@ -244,11 +244,9 @@ body.logging-out .content {
     display: none;
 }
 
-/* Hide mobile-only elements on desktop */
-.mobile-actions { display: none; }
+/* Hide close button on desktop */
 .menu-close-wrapper { display: none; }
 
-/* Mobile styles */
 @media (max-width: 768px) {
     .nav-toggle { 
         display: flex; 

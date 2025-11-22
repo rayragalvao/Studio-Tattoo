@@ -23,6 +23,41 @@ class AuthService {
     }
   }
 
+  static async loginWithGoogle(googleUser) {
+    try {
+      // Tenta fazer login com Google no backend
+      const response = await ApiService.post('/usuario/login', {
+        email: googleUser.email,
+        senha: googleUser.uid // Usa UID do Google como "senha"
+      });
+
+      if (response.token) {
+        AuthStorage.saveToken(response.token, true);
+        AuthStorage.saveUser(response, true);
+        return response;
+      }
+
+      throw new Error('Token não recebido');
+    } catch (backendError) {
+      console.log('Backend não reconheceu Google login, usando fallback local');
+      
+      // Fallback: armazenar dados do Google localmente
+      const userData = {
+        id: googleUser.uid,
+        email: googleUser.email,
+        nome: googleUser.displayName,
+        photoURL: googleUser.photoURL,
+        isAdmin: false,
+        loginType: 'google'
+      };
+      
+      AuthStorage.saveToken(`google_${googleUser.uid}`, true);
+      AuthStorage.saveUser(userData, true);
+      console.log('Usuário Google armazenado localmente:', userData);
+      return userData;
+    }
+  }
+
   static async register(userData) {
     try {
       const response = await ApiService.post('/usuario/cadastro', {

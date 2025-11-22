@@ -6,8 +6,8 @@ import { auth, provider } from "../../../firebaseConfig";
 import GoogleLogo from '../../../assets/img/google.png'; 
 import ModalLoginConcluido from './ModalLoginConcluido.jsx';
 
-const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
-  const { login } = useAuth();
+export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
+  const { login, loginWithGoogle } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -90,18 +90,29 @@ const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" 
   // Login com Google
   const handleGoogleLogin = async () => {
     try {
+      setIsLoading(true);
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
-      login({ email: user.email, nome: user.displayName, uid: user.uid, permanecerConectado: true });
+      
+      console.log('Google sign-in bem-sucedido:', user);
+      
+      // Chama o novo método loginWithGoogle
+      const response = await loginWithGoogle({
+        email: user.email,
+        displayName: user.displayName,
+        uid: user.uid,
+        photoURL: user.photoURL
+      });
 
-      console.log('Login Google realizado com sucesso:', user);
+      console.log('Login Google processado:', response);
       clearForm();
       onClose();
-
-      setLoginConcluido(true); // abre modal de login concluído
+      setLoginConcluido(true);
     } catch (error) {
       console.error('Erro no login com Google:', error);
       setErrors({ geral: 'Não foi possível realizar login com Google.' });
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -24,15 +24,21 @@
 
 .modal-close {
   position: absolute;
-  top: 20px;
-  right: 25px;
-  background: none;
+  display: flex;
+  align-items: center;
+  top: 15px;
+  right: 15px;
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
   border: none;
+  border-radius: 2px;
   font-size: 28px;
-  color: #222222;
+  color: #222222 !important;
   cursor: pointer;
-  z-index: 1001;
+  z-index: 1000;
   transition: color 0.3s ease;
+  justify-content: center;
   font-weight: 300;
 }
 

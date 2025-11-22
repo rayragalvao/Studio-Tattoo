@@ -15,7 +15,6 @@
     font-family: 'Martel Sans', sans-serif;
 }
 
-/* Classe para elementos visíveis apenas para leitores de tela */
 .sr-only {
     position: absolute;
     width: 1px;
@@ -28,12 +27,9 @@
     border: 0;
 }
 
-/* Scroll suave para toda a página */
 html {
     scroll-behavior: smooth;
 }
-
-
 
 .section-estoque {
     min-height: 100vh;
@@ -78,8 +74,6 @@ html {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 2em;
 }
-
-
 
 .div-barra-pesquisa {
     display: grid;
@@ -159,6 +153,7 @@ html {
 }
 
 .container-itens {
+    position: relative;
     width: 100%;
     max-height: 100%;
     display: flex;
@@ -301,8 +296,6 @@ html {
         height: 3em;
     }
 
-
-
     .input-barra-pesquisa input {
         padding-left: 2.2em;
         height: 100%;;
@@ -340,8 +333,6 @@ html {
         gap: 0.2em;
     }
 
-
-
     .input-barra-pesquisa input {
         padding-left: 2em;
     }
@@ -358,8 +349,6 @@ html {
     .bt-filtro .icon {
         font-size: 16px;
     }
-
-
 }
 
 /* Landscape Mobile */
@@ -377,8 +366,6 @@ html {
         max-width: 40vw;
         min-height: auto;
     }
-
-
 
     .container-itens {
         overflow-y: auto;

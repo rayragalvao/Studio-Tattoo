@@ -8,12 +8,13 @@ export const Formulario = ({
   subtitulo = 'Conte sua ideia, nós criamos a arte.',
   campos = [],
   onSubmit,
+  limparForms,
+  onLimparForms,
   submitButtonText = 'Enviar orçamento',
   className = '',
   initialValues = {},
   isSubmitting = false,
 }) => {
-  // Estado único para o formulário
   const [dadosFormulario, setDadosFormulario] = useState(() => {
     const inicial = {};
     campos.forEach((campo) => {
@@ -27,6 +28,34 @@ export const Formulario = ({
   });
 
   const [erros, setErros] = useState({});
+
+    useEffect(() => {
+    if (limparForms) {
+      const dadosLimpos = {};
+      campos.forEach(campo => {
+        if (campo.type === 'checkbox group') {
+          dadosLimpos[campo.name] = [];
+        } else if (campo.type === 'file') {
+          dadosLimpos[campo.name] = [];
+        } else if (campo.type === 'select') {
+          dadosLimpos[campo.name] = campo.options[0];
+        } else {
+          dadosLimpos[campo.name] = '';
+        }
+      });
+
+       setDadosFormulario(dadosLimpos);
+      
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      fileInputs.forEach(input => {
+        input.value = '';
+      });
+      
+      if (onLimparForms) {
+        onLimparForms();
+      }
+    }
+  }, [limparForms, campos, onLimparForms]);
 
   useEffect(() => {
     setDadosFormulario((prev) => ({ ...prev, ...initialValues }));
@@ -134,15 +163,21 @@ export const Formulario = ({
             </select>
 
             {String(dadosFormulario[campo.name]).toLowerCase() === 'outro' && (
-              <input
-                type="text"
-                id={`${campo.name}_outro`}
-                name={`${campo.name}_outro`}
-                value={dadosFormulario[`${campo.name}_outro`] || ''}
-                onChange={handleMudancaInput}
-                placeholder={`Especifique ${campo.label.toLowerCase()}`}
-                className={classeInput}
-              />
+              <div className="campo-outro">
+                <label htmlFor={`${campo.name}_outro`}>
+                  Especifique o local do corpo
+                  {campo.required && <span className="required">*</span>}
+                </label>
+                <input
+                  type="text"
+                  id={`${campo.name}_outro`}
+                  name={`${campo.name}_outro`}
+                  value={dadosFormulario[`${campo.name}_outro`] || ''}
+                  onChange={handleMudancaInput}
+                  placeholder="Digite o local específico"
+                  className={classeInput}
+                />
+              </div>
             )}
           </>
         );

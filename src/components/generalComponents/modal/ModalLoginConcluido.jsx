@@ -1,7 +1,7 @@
 import React from "react";
 import "../alertaCustomizado/alertaCustomizado.css";
 
-export const ModalLoginConcluido = ({ 
+const ModalLoginConcluido = ({ 
   isVisible, 
   onClose, 
   emailUsuario = "usuário" 

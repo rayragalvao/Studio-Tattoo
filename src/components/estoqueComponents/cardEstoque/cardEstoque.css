@@ -1,6 +1,7 @@
 /* CSS específico para os componentes CardEstoque */
 
 .card-estoque {
+    position: relative;
     background-color: var(--branco);
     border-radius: 0.5em;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -37,6 +38,10 @@
     display: flex;
     justify-content: space-between;
     gap: 1em;
+}
+
+.linha p {
+    margin-bottom: 0.3em;
 }
 
 .linha div {

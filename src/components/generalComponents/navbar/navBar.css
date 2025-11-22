@@ -248,7 +248,16 @@ body.logging-out .content {
 .menu-close-wrapper { display: none; }
 
 @media (max-width: 768px) {
-    .nav-toggle { display: flex; position: absolute; right: 56px; top: 50%; transform: translateY(-50%); z-index: 60; }
+    .nav-toggle { 
+        display: flex; 
+        position: absolute; 
+        right: 0.5em;
+        top: 1em;
+        transform: 
+        translateY(-50%); 
+        z-index: 60; 
+    }
+
     .menu {
         position: fixed;
         top: 0;
@@ -277,6 +286,10 @@ body.logging-out .content {
     .actions-mobile { display: flex; gap: 12px; flex-direction: column; width: 100%; }
     .actions-mobile .btn-cadastro, .actions-mobile .btn-login, .actions-mobile .btn-logout { width: 100%; }
 
+    .user-name {
+        display: none;
+    }
+
     /* Dim background when menu open using body.menu-open */
     body.menu-open::before {
         content: "";
@@ -299,15 +312,13 @@ body.logging-out .content {
         color: var(--branco);
         font-size: 26px;
         line-height: 1;
-        padding: 6px 8px;
         cursor: pointer;
-        margin: -8px -8px 12px 0;
+        margin-right: 10px;
         transition: color .15s ease;
     }
     .menu-close:hover { color: var(--vermelho); }
 }
 
 @media (max-width: 480px) {
-    .nav-toggle { right: 46px; }
     .menu { width: 92vw; }
 }

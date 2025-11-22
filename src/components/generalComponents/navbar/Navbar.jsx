@@ -4,9 +4,9 @@ import { Link, NavLink } from "react-router-dom";
 import { useAuth } from "../../../contexts/AuthContext.jsx";
 import { useIsMobile } from "../../../hooks/useIsMobile.js";
 import logoBranca from "../../../assets/img/logo-branca.png";
-import { ModalCadastro } from "../modal/ModalCadastro.jsx";
-import { ModalLogin } from "../modal/ModalLogin.jsx";
-import "./navbar.css";
+import { ModalCadastro } from "../modal/modalCadastro/ModalCadastro.jsx";
+import { ModalLogin } from "../modal/modalLogin/ModalLogin.jsx";
+import "./navBar.css";
 
 export const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -106,6 +106,7 @@ export const Navbar = () => {
   
   if (isAuthenticated) {
     if (user?.isAdmin) {
+      menuItems.push({ label: "Dashboard", to: "/dashboard" });
       menuItems.push({ label: "Estoque", to: "/estoque" });
     } else {
       menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
@@ -139,7 +140,7 @@ export const Navbar = () => {
         <ul id="main-menu" className={`menu ${isMenuOpen ? 'open' : ''}`}>
           {/* close button visible on mobile inside the drawer */}
           <li className="menu-close-wrapper">
-            <button className="menu-close" aria-label="Fechar menu" onClick={closeMenu}>✕</button>
+            <button className="menu-close" aria-label="Fechar menu" onClick={closeMenu}>X</button>
           </li>
           {menuItems.map((item, index) => (
             <li key={index}>

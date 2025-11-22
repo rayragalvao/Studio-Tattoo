@@ -2,27 +2,33 @@ import React, { useState } from "react";
 import "./agendamentoForm.css";
 import { Calendario } from "../calendario/Calendario";
 import { AlertaCustomizado } from "../../generalComponents/alertaCustomizado/AlertaCustomizado";
+import AgendamentoService from "../../../services/AgendamentoService";
+import { useAuth } from "../../../contexts/AuthContext";
 
 export const AgendamentoForm = () => {
+  const { user } = useAuth();
   const [codigoOrcamento, setCodigoOrcamento] = useState("");
   const [dataSelecionada, setDataSelecionada] = useState("");
   const [horarioSelecionado, setHorarioSelecionado] = useState("");
   const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
   const [errors, setErrors] = useState({});
+  const [recarregarCalendario, setRecarregarCalendario] = useState(0);
   const [showAlerta, setShowAlerta] = useState(false);
+  const [alertaConfig, setAlertaConfig] = useState({
+    tipo: "success",
+    titulo: "",
+    mensagem: ""
+  });
+  const [enviando, setEnviando] = useState(false);
 
   const gerarHorariosDisponiveis = (data) => {
     const horariosBase = [
       "09:00", "10:00", "11:00", "13:00", "14:00", 
       "15:00", "16:00", "17:00", "18:00"
     ];
-
-    const horariosOcupados = ["10:00", "15:00", "17:00"];
     
-    return horariosBase.filter(horario => !horariosOcupados.includes(horario));
+    return horariosBase;
   };
-
-
 
   const handleCodigoChange = (e) => {
     const valor = e.target.value;
@@ -100,19 +106,122 @@ export const AgendamentoForm = () => {
       return;
     }
 
-    const dadosAgendamento = {
-      codigoOrcamento,
-      data: dataSelecionada,
-      horario: horarioSelecionado
-    };
+    if (!user?.email) {
+      setAlertaConfig({
+        tipo: "error",
+        titulo: "Login Necessário",
+        mensagem: "Você precisa estar logado para fazer um agendamento. Por favor, faça login e tente novamente."
+      });
+      setShowAlerta(true);
+      return;
+    }
 
-    console.log("Dados do agendamento:", dadosAgendamento);
-    setShowAlerta(true);
+    try {
+      setEnviando(true);
+
+      const isCodigoValido = await AgendamentoService.validarCodigoOrcamento(codigoOrcamento);
+      
+      if (!isCodigoValido) {
+        setErrors({
+          codigoOrcamento: "Código de orçamento inválido ou já possui agendamento"
+        });
+        setAlertaConfig({
+          tipo: "error",
+          titulo: "Código Inválido",
+          mensagem: "O código do orçamento não foi encontrado ou já possui um agendamento cadastrado."
+        });
+        setShowAlerta(true);
+        setEnviando(false);
+        return;
+      }
+
+      const [hora, minuto] = horarioSelecionado.split(':');
+      const dataHoraCompleta = `${dataSelecionada}T${hora.padStart(2, '0')}:${minuto.padStart(2, '0')}:00`;
+
+      const dadosAgendamento = {
+        emailUsuario: user.email,
+        codigoOrcamento: codigoOrcamento,
+        dataHora: dataHoraCompleta
+      };
+
+      await AgendamentoService.criarAgendamento(dadosAgendamento);
+      
+      setRecarregarCalendario(prev => prev + 1);
+      
+      setAlertaConfig({
+        tipo: "success",
+        titulo: "Agendamento Confirmado!",
+        mensagem: `Sua sessão foi agendada para o dia ${new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR')} às ${horarioSelecionado}. Você receberá uma confirmação em breve.`
+      });
+      setShowAlerta(true);
+      
+    } catch (error) {
+      console.error('Erro ao criar agendamento:', error);
+      console.error('Detalhes do erro:', {
+        response: error.response,
+        data: error.response?.data,
+        status: error.response?.status,
+        message: error.message
+      });
+      
+      let mensagemErro = "Ocorreu um erro ao criar o agendamento. Tente novamente.";
+      let tituloErro = "Erro ao Agendar";
+      
+      if (error.response?.status === 409) {
+        tituloErro = "Código Já Agendado";
+        mensagemErro = "Este código de orçamento já possui um agendamento cadastrado.";
+        setErrors({
+          codigoOrcamento: "Este código já possui agendamento"
+        });
+      } else if (error.response?.status === 401) {
+        tituloErro = "Login Necessário";
+        mensagemErro = "Você precisa estar logado para fazer um agendamento. Por favor, faça login e tente novamente.";
+      } else if (error.response?.status === 404 || error.message?.includes("não encontrado")) {
+        tituloErro = "Código Não Encontrado";
+        mensagemErro = "O código do orçamento informado não foi encontrado no sistema. Verifique se digitou corretamente.";
+        setErrors({
+          codigoOrcamento: "Código não encontrado"
+        });
+      } else if (error.response?.status === 400) {
+        tituloErro = "Dados Inválidos";
+        const errorData = error.response.data;
+        
+        if (typeof errorData === 'string') {
+          mensagemErro = errorData;
+        } else if (errorData?.message) {
+          mensagemErro = errorData.message;
+        } else if (errorData?.error) {
+          mensagemErro = errorData.error;
+        } else {
+          mensagemErro = "Os dados do agendamento são inválidos. Verifique as informações e tente novamente.";
+        }
+      } else if (error.message && error.message !== '[object Object]') {
+        mensagemErro = error.message;
+      } else if (error.response?.data) {
+        const errorData = error.response.data;
+        if (typeof errorData === 'string') {
+          mensagemErro = errorData;
+        } else if (errorData?.message) {
+          mensagemErro = errorData.message;
+        }
+      }
+      
+      setAlertaConfig({
+        tipo: "error",
+        titulo: tituloErro,
+        mensagem: mensagemErro
+      });
+      setShowAlerta(true);
+    } finally {
+      setEnviando(false);
+    }
   };
 
   const handleCloseAlerta = () => {
     setShowAlerta(false);
-    limparFormulario();
+    if (alertaConfig.tipo === "success") {
+      limparFormulario();
+    }
   };
 
   return (
@@ -155,6 +264,7 @@ export const AgendamentoForm = () => {
               <Calendario 
                 onDataSelecionada={handleDataChange}
                 dataSelecionada={dataSelecionada}
+                recarregarDatas={recarregarCalendario}
               />
               {errors.dataSelecionada && (
                 <span className="error-message">
@@ -201,14 +311,12 @@ export const AgendamentoForm = () => {
             </div>
           </div>
 
-
-
           <button 
             type="submit" 
             className="submit-button"
-            disabled={!codigoOrcamento || !dataSelecionada || !horarioSelecionado}
+            disabled={!codigoOrcamento || !dataSelecionada || !horarioSelecionado || enviando}
           >
-            Confirmar Agendamento
+            {enviando ? 'Confirmando...' : 'Confirmar Agendamento'}
           </button>
         </form>
       </div>
@@ -216,9 +324,9 @@ export const AgendamentoForm = () => {
       <AlertaCustomizado
         isVisible={showAlerta}
         onClose={handleCloseAlerta}
-        tipo="success"
-        titulo="Agendamento Confirmado!"
-        mensagem={`Sua sessão foi agendada para o dia ${dataSelecionada ? new Date(dataSelecionada + 'T00:00:00').toLocaleDateString('pt-BR') : ''} às ${horarioSelecionado}. Você receberá uma confirmação em breve.`}
+        tipo={alertaConfig.tipo}
+        titulo={alertaConfig.titulo}
+        mensagem={alertaConfig.mensagem}
         botaoTexto="Entendi"
       />
     </section>

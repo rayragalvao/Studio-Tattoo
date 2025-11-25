@@ -8,7 +8,7 @@ import GoogleLogo from '../../../../assets/img/google.png';
 import { Notificacao } from '../../notificacao/Notificacao.jsx';
 
 export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClass = "" }) => {
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, login } = useAuth();
 
   const [formData, setFormData] = useState({
     email: '',

@@ -106,10 +106,10 @@
 
 .card-resposta-codigo {
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 14px 14px;
   margin: 0 0 20px 0;
   font-family: 'Martel Sans', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--cinza-escuro);
   border: 2px solid;
 }

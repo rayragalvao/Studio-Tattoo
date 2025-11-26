@@ -184,7 +184,7 @@ export const CardEstoque = ({
                 aria-labelledby="info-title"
                 aria-describedby="info-description"
             >
-                <h2 id="info-title">Atualizar item</h2>
+                <h2 id="info-title">Informações do item</h2>
                 <p id="info-description" className="sr-only">
                     Informações detalhadas e opções para atualizar {item?.nome}
                 </p>

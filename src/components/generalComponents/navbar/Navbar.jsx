@@ -8,7 +8,7 @@ import { ModalCadastro } from "../modal/modalCadastro/ModalCadastro.jsx";
 import { ModalLogin } from "../modal/modalLogin/ModalLogin.jsx";
 import "./navBar.css";
 
-export const Navbar = () => {
+export const Navbar = ({ customMenuItems = null }) => {
   const { isAuthenticated, user, logout } = useAuth();
   const isMobile = useIsMobile(768);
   
@@ -102,9 +102,9 @@ export const Navbar = () => {
     { label: "Orçamento", to: "/orcamento" }
   ];
 
-  let menuItems = [...baseMenuItems];
+  let menuItems = customMenuItems || [...baseMenuItems];
   
-  if (isAuthenticated) {
+  if (!customMenuItems && isAuthenticated) {
     if (user?.isAdmin) {
       menuItems.push({ label: "Dashboard", to: "/dashboard" });
       menuItems.push({ label: "Estoque", to: "/estoque" });

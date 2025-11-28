@@ -1,0 +1,353 @@
+.orc-list {
+  background: #fff;
+  border-radius: 6px;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  height: 70vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  margin-left: 10%;
+  width: 100%;
+}
+.orc-list-title {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 12px;
+  color: #1f2937;
+}
+.orc-list-header {
+  display:flex;
+  gap:8px;
+  margin-bottom:8px;
+}
+.orc-search-wrapper {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.orc-search-wrapper .icon {
+  position: absolute;
+  right: 10px;
+  color: #9ca3af;
+  pointer-events: none;
+  font-size: 18px;
+}
+.orc-search { 
+  flex:1; 
+  padding: 6px 32px 6px 8px;
+  border-radius:4px; 
+  border:1px solid #ddd;
+  background: #f3f4f6;
+  font-size: 13px;
+  height: 32px;
+  color: #1f2937;
+}
+.orc-search::placeholder {
+  color: #9ca3af;
+}
+.btn-filter { 
+  background: transparent;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: all 0.2s ease;
+}
+.btn-filter:hover {
+  background: #f3f4f6;
+  color: #870C0E;
+}
+.btn-filter .icon {
+  font-size: 20px;
+}
+.orc-list-items { 
+  overflow:auto; 
+  flex:1; 
+  margin-top: 0;
+  background: #f9fafb;
+  border-radius: 4px;
+  padding: 8px 8px 8px 0;
+}
+/* Footer button fixed at bottom of panel */
+.orc-list-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+.btn-criar-orcamento {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #870C0E;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.btn-criar-orcamento:hover {
+  background: #870C0E; 
+  color: #fff;
+}
+.orc-item { 
+  display:flex; 
+  color: #fff; 
+  padding:8px 10px; 
+  border-radius:6px; 
+  margin-bottom:8px; 
+  background: #868686; 
+  position: relative; 
+}
+.orc-item.selected { background:#868686; border: 2px solid #870C0E; }
+.orc-item-header { display:flex; align-items:center; gap: 8px; }
+.orc-item-left { display:flex; gap:10px; align-items:center; padding-right: 40px; flex: 1; }
+.orc-item-info-btn {
+  position: absolute;
+  right: 8px; 
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: none;
+  border-radius: 0.2em;
+  padding: 0.3em;
+  height: 4em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #868686;
+  transition: all 0.3s ease;
+}
+.orc-item-info-btn:hover {
+  box-shadow: 0 0 0 4px rgba(27, 16, 6, 0.2);
+  transform: translateY(-51%) translateY(-1px);
+}
+.orc-item.selected .orc-item-info-btn {
+  color: #870C0E;
+}
+.orc-item-info-btn .icon {
+  font-size: 18px;
+}
+.orc-item-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-agendar {
+  background: #870C0E;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.btn-agendar:hover {
+  background: #6b0a0c;
+}
+.status-dot { width:10px; height:10px; border-radius:50% }
+.status-dot.green { background: #22c55e }
+.status-dot.yellow { background: #fbbf24 }
+.orc-item-title { font-weight:600 }
+.orc-item-sub { font-size:12px; color:#fff }
+.orc-loading, .orc-empty { padding:16px; color:#666 }
+
+/* Painel de Filtros */
+.orc-filtros-panel {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.orc-filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orc-filtro-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.orc-filtro-group select {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  color: #1f2937;
+}
+
+.orc-filtro-group select:focus {
+  outline: none;
+  border-color: #870C0E;
+}
+
+.orc-btn-limpar-filtros {
+  padding: 6px 12px;
+  background: #870C0E;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.orc-btn-limpar-filtros:hover {
+  background: #6b0a0c;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .orc-list {
+    height: auto;
+    min-height: 300px;
+    margin-bottom: 16px;
+  }
+  
+  .orc-list-title {
+    font-size: 16px;
+  }
+  
+  .orc-list-items {
+    max-height: 400px;
+  }
+  
+  .orc-item-title {
+    font-size: 14px;
+  }
+  
+  .orc-item-sub {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orc-list {
+    padding: 10px;
+  }
+  
+  .orc-list-title {
+    font-size: 14px;
+  }
+  
+  .orc-search {
+    font-size: 12px;
+    padding: 5px 28px 5px 6px;
+  }
+  
+  .btn-filter {
+    padding: 4px 6px;
+  }
+  
+  .btn-filter svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .orc-item {
+    padding: 8px;
+  }
+  
+  .orc-item-left {
+    gap: 6px;
+  }
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .orc-list {
+    height: auto;
+    min-height: 400px;
+    margin-bottom: 20px;
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .orc-list {
+    height: auto;
+    min-height: 300px;
+    margin-bottom: 16px;
+    margin-left: 0;
+    padding: 12px;
+  }
+  
+  .orc-list-title {
+    font-size: 16px;
+  }
+  
+  .orc-list-items {
+    max-height: 400px;
+  }
+  
+  .orc-item-title {
+    font-size: 14px;
+  }
+  
+  .orc-item-sub {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orc-list {
+    padding: 10px;
+  }
+  
+  .orc-list-title {
+    font-size: 14px;
+  }
+  
+  .orc-search {
+    font-size: 12px;
+    padding: 5px 28px 5px 6px;
+  }
+  
+  .btn-filter {
+    padding: 4px 6px;
+  }
+  
+  .btn-filter svg {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .orc-item {
+    padding: 8px;
+  }
+  
+  .orc-item-left {
+    gap: 6px;
+  }
+  
+  .status-dot {
+    width: 8px;
+    height: 8px;
+  }
+}

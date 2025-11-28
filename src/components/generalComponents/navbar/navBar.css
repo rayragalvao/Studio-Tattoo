@@ -10,6 +10,9 @@
     position: relative;
 }
 
+/* compact: make inner container full width to allow right alignment */
+/* removed compact override to restore default navbar layout */
+
 .navbar {
     height: 48px;
     position: relative;
@@ -79,6 +82,9 @@
     gap: 12px;
     align-items: center;
 }
+
+/* Compact navbar: align menu more to the right */
+/* removed compact right alignment to keep menu centered by default */
 
 .user-info {
     display: flex;

@@ -2,6 +2,21 @@ import api from './api';
 
 class AgendamentoService {
   /**
+   * Busca todos os agendamentos de um usuário
+   * @param {number} usuarioId - ID do usuário
+   * @returns {Promise<Array>} - Array com os agendamentos do usuário
+   */
+  async buscarAgendamentosUsuario(usuarioId) {
+    try {
+      const response = await api.get(`/agendamento/usuario/${usuarioId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar agendamentos do usuário:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Valida se um código de orçamento existe e está disponível
    * @param {string} codigoOrcamento - Código do orçamento
    * @returns {Promise<boolean>} - true se o código é válido e disponível

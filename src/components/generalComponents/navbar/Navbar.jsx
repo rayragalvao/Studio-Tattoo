@@ -109,7 +109,8 @@ export const Navbar = () => {
       menuItems.push({ label: "Dashboard", to: "/dashboard" });
       menuItems.push({ label: "Estoque", to: "/estoque" });
     } else {
-      menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
+      menuItems.push({ label: "Agendar", to: "/agendamento" });
+      menuItems.push({ label: "Menu", to: "/meu-perfil" });
     }
   }
 

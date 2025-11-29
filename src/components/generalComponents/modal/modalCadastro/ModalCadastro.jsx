@@ -301,61 +301,89 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
           <form onSubmit={handleSubmit} className="cadastro-form" noValidate>
             <div className="form-group">
               <label htmlFor="nomeCompleto">Nome completo</label>
-              <input
-                type="text"
-                id="nomeCompleto"
-                name="nomeCompleto"
-                placeholder="Digite seu nome completo"
-                value={formData.nomeCompleto}
-                onChange={handleInputChange}
-                className={errors.nomeCompleto ? 'error' : ''}
-                autoComplete="off"
-                required
-              />
+              <div className="input-with-error">
+                <input
+                  type="text"
+                  id="nomeCompleto"
+                  name="nomeCompleto"
+                  placeholder="Digite seu nome completo"
+                  value={formData.nomeCompleto}
+                  onChange={handleInputChange}
+                  className={errors.nomeCompleto ? 'error' : ''}
+                  autoComplete="off"
+                  required
+                />
+                {errors.nomeCompleto && (
+                  <div className="error-tooltip">
+                    {errors.nomeCompleto}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="dataNascimento">Data de nascimento</label>
-              <input
-                type="date"
-                id="dataNascimento"
-                name="dataNascimento"
-                value={formData.dataNascimento}
-                onChange={handleInputChange}
-                className={errors.dataNascimento ? 'error' : ''}
-                autoComplete="off"
-                required
-              />
+              <div className="input-with-error">
+                <input
+                  type="date"
+                  id="dataNascimento"
+                  name="dataNascimento"
+                  value={formData.dataNascimento}
+                  onChange={handleInputChange}
+                  className={errors.dataNascimento ? 'error' : ''}
+                  autoComplete="off"
+                  required
+                />
+                {errors.dataNascimento && (
+                  <div className="error-tooltip">
+                    {errors.dataNascimento}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="email">Email</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Digite seu email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className={errors.email ? 'error' : ''}
-                autoComplete="off"
-                required
-              />
+              <div className="input-with-error">
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Digite seu email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  className={errors.email ? 'error' : ''}
+                  autoComplete="off"
+                  required
+                />
+                {errors.email && (
+                  <div className="error-tooltip">
+                    {errors.email}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
               <label htmlFor="telefone">Telefone</label>
-              <input
-                type="tel"
-                id="telefone"
-                name="telefone"
-                placeholder="(11) 99999-9999"
-                value={formData.telefone}
-                onChange={handleInputChange}
-                className={errors.telefone ? 'error' : ''}
-                autoComplete="off"
-                required
-              />
+              <div className="input-with-error">
+                <input
+                  type="tel"
+                  id="telefone"
+                  name="telefone"
+                  placeholder="(11) 99999-9999"
+                  value={formData.telefone}
+                  onChange={handleInputChange}
+                  className={errors.telefone ? 'error' : ''}
+                  autoComplete="off"
+                  required
+                />
+                {errors.telefone && (
+                  <div className="error-tooltip">
+                    {errors.telefone}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div className="form-group">
@@ -427,6 +455,11 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                     </ul>
                   </div>
                 )}
+                {errors.senha && (
+                  <div className="error-tooltip error-tooltip-password">
+                    {errors.senha}
+                  </div>
+                )}
               </div>
             </div>
 
@@ -465,6 +498,11 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                     </span>
                 </button>
               </div>
+              {errors.confirmacaoSenha && (
+                <div className="error-tooltip error-tooltip-password">
+                  {errors.confirmacaoSenha}
+                </div>
+              )}
             </div>
 
             <button type="submit" className="btn-cadastrar" disabled={isLoading}>

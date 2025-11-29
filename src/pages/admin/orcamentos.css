@@ -1,0 +1,19 @@
+.admin-orc-wrapper{ padding:24px; min-height:70vh; }
+.admin-orc-grid{ display:grid; grid-template-columns: 340px 1fr; gap:32px; align-items:start; }
+
+/* Large tablets */
+@media (max-width: 1200px){
+  .admin-orc-grid{ grid-template-columns: 300px 1fr; gap:24px; }
+}
+
+/* Tablets */
+@media (max-width: 992px){
+  .admin-orc-wrapper{ padding:16px; }
+  .admin-orc-grid{ grid-template-columns: 1fr; gap:16px; }
+}
+
+/* Mobile */
+@media (max-width: 480px){
+  .admin-orc-wrapper{ padding:12px; }
+  .admin-orc-grid{ gap:12px; }
+}

@@ -106,15 +106,15 @@
 
 .card-resposta-codigo {
   border-radius: 8px;
-  padding: 12px 16px;
+  padding: 14px 14px;
   margin: 0 0 20px 0;
   font-family: 'Martel Sans', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--cinza-escuro);
   border: 2px solid;
 }
 
-.card-resposta-codigo--sucesso {
+.card-resposta-codigo--sucesso { 
   background: rgba(16, 185, 129, 0.1);
   border-color: #0d9349ae;
 }

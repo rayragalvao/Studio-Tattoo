@@ -25,49 +25,44 @@ export const Portfolio = () => {
         <PortifolioCard
           imagem={caveira}
           titulo="Caveira"
-          tamanho="5"
-          precoMin="XX"
-          precoMax="XX"
-          
+          tamanho="8"
+          precoMin="150"
+          precoMax="300"
         />
         <PortifolioCard
           imagem={mamadeira}
           titulo="Mamadeira Vodka"
-          tamanho="Xcm"
-          precoMin="XX"
-          precoMax="XX"
-          
+          tamanho="6"
+          precoMin="120"
+          precoMax="250"
         />
         <PortifolioCard
           imagem={alien}
           titulo="Alien Olhudo"
-          tamanho="Xcm"
-          precoMin="XX"
-          precoMax="XX"
-          
+          tamanho="7"
+          precoMin="140"
+          precoMax="280"
         />
         <PortifolioCard
           imagem={cadeira}
           titulo="Cadeira"
-          tamanho="Xcm"
-          precoMin="XX"
-          precoMax="XX"
-          
+          tamanho="9"
+          precoMin="180"
+          precoMax="350"
         />
         <PortifolioCard
           imagem={lua}
           titulo="Lua Triste"
-          tamanho="Xcm"
-          precoMin="XX"
-          precoMax="XX"
+          tamanho="5"
+          precoMin="100"
+          precoMax="200"
         />
         <PortifolioCard
           imagem={candelabro}
           titulo="Candelabro de Vinho"
-          tamanho="Xcm"
-          precoMin="XX"
-          precoMax="XX"
-          
+          tamanho="10"
+          precoMin="200"
+          precoMax="400"
         />
       </div>
 

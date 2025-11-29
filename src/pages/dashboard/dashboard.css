@@ -122,6 +122,15 @@
     margin-left: auto;
 }
 
+.btn-agendar-action {
+    position: fixed;
+    display: flex;
+}
+
+.btn-agendar-action span {
+    color: var(--branco)
+}
+
 .orcamentos-pendentes-card {
     background-color: #f7f7f7;
     border-radius: 8px;

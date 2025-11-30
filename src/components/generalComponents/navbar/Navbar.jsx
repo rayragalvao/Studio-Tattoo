@@ -7,8 +7,8 @@ import logoBranca from "../../../assets/img/logo-branca.png";
 import { ModalCadastro } from "../modal/modalCadastro/ModalCadastro.jsx";
 import { ModalLogin } from "../modal/modalLogin/ModalLogin.jsx";
 import "./navBar.css";
-
-export const Navbar = () => {
+// Ajustado para permitir customização (ocultar logo e definir itens do menu)
+export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
   const { isAuthenticated, user, logout } = useAuth();
   const isMobile = useIsMobile(768);
   
@@ -96,33 +96,49 @@ export const Navbar = () => {
     }, 300);
   };
 
-  const baseMenuItems = [
-    { label: "Início", to: "/" },
-    { label: "Portfólio", to: "/portfolio" },
-    { label: "Orçamento", to: "/orcamento" }
-  ];
+  const isCustom = Array.isArray(customMenuItems) && customMenuItems.length > 0;
 
-  let menuItems = [...baseMenuItems];
-  
-  if (isAuthenticated) {
-    if (user?.isAdmin) {
-      menuItems.push({ label: "Dashboard", to: "/dashboard" });
-      menuItems.push({ label: "Estoque", to: "/estoque" });
+  let menuItems;
+  if (isCustom) {
+    // Usa exatamente os itens fornecidos (ex: Início, Estoque, Agendamentos, Orçamentos)
+    menuItems = customMenuItems;
+  } else {
+    // Lógica padrão original
+    const baseMenuItems = [
+      { label: "Início", to: "/" },
+      { label: "Portfólio", to: "/portfolio" },
+      { label: "Orçamento", to: "/orcamento" }
+    ];
+    if (isAuthenticated && user?.isAdmin) {
+      // Para admin: ocultar Portfólio e usar Orçamentos (admin)
+      menuItems = [
+        { label: "Início", to: "/" },
+        { label: "Orçamentos", to: "/admin/orcamentos" },
+        { label: "Dashboard", to: "/dashboard" },
+        { label: "Estoque", to: "/estoque" }
+      ];
     } else {
       menuItems.push({ label: "Agendar", to: "/agendamento" });
       menuItems.push({ label: "Menu", to: "/meu-perfil" });
+      menuItems = [...baseMenuItems];
+      if (isAuthenticated) {
+        menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
+      }
     }
   }
 
   return (
     <div className="nav-outer">
       <div className="nav-inner">
-        <nav className="navbar">
-        <div className="logo">
-          <Link to="/">
-            <img src={logoBranca} alt="Tattoo Studio" />
-          </Link>
-        </div>
+        <nav className={`navbar ${hideLogo ? 'no-logo' : ''}`}>
+        {/* Greeting deslocado para a área de ações à direita para evitar sobreposição */}
+        {!hideLogo && (
+          <div className="logo">
+            <Link to="/">
+              <img src={logoBranca} alt="Tattoo Studio" />
+            </Link>
+          </div>
+        )}
         
         <button
           className={`nav-toggle ${isMenuOpen ? 'open' : ''}`}
@@ -160,16 +176,18 @@ export const Navbar = () => {
               <div className="actions-mobile">
                 {isAuthenticated ? (
                   <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
-                    <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>
+                    {(!isCustom) && <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>}
                     <button onClick={() => { handleLogout(); closeMenu(); }} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
                       {isLoggingOut ? 'Saindo...' : 'Sair'}
                     </button>
                   </div>
                 ) : (
-                  <>
-                    <button onClick={() => { openCadastroModal(); closeMenu(); }} className="btn-cadastro">Cadastro</button>
-                    <button onClick={() => { openLoginModal(); closeMenu(); }} className="btn-login">Login</button>
-                  </>
+                  !isCustom && (
+                    <>
+                      <button onClick={() => { openCadastroModal(); closeMenu(); }} className="btn-cadastro">Cadastro</button>
+                      <button onClick={() => { openLoginModal(); closeMenu(); }} className="btn-login">Login</button>
+                    </>
+                  )
                 )}
               </div>
             </li>
@@ -179,7 +197,11 @@ export const Navbar = () => {
         <div className="actions">
           {isAuthenticated ? (
             <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
-              <span className="user-name">Olá, {getPrimeiroNome(user?.nome)}</span>
+              {!isCustom && (
+                <span className="user-name">
+                  {user?.isAdmin ? 'Olá, admin' : `Olá, ${getPrimeiroNome(user?.nome)}`}
+                </span>
+              )}
               <button onClick={handleLogout} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
                 {isLoggingOut ? (
                   <span className="logout-animation">
@@ -197,10 +219,12 @@ export const Navbar = () => {
               </button>
             </div>
           ) : (
-            <>
-              <button onClick={openCadastroModal} className="btn-cadastro">Cadastro</button>
-              <button onClick={openLoginModal} className="btn-login">Login</button>
-            </>
+            !isCustom && (
+              <>
+                <button onClick={openCadastroModal} className="btn-cadastro">Cadastro</button>
+                <button onClick={openLoginModal} className="btn-login">Login</button>
+              </>
+            )
           )}
         </div>
       </nav>

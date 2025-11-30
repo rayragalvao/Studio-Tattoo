@@ -455,11 +455,6 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                     </ul>
                   </div>
                 )}
-                {errors.senha && (
-                  <div className="error-tooltip error-tooltip-password">
-                    {errors.senha}
-                  </div>
-                )}
               </div>
             </div>
 

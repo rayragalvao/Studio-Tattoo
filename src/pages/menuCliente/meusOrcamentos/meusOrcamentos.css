@@ -54,7 +54,7 @@
 .orcamentos-lista {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .orcamento-card {
@@ -75,29 +75,29 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 10px 14px;
   user-select: none;
 }
 
 .orcamento-header-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
 }
 
 .orcamento-header-info h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #333;
   font-family: "Montserrat Alternates", sans-serif;
 }
 
 .status-badge {
-  padding: 6px 12px;
+  padding: 4px 10px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -132,7 +132,7 @@
   background: #f5f5f5;
   min-height: calc(100vh - 200px);
   animation: fadeIn 0.3s ease;
-  padding: 20px;
+  padding: 5px;
 }
 
 @keyframes slideDown {
@@ -149,20 +149,20 @@
 .detalhes-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 8px;
   background: #ffffff;
-  border-radius: 12px;
+  border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .btn-voltar {
   background: none;
   border: none;
-  font-size: 24px;
+  font-size: 14px;
   color: #333;
   cursor: pointer;
   padding: 0;
-  margin-bottom: 16px;
+  margin-bottom: 2px;
   display: block;
 }
 
@@ -172,8 +172,8 @@
 
 .status-header {
   text-align: right;
-  margin-bottom: 24px;
-  font-size: 16px;
+  margin-bottom: 4px;
+  font-size: 11px;
 }
 
 .status-label {
@@ -201,18 +201,18 @@
 .info-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
+  gap: 8px;
 }
 
 .info-column {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 4px;
 }
 
 .column-title {
-  margin: 0 0 12px 0;
-  font-size: 18px;
+  margin: 0 0 2px 0;
+  font-size: 12px;
   font-weight: 700;
   color: #333;
   font-family: "Montserrat Alternates", sans-serif;
@@ -221,25 +221,25 @@
 .info-row {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0px;
 }
 
 .info-block {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 1px;
 }
 
 .info-label-orange {
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--laranja);
 }
 
 .info-text {
-  font-size: 14px;
+  font-size: 10px;
   color: #333;
-  line-height: 1.6;
+  line-height: 1.2;
   margin: 0;
 }
 
@@ -308,6 +308,298 @@
   from {
     opacity: 0;
     transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.acoes-agendamento {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid #e0e0e0;
+  justify-content: center;
+}
+
+.btn-editar,
+.btn-excluir {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Montserrat Alternates", sans-serif;
+}
+
+.btn-editar {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-editar:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.btn-excluir {
+  background: var(--vermelho);
+  color: white;
+}
+
+.btn-excluir:hover {
+  background: #a50f11;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(198, 15, 19, 0.3);
+}
+
+.modal-overlay-orcamento {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content-orcamento {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-content-orcamento.modal-editar-orcamento {
+  max-width: 500px;
+}
+
+.modal-content-orcamento h3 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  font-family: "Montserrat Alternates", sans-serif;
+}
+
+.modal-content-orcamento.modal-confirmacao {
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-content-orcamento.modal-confirmacao p {
+  margin: 16px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.aviso-exclusao {
+  color: var(--vermelho) !important;
+  font-weight: 600;
+  font-size: 14px !important;
+}
+
+.form-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.campos-edicao-orcamento {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.campo-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 10px;
+}
+
+.campo-edicao label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: var(--cinza-escuro);
+  font-size: 14px;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.required {
+  color: var(--vermelho);
+  margin-left: 4px;
+}
+
+.input-edicao,
+.textarea-edicao {
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid #e1e5e9;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Martel Sans', sans-serif;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background: var(--cinza-claro);
+  color: var(--cinza-escuro);
+}
+
+.input-edicao:focus,
+.textarea-edicao:focus {
+  outline: none;
+  border-color: var(--vermelho);
+  box-shadow: 0 0 0 4px rgba(212, 107, 15, 0.2);
+  transform: translateY(-1px);
+}
+
+.textarea-edicao {
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.checkbox-group-edicao {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.checkbox-item-edicao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Martel Sans', sans-serif;
+  color: var(--cinza-escuro);
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--cinza-claro);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.checkbox-item-edicao input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 2px solid rgba(0,0,0,0.12);
+  border-radius: 4px;
+  background: #ffffff;
+  display: inline-block;
+  vertical-align: middle;
+  flex: 0 0 auto;
+  transition: all 0.12s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox-item-edicao input[type="checkbox"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+}
+
+.checkbox-item-edicao input[type="checkbox"]:checked {
+  background: var(--vermelho);
+  border-color: var(--vermelho);
+  box-shadow: 0 0 0 6px rgba(212, 107, 15, 0.08);
+}
+
+.checkbox-item-edicao input[type="checkbox"]:checked::after {
+  content: 'check';
+  font-family: 'Material Icons';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 14px;
+}
+
+.modal-acoes {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-salvar,
+.btn-confirmar-exclusao,
+.btn-cancelar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Montserrat Alternates", sans-serif;
+}
+
+.btn-salvar {
+  background: var(--vermelho);
+  color: white;
+}
+
+.btn-salvar:hover:not(:disabled) {
+  background: #a50f11;
+  transform: translateY(-2px);
+}
+
+.btn-confirmar-exclusao {
+  background: var(--vermelho);
+  color: white;
+}
+
+.btn-confirmar-exclusao:hover:not(:disabled) {
+  background: #a50f11;
+  transform: translateY(-2px);
+}
+
+.btn-cancelar {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-cancelar:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.btn-salvar:disabled,
+.btn-confirmar-exclusao:disabled,
+.btn-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
   }
   to {
     opacity: 1;

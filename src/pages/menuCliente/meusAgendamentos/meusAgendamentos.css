@@ -54,7 +54,7 @@
 .agendamentos-lista {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .agendamento-card {
@@ -75,20 +75,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 20px;
+  padding: 10px 14px;
   user-select: none;
 }
 
 .agendamento-header-info {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   flex: 1;
 }
 
 .agendamento-header-info h3 {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: #333;
   font-family: "Montserrat Alternates", sans-serif;
@@ -326,5 +326,297 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.acoes-agendamento {
+  display: flex;
+  gap: 16px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+  justify-content: center;
+}
+
+.btn-editar,
+.btn-excluir {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Montserrat Alternates", sans-serif;
+}
+
+.btn-editar {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-editar:hover {
+  background: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
+}
+
+.btn-excluir {
+  background: var(--vermelho);
+  color: white;
+}
+
+.btn-excluir:hover {
+  background: #a50f11;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(198, 15, 19, 0.3);
+}
+
+.modal-overlay-agendamento {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content-agendamento {
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-content-agendamento.modal-editar {
+  max-width: 950px;
+  max-height: 95vh;
+}
+
+.modal-content-agendamento h3 {
+  margin: 0 0 24px 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #333;
+  font-family: "Montserrat Alternates", sans-serif;
+}
+
+.modal-content-agendamento.modal-confirmacao {
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-content-agendamento.modal-confirmacao p {
+  margin: 16px 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.aviso-exclusao {
+  color: var(--vermelho) !important;
+  font-weight: 600;
+  font-size: 14px !important;
+}
+
+.form-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.campo-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.campo-edicao label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  font-family: "Martel Sans", sans-serif;
+}
+
+.required {
+  color: var(--vermelho);
+  margin-left: 4px;
+}
+
+.calendario-horarios-container-modal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 10px;
+}
+
+.acoes-edicao {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.calendario-group-modal {
+  display: flex;
+  flex-direction: column;
+}
+
+.horarios-group-modal {
+  display: flex;
+  flex-direction: column;
+}
+
+.horarios-grid-modal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px solid #e9ecef;
+}
+
+.horario-btn-modal {
+  padding: 12px 8px;
+  border: 2px solid #e1e5e9;
+  border-radius: 5px;
+  background: var(--cinza-claro);
+  color: var(--cinza-escuro);
+  font-family: "Martel Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.horario-btn-modal:hover {
+  border-color: var(--vermelho);
+  background-color: rgba(220, 38, 127, 0.1);
+}
+
+.horario-btn-modal.selected {
+  background-color: var(--vermelho);
+  color: var(--branco);
+  border-color: var(--vermelho);
+}
+
+.horario-btn-modal:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 127, 0.2);
+}
+
+.selecione-data-modal {
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  padding: 20px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.selecione-data-modal p {
+  margin: 0;
+  font-family: "Martel Sans", sans-serif;
+  font-size: 13px;
+  color: #666;
+}
+
+.modal-acoes {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.btn-salvar,
+.btn-confirmar-exclusao,
+.btn-cancelar {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: "Montserrat Alternates", sans-serif;
+}
+
+.btn-salvar {
+  background: var(--vermelho);
+  color: white;
+}
+
+.btn-salvar:hover:not(:disabled) {
+  background: #a50f11;
+  transform: translateY(-2px);
+}
+
+.btn-confirmar-exclusao {
+  background: var(--vermelho);
+  color: white;
+}
+
+.btn-confirmar-exclusao:hover:not(:disabled) {
+  background: #a50f11;
+  transform: translateY(-2px);
+}
+
+.btn-cancelar {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.btn-cancelar:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.btn-salvar:disabled,
+.btn-confirmar-exclusao:disabled,
+.btn-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 992px) {
+  .modal-editar {
+    max-width: 95%;
+  }
+
+  .calendario-horarios-container-modal {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .horarios-grid-modal {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .horarios-grid-modal {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../../contexts/AuthContext";
 import AgendamentoService from "../../../services/AgendamentoService";
+import { Calendario } from "../../../components/agendamentoComponents/calendario/Calendario";
+import { Notificacao } from "../../../components/generalComponents/notificacao/Notificacao";
 import "./meusAgendamentos.css";
 
 export const MeusAgendamentos = () => {
@@ -9,6 +11,19 @@ export const MeusAgendamentos = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [expandedId, setExpandedId] = useState(null);
   const [error, setError] = useState(null);
+  const [modalEditar, setModalEditar] = useState(false);
+  const [modalExcluir, setModalExcluir] = useState(false);
+  const [agendamentoEditando, setAgendamentoEditando] = useState(null);
+  const [dataSelecionada, setDataSelecionada] = useState(null);
+  const [horarioSelecionado, setHorarioSelecionado] = useState("");
+  const [recarregarDatas, setRecarregarDatas] = useState(0);
+  const [salvando, setSalvando] = useState(false);
+  const [notificacao, setNotificacao] = useState({
+    visivel: false,
+    tipo: "sucesso",
+    titulo: "",
+    mensagem: ""
+  });
 
   useEffect(() => {
     carregarAgendamentos();
@@ -78,6 +93,110 @@ export const MeusAgendamentos = () => {
       'CONCLUIDO': 'Concluído'
     };
     return labelMap[status] || status;
+  };
+
+  const abrirModalEditar = (agendamento) => {
+    setAgendamentoEditando(agendamento);
+    const data = new Date(agendamento.dataHora);
+    const dataFormatada = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+    setDataSelecionada(dataFormatada);
+    setHorarioSelecionado(formatarHora(agendamento.dataHora));
+    setModalEditar(true);
+  };
+
+  const fecharModalEditar = () => {
+    setModalEditar(false);
+    setAgendamentoEditando(null);
+    setDataSelecionada(null);
+    setHorarioSelecionado("");
+  };
+
+  const abrirModalExcluir = (agendamento) => {
+    setAgendamentoEditando(agendamento);
+    setModalExcluir(true);
+  };
+
+  const fecharModalExcluir = () => {
+    setModalExcluir(false);
+    setAgendamentoEditando(null);
+  };
+
+  const handleSalvarEdicao = async () => {
+    if (!dataSelecionada || !horarioSelecionado) {
+      setNotificacao({
+        visivel: true,
+        tipo: "aviso",
+        titulo: "Campos obrigatórios",
+        mensagem: "Por favor, selecione uma data e um horário."
+      });
+      return;
+    }
+
+    setSalvando(true);
+    try {
+      const dataHoraCompleta = `${dataSelecionada}T${horarioSelecionado}:00`;
+      
+      await AgendamentoService.atualizarAgendamento(agendamentoEditando.id, {
+        emailUsuario: agendamentoEditando.emailUsuario,
+        codigoOrcamento: agendamentoEditando.codigoOrcamento,
+        dataHora: dataHoraCompleta,
+        status: agendamentoEditando.status
+      });
+
+      await carregarAgendamentos();
+      setRecarregarDatas(prev => prev + 1);
+      fecharModalEditar();
+      setNotificacao({
+        visivel: true,
+        tipo: "sucesso",
+        titulo: "Sucesso!",
+        mensagem: "Agendamento atualizado com sucesso!"
+      });
+    } catch (error) {
+      console.error("Erro ao atualizar agendamento:", error);
+      setNotificacao({
+        visivel: true,
+        tipo: "erro",
+        titulo: "Erro",
+        mensagem: error.message || "Erro ao atualizar agendamento. Tente novamente."
+      });
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  const handleExcluir = async () => {
+    setSalvando(true);
+    try {
+      await AgendamentoService.deletarAgendamento(agendamentoEditando.id);
+      await carregarAgendamentos();
+      setRecarregarDatas(prev => prev + 1);
+      fecharModalExcluir();
+      setExpandedId(null);
+      setNotificacao({
+        visivel: true,
+        tipo: "sucesso",
+        titulo: "Sucesso!",
+        mensagem: "Agendamento excluído com sucesso!"
+      });
+    } catch (error) {
+      console.error("Erro ao excluir agendamento:", error);
+      setNotificacao({
+        visivel: true,
+        tipo: "erro",
+        titulo: "Erro",
+        mensagem: error.message || "Erro ao excluir agendamento. Tente novamente."
+      });
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  const gerarHorariosDisponiveis = () => {
+    return [
+      "09:00", "10:00", "11:00", "13:00", "14:00", 
+      "15:00", "16:00", "17:00", "18:00"
+    ];
   };
 
   if (isLoading) {
@@ -187,8 +306,129 @@ export const MeusAgendamentos = () => {
                 </div>
               </div>
             </div>
+
+            <div className="acoes-agendamento">
+              <button 
+                className="btn-editar"
+                onClick={() => abrirModalEditar(agendamentoSelecionado)}
+              >
+                Editar
+              </button>
+              <button 
+                className="btn-excluir"
+                onClick={() => abrirModalExcluir(agendamentoSelecionado)}
+              >
+                Excluir
+              </button>
+            </div>
           </div>
         </div>
+
+        {modalEditar && (
+          <div className="modal-overlay-agendamento" onClick={fecharModalEditar}>
+            <div className="modal-content-agendamento modal-editar" onClick={(e) => e.stopPropagation()}>
+              <h3>Editar Agendamento</h3>
+              
+              <div className="form-edicao">
+                <div className="calendario-horarios-container-modal">
+                  <div className="campo-edicao calendario-group-modal">
+                    <label>
+                      Selecione a nova data:
+                      <span className="required">*</span>
+                    </label>
+                    <Calendario
+                      onDataSelecionada={(data) => {
+                        setDataSelecionada(data);
+                        setRecarregarDatas(prev => prev + 1);
+                      }}
+                      dataSelecionada={dataSelecionada}
+                      recarregarDatas={recarregarDatas}
+                    />
+                  </div>
+
+                  <div className="campo-edicao horarios-group-modal">
+                    <label>
+                      Horários Disponíveis:
+                      <span className="required">*</span>
+                    </label>
+                    {dataSelecionada ? (
+                      <div className="horarios-grid-modal">
+                        {gerarHorariosDisponiveis().map((hora) => (
+                          <button
+                            key={hora}
+                            type="button"
+                            className={`horario-btn-modal ${
+                              horarioSelecionado === hora ? 'selected' : ''
+                            }`}
+                            onClick={() => setHorarioSelecionado(hora)}
+                          >
+                            {hora}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="selecione-data-modal">
+                        <p>Selecione uma data para ver os horários disponíveis</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="modal-acoes">
+                  <button 
+                    onClick={handleSalvarEdicao} 
+                    className="btn-salvar"
+                    disabled={salvando || !dataSelecionada || !horarioSelecionado}
+                  >
+                    {salvando ? 'Salvando...' : 'Salvar'}
+                  </button>
+                  <button 
+                    onClick={fecharModalEditar} 
+                    className="btn-cancelar"
+                    disabled={salvando}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {modalExcluir && (
+          <div className="modal-overlay-agendamento" onClick={fecharModalExcluir}>
+            <div className="modal-content-agendamento modal-confirmacao" onClick={(e) => e.stopPropagation()}>
+              <h3>Confirmar Exclusão</h3>
+              <p>Tem certeza que deseja excluir este agendamento?</p>
+              <p className="aviso-exclusao">Esta ação não pode ser desfeita.</p>
+              
+              <div className="modal-acoes">
+                <button 
+                  onClick={handleExcluir} 
+                  className="btn-confirmar-exclusao"
+                  disabled={salvando}
+                >
+                  {salvando ? 'Excluindo...' : 'Sim, excluir'}
+                </button>
+                <button 
+                  onClick={fecharModalExcluir} 
+                  className="btn-cancelar"
+                  disabled={salvando}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <Notificacao
+          visivel={notificacao.visivel}
+          tipo={notificacao.tipo}
+          titulo={notificacao.titulo}
+          mensagem={notificacao.mensagem}
+          onFechar={() => setNotificacao({ ...notificacao, visivel: false })}
+        />
       </div>
     );
   }
@@ -217,6 +457,14 @@ export const MeusAgendamentos = () => {
           </div>
         ))}
       </div>
+
+      <Notificacao
+        visivel={notificacao.visivel}
+        tipo={notificacao.tipo}
+        titulo={notificacao.titulo}
+        mensagem={notificacao.mensagem}
+        onFechar={() => setNotificacao({ ...notificacao, visivel: false })}
+      />
     </div>
   );
 };

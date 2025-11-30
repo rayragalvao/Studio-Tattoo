@@ -7,10 +7,22 @@ body {
   
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .portfolio-frases {
   text-align: center;
   margin-top: 0.5rem; 
   color: #fff;
+  animation: fadeIn 0.5s ease;
 }
 
 .portfolio-titulo {
@@ -37,6 +49,7 @@ body {
   column-gap: 0.2rem; 
   margin: 0.5rem auto;
   max-width: 1000px;
+  animation: fadeIn 0.5s ease 0.2s both;
 }
 
 .tattoo-card {

@@ -92,6 +92,33 @@ class AuthService {
   static getToken() {
     return AuthStorage.getToken();
   }
+
+  static async updateProfile(userId, userData) {
+    try {
+      const currentUser = AuthStorage.getUser();
+      
+      const response = await ApiService.patch(`/usuario/${userId}/perfil`, {
+        nome: userData.nome,
+        telefone: userData.telefone || '',
+        dtNasc: userData.dataNascimento || null
+      });
+
+      const updatedUser = {
+        ...currentUser,
+        nome: response.nome || userData.nome,
+        telefone: response.telefone || userData.telefone,
+        dataNascimento: userData.dataNascimento
+      };
+      
+      const rememberMe = AuthStorage.getToken() !== null;
+      AuthStorage.saveUser(updatedUser, rememberMe);
+      
+      return updatedUser;
+    } catch (error) {
+      console.error('Erro ao atualizar perfil:', error);
+      throw error;
+    }
+  }
 }
 
 export default AuthService;

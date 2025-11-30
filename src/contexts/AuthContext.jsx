@@ -90,6 +90,16 @@ export const AuthProvider = ({ children }) => {
     return user && user.isAdmin;
   };
 
+  const updateUser = async (userData) => {
+    try {
+      const updatedUser = await AuthService.updateProfile(user.id, userData);
+      setUser(updatedUser);
+      return updatedUser;
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -98,6 +108,7 @@ export const AuthProvider = ({ children }) => {
     loginWithGoogle,
     logout,
     register,
+    updateUser,
     isAdmin
   };
 

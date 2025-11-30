@@ -2,6 +2,21 @@ import api from './api';
 
 class AgendamentoService {
   /**
+   * Busca todos os agendamentos de um usuário
+   * @param {number} usuarioId - ID do usuário
+   * @returns {Promise<Array>} - Array com os agendamentos do usuário
+   */
+  async buscarAgendamentosUsuario(usuarioId) {
+    try {
+      const response = await api.get(`/agendamento/usuario/${usuarioId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar agendamentos do usuário:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Valida se um código de orçamento existe e está disponível
    * @param {string} codigoOrcamento - Código do orçamento
    * @returns {Promise<boolean>} - true se o código é válido e disponível
@@ -81,6 +96,43 @@ class AgendamentoService {
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar agendamento:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Atualiza a data e hora de um agendamento
+   * @param {number} id - ID do agendamento
+   * @param {Object} dados - Dados para atualização
+   * @param {string} dados.dataHora - Nova data e hora no formato ISO 8601
+   * @returns {Promise<Object>} - Dados do agendamento atualizado
+   */
+  async atualizarAgendamento(id, dados) {
+    try {
+      const response = await api.put(`/agendamento/${id}`, dados);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao atualizar agendamento:', error);
+      if (error.response?.data) {
+        throw new Error(error.response.data);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Deleta um agendamento
+   * @param {number} id - ID do agendamento
+   * @returns {Promise<void>}
+   */
+  async deletarAgendamento(id) {
+    try {
+      await api.delete(`/agendamento/${id}`);
+    } catch (error) {
+      console.error('Erro ao deletar agendamento:', error);
+      if (error.response?.data) {
+        throw new Error(error.response.data);
+      }
       throw error;
     }
   }

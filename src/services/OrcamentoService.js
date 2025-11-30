@@ -1,6 +1,12 @@
 import api from './api.js';
 
 class OrcamentoService {
+  async buscarOrcamentosUsuario(usuarioId) {
+    try {
+      const response = await api.get(`/orcamento/usuario/${usuarioId}`);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao buscar orçamentos do usuário:', error);
   /**
    * Busca todos os orçamentos (admin)
    */
@@ -21,6 +27,7 @@ class OrcamentoService {
     }
   }
 
+  async buscarOrcamentoPorCodigo(codigo) {
   /**
    * Busca orçamento por código
    */
@@ -34,15 +41,42 @@ class OrcamentoService {
     }
   }
 
+  async atualizarOrcamento(codigo, dados) {
+    try {
+      console.log('Atualizando orçamento:', codigo, dados);
+      const response = await api.put(`/orcamento/${codigo}`, dados, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Resposta da atualização:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao atualizar orçamento:', error);
+      console.error('Status:', error.response?.status);
+      console.error('Dados do erro:', error.response?.data);
   /**
    * Cria novo orçamento
    */
   async criar(dados) {
     try {
-      const response = await api.post('/orcamento', dados);
+      console.log('📤 Criando orçamento via POST /orcamento/cadastro');
+      
+      // Para FormData, precisamos remover o Content-Type para o browser definir automaticamente
+      const config = {};
+      if (dados instanceof FormData) {
+        config.headers = {
+          'Content-Type': 'multipart/form-data'
+        };
+      }
+      
+      const response = await api.post('/orcamento/cadastro', dados, config);
+      console.log('✅ Orçamento criado:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar orçamento:', error);
+      console.error('❌ Erro ao criar orçamento:', error);
+      console.error('📍 Status:', error.response?.status);
+      console.error('📍 Resposta:', error.response?.data);
       throw error;
     }
   }
@@ -60,6 +94,17 @@ class OrcamentoService {
     }
   }
 
+  async verificarSeTemAgendamento(codigo) {
+    try {
+      const response = await api.get(`/orcamento/${codigo}/tem-agendamento`);
+      return response.data.temAgendamento;
+    } catch (error) {
+      console.error('Erro ao verificar agendamento:', error);
+      return false;
+    }
+  }
+
+  async deletarOrcamento(codigo) {
   /**
    * Responde orçamento (admin envia resposta ao cliente)
    */

@@ -3,6 +3,23 @@ import React, { useState, useEffect, useRef } from "react";
 import "./formulario.css";
 import { BarraCarregamento } from '../../loadingComponents/barraCarregamento/BarraCarregamento.jsx';
 
+// Funções de formatação para máscaras
+const formatarValor = (value) => {
+  const numero = value.replace(/\D/g, '');
+  if (!numero) return '';
+  const valorNumerico = Number(numero) / 100;
+  return valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
+
+const formatarTempo = (value) => {
+  const num = value.replace(/\D/g, '');
+  if (!num) return '';
+  if (num.length <= 2) return num + 'h';
+  const horas = num.slice(0, -2);
+  const minutos = num.slice(-2);
+  return `${horas}h${minutos}min`;
+};
+
 export const Formulario = ({
   titulo = 'Do esboço ao real: Seu projeto começa aqui.',
   subtitulo = 'Conte sua ideia, nós criamos a arte.',
@@ -62,9 +79,23 @@ export const Formulario = ({
   }, [initialValues]);
 
   // Handlers
-  const handleMudancaInput = (e) => {
+  const handleMudancaInput = (e, campo) => {
     const { name, value } = e.target;
-    setDadosFormulario((prev) => ({ ...prev, [name]: value }));
+    let valorFormatado = value;
+    
+    // Aplicar máscara se definida
+    if (campo?.mask === 'currency') {
+      valorFormatado = formatarValor(value);
+    } else if (campo?.mask === 'time') {
+      const num = value.replace(/\D/g, '');
+      if (num.length <= 4) {
+        valorFormatado = formatarTempo(value);
+      } else {
+        return; // Não permite mais de 4 dígitos
+      }
+    }
+    
+    setDadosFormulario((prev) => ({ ...prev, [name]: valorFormatado }));
     if (erros[name]) setErros((prev) => ({ ...prev, [name]: '' }));
   };
 
@@ -138,7 +169,7 @@ export const Formulario = ({
             id={campo.name}
             name={campo.name}
             value={dadosFormulario[campo.name] || ''}
-            onChange={handleMudancaInput}
+            onChange={(e) => handleMudancaInput(e, campo)}
             placeholder={campo.placeholder}
             rows={campo.rows || 4}
             className={classeInput}
@@ -152,7 +183,7 @@ export const Formulario = ({
               id={campo.name}
               name={campo.name}
               value={dadosFormulario[campo.name] || ''}
-              onChange={handleMudancaInput}
+              onChange={(e) => handleMudancaInput(e, campo)}
               className={classeInput}
             >
               {campo.options?.map((opcao, idx) => (
@@ -173,7 +204,7 @@ export const Formulario = ({
                   id={`${campo.name}_outro`}
                   name={`${campo.name}_outro`}
                   value={dadosFormulario[`${campo.name}_outro`] || ''}
-                  onChange={handleMudancaInput}
+                  onChange={(e) => handleMudancaInput(e, campo)}
                   placeholder="Digite o local específico"
                   className={classeInput}
                 />
@@ -280,7 +311,7 @@ export const Formulario = ({
             id={campo.name}
             name={campo.name}
             value={dadosFormulario[campo.name] || ''}
-            onChange={handleMudancaInput}
+            onChange={(e) => handleMudancaInput(e, campo)}
             placeholder={campo.placeholder}
             className={classeInput}
           />

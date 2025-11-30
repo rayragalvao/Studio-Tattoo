@@ -4,6 +4,7 @@ import { Footer } from '../../components/generalComponents/footer/Footer.jsx';
 import OrcamentosList from '../../components/admin/OrcamentosList.jsx';
 import OrcamentoDetail from '../../components/admin/OrcamentoDetail.jsx';
 import ModalSucesso from '../../components/admin/ModalSucesso.jsx';
+import CriarOrcamento from '../../components/admin/CriarOrcamento.jsx';
 import './orcamentos.css';
 import orcamentoService from '../../services/OrcamentoService.js';
 import '../../styles/global.css';
@@ -17,6 +18,7 @@ const AdminOrcamentos = () => {
   const [filtros, setFiltros] = useState({ status: 'Todos' });
   const [loading, setLoading] = useState(true);
   const [modalSucesso, setModalSucesso] = useState(false);
+  const [modalCriarAberto, setModalCriarAberto] = useState(false);
 
   useEffect(() => {
     carregarOrcamentos();
@@ -69,6 +71,19 @@ const AdminOrcamentos = () => {
   const toggleFiltros = () => setFiltrosAbertos(!filtrosAbertos);
   const atualizarFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
   const limparFiltros = () => { setFiltros({ status:'Todos' }); setSearch(''); setFiltrosAbertos(false); };
+  
+  const handleCriarOrcamento = () => {
+    setModalCriarAberto(true);
+  };
+  
+  const handleFecharModalCriar = () => {
+    setModalCriarAberto(false);
+  };
+  
+  const handleOrcamentoCriado = () => {
+    carregarOrcamentos();
+    setModalCriarAberto(false);
+  };
   
   const handleEnviar = async (orcamento, dados) => {
     // Normalizar payload para o backend: valor (float) e tempo (HH:mm:ss)
@@ -169,7 +184,7 @@ const AdminOrcamentos = () => {
             filtros={filtros}
             onAtualizarFiltro={atualizarFiltro}
             onLimparFiltros={limparFiltros}
-            onCriarOrcamento={()=>console.log('Criar orçamento')}
+            onCriarOrcamento={handleCriarOrcamento}
           />
           <OrcamentoDetail orcamento={selected} onEnviar={handleEnviar} />
         </div>
@@ -179,6 +194,12 @@ const AdminOrcamentos = () => {
         onClose={() => setModalSucesso(false)}
         mensagem="Orçamento enviado com sucesso! O cliente receberá um e-mail com os detalhes."
       />
+      {modalCriarAberto && (
+        <CriarOrcamento 
+          onClose={handleFecharModalCriar}
+          onOrcamentoCriado={handleOrcamentoCriado}
+        />
+      )}
       <Footer />
     </>
   );

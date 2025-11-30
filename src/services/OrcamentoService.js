@@ -60,10 +60,23 @@ class OrcamentoService {
    */
   async criar(dados) {
     try {
-      const response = await api.post('/orcamento', dados);
+      console.log('📤 Criando orçamento via POST /orcamento/cadastro');
+      
+      // Para FormData, precisamos remover o Content-Type para o browser definir automaticamente
+      const config = {};
+      if (dados instanceof FormData) {
+        config.headers = {
+          'Content-Type': 'multipart/form-data'
+        };
+      }
+      
+      const response = await api.post('/orcamento/cadastro', dados, config);
+      console.log('✅ Orçamento criado:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar orçamento:', error);
+      console.error('❌ Erro ao criar orçamento:', error);
+      console.error('📍 Status:', error.response?.status);
+      console.error('📍 Resposta:', error.response?.data);
       throw error;
     }
   }

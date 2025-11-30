@@ -1,0 +1,81 @@
+/* CONTAINER PRINCIPAL DO FORMULÁRIO */
+.form-container {
+    width: 100%;
+    max-width: 1100px;          /* impede de ficar largo demais */
+    margin: 0 auto;             /* centraliza */
+    padding: 20px 40px;
+    box-sizing: border-box;
+}
+
+/* TÍTULO */
+.form-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* GRID PRINCIPAL – 2 COLUNAS */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;   /* duas colunas iguais */
+    gap: 25px;                        /* espaço entre os campos */
+}
+
+/* CAMPOS INDIVIDUAIS */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background: #f7f7f7;
+}
+
+textarea {
+    min-height: 120px;
+    resize: none;
+}
+
+/* SEÇÃO COMPLETA QUE PRECISA OCUPAR AS DUAS COLUNAS */
+.full-width {
+    grid-column: span 2;
+}
+
+/* CARD DA DICA */
+.tip-box {
+    background: #fff7f7;
+    border: 2px dashed #c44;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+/* REMOVER QUALQUER SCROLL */
+body, html {
+    overflow-x: hidden !important;
+}
+
+/* RESPONSIVIDADE — NO CELULAR, VIRA 1 COLUNA */
+@media (max-width: 780px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .full-width {
+        grid-column: span 1;
+    }
+}

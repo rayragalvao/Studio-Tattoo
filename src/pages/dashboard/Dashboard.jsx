@@ -14,6 +14,8 @@ import { Navbar } from '../../components/generalComponents/navbar/Navbar';
 import { Footer } from '../../components/generalComponents/footer/Footer';
 import { useAuth } from '../../contexts/AuthContext';
 import DashboardCard from '../../components/generalComponents/dashboardCard/DashboardCard';
+import { CardEstoque } from '../../components/estoqueComponents/cardEstoque/CardEstoque';
+import '../../components/estoqueComponents/cardEstoque/cardEstoque.css';
 import "./dashboard.css";
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -28,7 +30,6 @@ ChartJS.register(
     Legend
 );
 
-// As opções do gráfico podem continuar fora, pois são estáticas
 const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -96,7 +97,6 @@ const chartOptions = {
     },
 };
 
-
 const Dashboard = () => {
     
     const { user } = useAuth();
@@ -104,7 +104,12 @@ const Dashboard = () => {
 
     const [kpis, setKpis] = useState(null); 
     const [faturamentoDados, setFaturamentoDados] = useState([]); 
-    const [loading, setLoading] = useState(true); 
+    const [loading, setLoading] = useState(true);
+    const [itemEstoqueSelecionado, setItemEstoqueSelecionado] = useState(null);
+    const [mostrarDetalhesEstoque, setMostrarDetalhesEstoque] = useState(false);
+    
+    // ✅ NOVO: Estado para gerenciar quantidade a atualizar
+    const [qtdParaAtualizar, setQtdParaAtualizar] = useState('');
     
     const chartData = {
         labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
@@ -129,28 +134,20 @@ const Dashboard = () => {
         const fetchDashboardData = async () => {
             setLoading(true);
             try {
-                console.log('Buscando dados do dashboard...');
+                console.log('📄 Buscando dados do dashboard...');
                 
                 const kpiResponse = await api.get('/dashboard/kpis');
-                console.log('KPIs recebidos:', kpiResponse.data);
+                console.log('📊 KPIs recebidos do backend:', kpiResponse.data);
                 setKpis(kpiResponse.data);
 
                 const faturamentoResponse = await api.get('/dashboard/faturamento-anual');
-                console.log('Faturamento recebido:', faturamentoResponse.data);
+                console.log('💰 Faturamento recebido:', faturamentoResponse.data);
                 setFaturamentoDados(faturamentoResponse.data);
 
             } catch (error) {
-                console.error("Erro ao buscar dados do dashboard:", error);
-                
-                setKpis({
-                    proximoAgendamento: null,
-                    orcamentosPendentes: 0,
-                    agendamentosDoDia: [],
-                    alertasEstoque: []
-                });
-                setFaturamentoDados(Array(12).fill(0)); 
-                
-                console.warn('Usando dados vazios devido a erro na API');
+                console.error("❌ Erro ao buscar dados do dashboard:", error);
+                setKpis(null);
+                setFaturamentoDados([]);
             } finally {
                 setLoading(false);
             }
@@ -158,6 +155,71 @@ const Dashboard = () => {
 
         fetchDashboardData();
     }, []); 
+
+    // ✅ NOVO: Função para fechar modal e limpar estado
+    const fecharModalEstoque = () => {
+        setMostrarDetalhesEstoque(false);
+        setItemEstoqueSelecionado(null);
+        setQtdParaAtualizar('');
+    };
+
+    // ✅ NOVO: Função para atualizar quantidade do item
+    const handleAtualizarQuantidade = async (operacao) => {
+        if (!qtdParaAtualizar || qtdParaAtualizar <= 0) {
+            alert('Por favor, digite uma quantidade válida');
+            return;
+        }
+
+        try {
+            const quantidade = parseInt(qtdParaAtualizar);
+            const novaQuantidade = operacao === 'soma' 
+                ? itemEstoqueSelecionado.quantidade + quantidade
+                : itemEstoqueSelecionado.quantidade - quantidade;
+
+            if (novaQuantidade < 0) {
+                alert('A quantidade não pode ser negativa');
+                return;
+            }
+
+            // Atualizar via API (ajuste o endpoint conforme sua API)
+            await api.put(`/estoque/${itemEstoqueSelecionado.id}`, {
+                ...itemEstoqueSelecionado,
+                quantidade: novaQuantidade
+            });
+
+            alert(`Quantidade ${operacao === 'soma' ? 'adicionada' : 'removida'} com sucesso!`);
+            fecharModalEstoque();
+            
+            // Recarregar dados do dashboard
+            window.location.reload();
+        } catch (error) {
+            console.error('Erro ao atualizar quantidade:', error);
+            alert('Erro ao atualizar quantidade. Tente novamente.');
+        }
+    };
+
+    // ✅ NOVO: Função para editar item
+    const handleEditarItem = () => {
+        fecharModalEstoque();
+        navigate('/estoque', { state: { itemParaEditar: itemEstoqueSelecionado } });
+    };
+
+    // ✅ NOVO: Função para excluir item
+    const handleExcluirItem = async () => {
+        if (!window.confirm(`Tem certeza que deseja excluir "${itemEstoqueSelecionado.nomeProduto}"?`)) {
+            return;
+        }
+
+        try {
+            await api.delete(`/estoque/${itemEstoqueSelecionado.id}`);
+            alert('Item excluído com sucesso!');
+            fecharModalEstoque();
+            window.location.reload();
+        } catch (error) {
+            console.error('Erro ao excluir item:', error);
+            alert('Erro ao excluir item. Tente novamente.');
+        }
+    };
     
 
     if (loading) {
@@ -211,9 +273,9 @@ const Dashboard = () => {
 
     const proximoAgendamentoFormatado = proximoAgendamento ? {
         nome: proximoAgendamento.usuario?.nome || 'Cliente', 
-        valor: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proximoAgendamento.valor || 0),
-        data: new Date(proximoAgendamento.dataHorario).toLocaleDateString('pt-BR'),
-        horario: new Date(proximoAgendamento.dataHorario).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+        valor: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(proximoAgendamento.orcamento?.valor || 0),
+        data: new Date(proximoAgendamento.dataHora).toLocaleDateString('pt-BR'),
+        horario: new Date(proximoAgendamento.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     } : { 
         nome: 'Nenhum', 
         valor: 'R$ 0,00', 
@@ -239,12 +301,10 @@ const Dashboard = () => {
                                 <div className="proximo-agendamento-bloco-destaque"> 
                                     <p className="nome-cliente">{proximoAgendamentoFormatado.nome} - {proximoAgendamentoFormatado.valor}</p>
                                     <p className="data-hora">{proximoAgendamentoFormatado.data} - {proximoAgendamentoFormatado.horario}</p>
-                                    <button className="btn-agendar-action">▶</button>
                                 </div>
                             </div>
                             <div className="orcamentos-pendentes-card">
                                 <h3>Orçamentos aguardando resposta</h3>
-                                {/* DADO DINÂMICO */}
                                 <p className="numero-pendentes">{orcamentosPendentes}</p>
                             </div>
                         </div>
@@ -262,29 +322,31 @@ const Dashboard = () => {
                 
                 <div className="dashboard-row-listas">
                     <DashboardCard titulo="Agendamentos do dia" className="agendamentos-dia-card">
-                        <ul className="lista-agendamentos">
-                            {agendamentosDoDia.length === 0 ? (
-                                <li className="item-agendamento-vazio">Nenhum agendamento hoje.</li>
-                            ) : (
-                                agendamentosDoDia.map((ag) => (
-                                    <li key={ag.id} className="item-agendamento">
-                                        <div>
-                                            <span className="info-principal">
-                                                {ag.usuario?.nome || 'Cliente'} - {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(ag.valor || 0)}
-                                            </span>
-                                            <span className="info-secundaria">
-                                                {new Date(ag.dataHorario).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        </div>
-                                        <button className="btn-agendar-action">
-                                            <span className="material-symbols-outlined">
-                                                alarm
-                                            </span>
-                                        </button>
-                                    </li>
-                                ))
-                            )}
-                        </ul>
+                        <div className="agendamentos-scroll-container">
+                            <ul className="lista-agendamentos">
+                                {agendamentosDoDia.length === 0 ? (
+                                    <li className="item-agendamento-vazio">Nenhum agendamento hoje.</li>
+                                ) : (
+                                    agendamentosDoDia.map((ag) => (
+                                        <li key={ag.id} className="item-agendamento">
+                                            <div>
+                                                <span className="info-principal">
+                                                    {ag.usuario?.nome || 'Cliente'} - {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(ag.orcamento?.valor || 0)}
+                                                </span>
+                                                <span className="info-secundaria">
+                                                    {new Date(ag.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            </div>
+                                            <button className="btn-agendar-action">
+                                                <span className="material-symbols-outlined">
+                                                    alarm
+                                                </span>
+                                            </button>
+                                        </li>
+                                    ))
+                                )}
+                            </ul>
+                        </div>
                     </DashboardCard>
                     
                     <DashboardCard 
@@ -296,9 +358,21 @@ const Dashboard = () => {
                                 <div className="alerta-item-vazio">Estoque em ordem!</div>
                             ) : (
                                 alertasEstoque.map((alerta) => (
-                                    <div key={alerta.id} className="alerta-item-destaque">
-                                        <p className="item-nome-alerta">{alerta.nome}</p>
-                                        <p className="item-quantidade-alerta">{alerta.quantidade} unidades sobrando</p>
+                                    <div 
+                                        key={alerta.id} 
+                                        className="alerta-item-destaque"
+                                        onClick={() => {
+                                            console.log('🔍 Item clicado:', alerta);
+                                            setItemEstoqueSelecionado(alerta);
+                                            setMostrarDetalhesEstoque(true);
+                                        }}
+                                        style={{ cursor: 'pointer' }}
+                                        title={`Clique para ver detalhes de ${alerta.nomeProduto}`}
+                                    >
+                                        <p className="item-nome-alerta">{alerta.nomeProduto}</p>
+                                        <p className="item-quantidade-alerta">
+                                            {alerta.quantidade} {alerta.unidadeMedida || 'unidades'} restante{alerta.quantidade !== 1 ? 's' : ''}
+                                        </p>
                                     </div>
                                 ))
                             )}
@@ -313,6 +387,44 @@ const Dashboard = () => {
                 </div>
                 
             </div>
+            
+            {/* ✅ MODAL CORRIGIDO */}
+            {mostrarDetalhesEstoque && itemEstoqueSelecionado && (
+                <div 
+                    className="modal-overlay" 
+                    onClick={fecharModalEstoque}
+                >
+                    <div 
+                        className="modal-content" 
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button 
+                            className="modal-close-button"
+                            onClick={fecharModalEstoque}
+                            aria-label="Fechar detalhes do item"
+                        >
+                            <span className="material-symbols-outlined">close</span>
+                        </button>
+                        
+                        {/* ✅ CardEstoque com todas as props necessárias */}
+                        <CardEstoque
+                            tipo="informacoes"
+                            item={{
+                                id: itemEstoqueSelecionado.id,
+                                nome: itemEstoqueSelecionado.nomeProduto,
+                                quantidade: itemEstoqueSelecionado.quantidade,
+                                minAviso: itemEstoqueSelecionado.minAviso,
+                                unidadeMedida: itemEstoqueSelecionado.unidadeMedida
+                            }}
+                            qtdParaAtualizar={qtdParaAtualizar}
+                            setQtdParaAtualizar={setQtdParaAtualizar}
+                            onEditar={handleEditarItem}
+                            onExcluir={handleExcluirItem}
+                            onAtualizarQuantidade={handleAtualizarQuantidade}
+                        />
+                    </div>
+                </div>
+            )}
             
             <Footer />
         </>

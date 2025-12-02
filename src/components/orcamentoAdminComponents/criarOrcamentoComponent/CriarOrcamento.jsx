@@ -1,5 +1,5 @@
 import { useState } from "react";
-import orcamentoService from "../../services/OrcamentoService.js";
+import orcamentoService from "../../../services/OrcamentoService.js";
 import './modalSucesso.css';
 
 const CriarOrcamento = ({ onClose, onOrcamentoCriado }) => {

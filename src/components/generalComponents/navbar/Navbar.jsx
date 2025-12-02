@@ -118,11 +118,16 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         { label: "Estoque", to: "/estoque" }
       ];
     } else {
-      menuItems.push({ label: "Agendar", to: "/agendamento" });
-      menuItems.push({ label: "Menu", to: "/meu-perfil" });
+      // Inicializa com os itens base primeiro
       menuItems = [...baseMenuItems];
+      // Para usuários autenticados, insere "Agendamento" antes de "Orçamento"
       if (isAuthenticated) {
         menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
+        // Adiciona atalho para menu do cliente
+        menuItems.push({ label: "Menu", to: "/meu-perfil" });
+      } else {
+        // Visitantes: adiciona atalho de agendar no final
+        menuItems.push({ label: "Agendar", to: "/agendamento" });
       }
     }
   }
@@ -197,11 +202,9 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         <div className="actions">
           {isAuthenticated ? (
             <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
-              {!isCustom && (
-                <span className="user-name">
-                  {user?.isAdmin ? 'Olá, admin' : `Olá, ${getPrimeiroNome(user?.nome)}`}
-                </span>
-              )}
+              <span className="user-name">
+                {user?.isAdmin ? 'Olá, admin' : `Olá, ${getPrimeiroNome(user?.nome)}`}
+              </span>
               <button onClick={handleLogout} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
                 {isLoggingOut ? (
                   <span className="logout-animation">

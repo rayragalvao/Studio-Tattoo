@@ -20,6 +20,14 @@ const AdminOrcamentos = () => {
   const [modalSucesso, setModalSucesso] = useState(false);
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
 
+  const customMenuItems = [
+    { label: 'Início', to: '/' },
+    { label: 'Dashboard', to: '/dashboard' },
+    { label: 'Estoque', to: '/estoque' },
+    { label: 'Orçamentos', to: '/admin/orcamentos' },
+    { label: 'Agendamentos', to: '/admin/agendamentos' }
+  ];
+
   useEffect(() => {
     carregarOrcamentos();
   }, []);
@@ -169,7 +177,7 @@ const AdminOrcamentos = () => {
 
   return (
     <>
-      <Navbar hideLogo />
+      <Navbar isCustom={true} customMenuItems={customMenuItems} hideLogo />
         <div className="admin-orc-wrapper">
           <div className="admin-orc-grid">
           <OrcamentosList

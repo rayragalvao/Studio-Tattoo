@@ -18,6 +18,25 @@ const OrcamentosList = ({
   return (
     <aside className="orc-list">
       <h2 className="orc-list-title">Orçamentos</h2>
+      <div style={{
+        fontSize: '0.75rem',
+        color: '#666',
+        marginTop: '-4px',
+        marginBottom: '12px',
+        display: 'flex',
+        gap: '16px',
+        paddingLeft: '4px'
+      }}>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#ffc107', display: 'inline-block' }}></span>
+          Pendente
+        </span>
+        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4caf50', display: 'inline-block' }}></span>
+          Respondido
+        </span>
+      </div>
+
       <div className="orc-list-header">
         <div className="orc-search-wrapper">
           <span className="icon material-symbols-outlined" aria-hidden="true">search</span>

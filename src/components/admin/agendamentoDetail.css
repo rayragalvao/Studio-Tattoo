@@ -1,0 +1,32 @@
+.agend-detail { background:#fff; border-radius:8px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
+.agend-detail-status { background:#f3f4f6; border-radius:6px; padding:12px 16px; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+.agend-detail-status .status-label { font-size:14px; font-weight:600; color:#6b7280; }
+.agend-detail-status .status-value { font-size:14px; font-weight:600; }
+.status-aguardando .status-value { color:#f59e0b; }
+.status-confirmado .status-value { color:#10b981; }
+.status-cancelado .status-value { color:#ef4444; }
+.agend-detail-section { margin-bottom:24px; }
+.agend-detail-section h3 { font-size:16px; font-weight:600; color:#1f2937; margin:0 0 12px 0; }
+.agend-detail-row { display:flex; gap:8px; margin-bottom:10px; }
+.agend-detail-row .label-orange { font-size:14px; font-weight:600; color:var(--laranja); min-width:160px; }
+.agend-detail-row .value { font-size:14px; color:#374151; }
+.agend-detail-block { margin-bottom:16px; }
+.agend-detail-block .label-orange { font-size:14px; font-weight:600; color:var(--laranja); display:block; margin-bottom:8px; }
+.agend-detail-block .value-block { font-size:14px; color:#374151; line-height:1.6; margin:0; }
+.referencias-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:12px; margin-top:8px; }
+.referencia-image { width:100%; height:200px; object-fit:cover; border-radius:6px; border:1px solid #e5e7eb; }
+.sem-referencia { font-size:14px; color:#9ca3af; font-style:italic; }
+.agend-detail-actions { display:flex; gap:12px; flex-wrap:wrap; }
+.btn-primary, .btn-secondary { padding:10px 20px; border-radius:6px; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; border:none; }
+.btn-primary { background:var(--laranja); color:#fff; }
+.btn-primary:hover { background:#d97706; transform:translateY(-1px); box-shadow:0 4px 12px rgba(249,115,22,0.3); }
+.btn-secondary { background:#fff; color:#6b7280; border:1px solid #d1d5db; }
+.btn-secondary:hover { background:#f9fafb; border-color:#9ca3af; }
+
+@media (max-width: 768px) {
+  .agend-detail { padding:16px; }
+  .agend-detail-row { flex-direction:column; gap:4px; }
+  .agend-detail-row .label-orange { min-width:auto; }
+  .agend-detail-actions { flex-direction:column; }
+  .btn-primary, .btn-secondary { width:100%; }
+}

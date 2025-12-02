@@ -12,22 +12,17 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = AuthStorage.getToken();
-    
+    const token = AuthStorage.getToken(); 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
     console.error('Erro na requisição:', error.response?.data || error.message);
     return Promise.reject(error);

@@ -88,7 +88,14 @@
     border-radius: 8px;
     margin-top: 5px;
     position: relative;
-    box-shadow: none; 
+    box-shadow: none;
+    transition: all 0.3s ease;
+}
+
+.proximo-agendamento-bloco-destaque:hover {
+    background-color: #e87913;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 107, 15, 0.3);
 }
 
 .proximo-agendamento-bloco-destaque .nome-cliente {
@@ -140,6 +147,13 @@
     justify-content: center;
     align-items: center;
     padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.orcamentos-pendentes-card:hover {
+    background-color: #eeeeee;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .orcamentos-pendentes-card h3 {
@@ -155,52 +169,56 @@
 }
 
 .agendamentos-dia-card {
-    flex: 1.5;
+    flex: 1;
+    min-height: 350px; /* Aumentado de 300px para 350px */
+    display: flex;
+    flex-direction: column;
 }
 
 .alerta-estoque-card {
     flex: 1;
-}
-
-.lista-agendamentos {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.item-agendamento {
+    min-height: 350px; /* Mantém a mesma altura para simetria */
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px; 
-    border-bottom: none; 
-    background-color: #bdbdbd;
-    border-radius: 6px; 
-    margin-bottom: 8px; 
+    flex-direction: column;
 }
 
-.item-agendamento:last-child {
-    border-bottom: none;
+/* Igualar as proporções dos cards */
+.agendamentos-dia-card,
+.alerta-estoque-card {
+    flex: 1; /* Ambos com mesma proporção */
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
 }
 
-.info-principal {
-    font-weight: 600;
-    display: block;
-    color: var(--cinza-escuro); 
-    font-size: 1rem;
+/* Adicionar container de scroll para agendamentos também */
+.agendamentos-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+    max-height: 280px; /* Aumentado de 250px para 280px */
+    scrollbar-width: thin;
+    scrollbar-color: var(--laranja) transparent;
 }
 
-.info-secundaria {
-    font-size: 0.8rem;
-    color: #666;
-    display: block;
+.agendamentos-scroll-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.agendamentos-scroll-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.agendamentos-scroll-container::-webkit-scrollbar-thumb {
+    background-color: var(--laranja);
+    border-radius: 3px;
 }
 
 .alertas-scroll-container {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 15px;
-    max-height: 200px;
+    max-height: 280px; /* Aumentado para manter simetria */
     scrollbar-width: thin;
     scrollbar-color: var(--vermelho) transparent;
 }
@@ -229,6 +247,13 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 8px;
+    transition: all 0.3s ease;
+}
+
+.alerta-item-destaque:hover {
+    background-color: #a00a0c;
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(135, 12, 14, 0.3);
 }
 
 .alerta-item-destaque:last-child {
@@ -262,6 +287,73 @@
     transform: translateY(-1px);
 }
 
+/* Modal de detalhes do item de estoque */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--vermelho);
+    color: var(--branco);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close-button:hover {
+    background: #a00a0c;
+    transform: scale(1.1);
+}
+
+.modal-close-button:active {
+    transform: scale(0.95);
+}
+
+.modal-close-button .material-symbols-outlined {
+    font-size: 20px;
+}
+
 /* Media Queries para responsividade */
 @media (max-width: 900px) {
     .dashboard-row-kpis,
@@ -282,4 +374,52 @@
     .grafico-wrapper {
         height: 300px; 
     }
+}
+
+/* Estilização dos itens de agendamento */
+.lista-agendamentos {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item-agendamento {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px; /* Aumentado de 12px para 15px */
+    margin-bottom: 10px; /* Adiciona espaço entre os itens */
+    background: #f8f8f8;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.item-agendamento:hover {
+    background: #f0f0f0;
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.item-agendamento:last-child {
+    margin-bottom: 0;
+}
+
+.info-principal {
+    display: block;
+    font-weight: 600;
+    color: var(--cinza-escuro);
+    margin-bottom: 4px;
+}
+
+.info-secundaria {
+    display: block;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.item-agendamento-vazio {
+    text-align: center;
+    padding: 30px 20px; /* Aumentado para melhor aparência */
+    color: #999;
+    font-style: italic;
 }

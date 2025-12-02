@@ -1,5 +1,5 @@
 .nav-outer {
-    width: 100%;
+    width: 100vw;
     position: relative;
 }
 
@@ -34,28 +34,6 @@
     transform: translate(-50%, -50%);
     align-items: center;
     white-space: nowrap;
-}
-
-/* Ajuste quando não há logo (admin custom) - desloca menu para direita */
-.navbar.no-logo .menu {
-    left: auto;
-    right: 200px; /* mais espaço para saudação + sair no canto direito */
-    transform: translateY(-50%);
-}
-
-.navbar.no-logo .admin-greeting {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--branco);
-    font-weight: 600;
-    font-size: 14px;
-    letter-spacing: 0.3px;
-}
-
-@media (max-width: 768px) {
-  .navbar.no-logo .admin-greeting { display: none; }
 }
 
 .menu li {
@@ -100,10 +78,6 @@
     display: flex;
     gap: 12px;
     align-items: center;
-}
-
-.navbar.no-logo .actions {
-    right: 0; /* mantém botão sair no canto direito */
 }
 
 .user-info {
@@ -324,10 +298,6 @@ body.logging-out .content {
         background: rgba(0,0,0,0.45);
         z-index: 60;
     }
-    
-        body.menu-open {
-            overflow: hidden;
-        }
 
     /* Ensure logo is left and smaller on mobile */
     .navbar .logo img { width: 120px; }

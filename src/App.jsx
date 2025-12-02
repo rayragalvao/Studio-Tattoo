@@ -6,6 +6,8 @@ import { Home } from "./pages/home/Home.jsx";
 import { Portfolio } from "./pages/portifolio/Portfolio.jsx";
 import { Agendamento } from "./pages/agendamento/Agendamento.jsx";
 import { Orcamento } from "./pages/orcamento/Orcamento.jsx";
+import { MenuCliente } from "./pages/menuCliente/MenuCliente.jsx";
+import AdminOrcamentos from "./pages/admin/Orcamentos.jsx";
 
 // Páginas protegidas
 import { Estoque } from "./pages/estoque/Estoque.jsx";
@@ -25,7 +27,11 @@ function App() {
             <Agendamento />
           </UserRoute>
         } />
-        
+        <Route path="/meu-perfil" element={
+          <UserRoute>
+            <MenuCliente />
+          </UserRoute>
+        } />
         <Route path="/dashboard" element={
             <AdminRoute>
               <Dashboard />
@@ -35,6 +41,11 @@ function App() {
         <Route path="/estoque" element={
           <AdminRoute>
             <Estoque />
+          </AdminRoute>
+        } />
+        <Route path="/admin/orcamentos" element={
+          <AdminRoute>
+            <AdminOrcamentos />
           </AdminRoute>
         } />
       </Routes>

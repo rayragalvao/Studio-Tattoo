@@ -1,0 +1,253 @@
+.orc-list {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+.orc-list-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #1f2937;
+  text-align: center;
+}
+.orc-list-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.orc-search-wrapper {
+  flex: 1;
+  position: relative;
+}
+.orc-search-wrapper .icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #9ca3af;
+}
+.orc-search {
+  width: 100%;
+  padding: 6px 32px 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f3f4f6;
+  font-size: 13px;
+}
+.btn-filter {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: 0.18s;
+}
+.btn-filter:hover {
+  background: #f3f4f6;
+  color: #870c0e;
+}
+.orc-filtros-panel {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.orc-filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.orc-filtro-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+.orc-filtro-group select {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: #374151;
+}
+.orc-btn-limpar-filtros {
+  background: #870c0e;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.orc-btn-limpar-filtros:hover {
+  background: #6b0a0c;
+}
+.orc-list-items {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.orc-item {
+  position: relative;
+  background: #868686;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: 0.18s;
+  display: flex;
+  align-items: center;
+}
+.orc-item.selected {
+  outline: 2px solid #870c0e;
+}
+.orc-item-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+.orc-item-left {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  padding-right: 40px;
+}
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #facc15;
+}
+.status-dot.green {
+  background: #22c55e;
+}
+.orc-item-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+.orc-item-sub {
+  font-size: 11px;
+  opacity: 0.9;
+}
+.orc-item-info-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: none;
+  color: #868686;
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.18s;
+}
+.orc-item-info-btn:hover {
+  box-shadow: 0 0 0 4px rgba(27, 16, 6, 0.2);
+  color: #870c0e;
+}
+.btn-criar-agendamento,
+.btn-criar-orcamento {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #870c0e;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+.btn-criar-orcamento:hover {
+  background: #6b0a0c;
+}
+.orc-list-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .orc-list {
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .orc-list {
+    margin-bottom: 16px;
+    padding: 12px;
+  }
+  .orc-list-header {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .orc-search,
+  .orc-filtro-group select {
+    font-size: 14px;
+    width: 100%;
+  }
+  .orc-item {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .orc-item-name {
+    font-size: 13px;
+  }
+  .orc-item-email {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .orc-list {
+    padding: 8px;
+  }
+  .orc-list-title {
+    font-size: 14px;
+  }
+  .orc-search {
+    font-size: 12px;
+    padding: 8px;
+  }
+  .orc-filtro-group select {
+    font-size: 12px;
+    padding: 6px;
+  }
+  .orc-item {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  .orc-item-name {
+    font-size: 12px;
+  }
+  .orc-item-email {
+    font-size: 11px;
+  }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+  }
+}

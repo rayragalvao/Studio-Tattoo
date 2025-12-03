@@ -21,7 +21,11 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/portfolio" element={<Portfolio />} />
+        <Route path="/portfolio" element={
+          <UserRoute allowGuests={true}>
+            <Portfolio />
+          </UserRoute>
+        } />
         <Route path="/agendamento" element={
           <UserRoute>
             <Agendamento />
@@ -37,7 +41,11 @@ function App() {
               <Dashboard />
             </AdminRoute>
           } />
-        <Route path="/orcamento" element={<Orcamento />} />
+        <Route path="/orcamento" element={
+          <UserRoute allowGuests={true}>
+            <Orcamento />
+          </UserRoute>
+        } />
         <Route path="/estoque" element={
           <AdminRoute>
             <Estoque />

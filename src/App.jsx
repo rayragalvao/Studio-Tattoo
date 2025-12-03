@@ -12,7 +12,6 @@ import AdminOrcamentos from "./pages/orcamentoAdmin/Orcamentos.jsx";
 // Páginas protegidas
 import { Estoque } from "./pages/estoque/Estoque.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
-import { MenuCliente } from "./pages/menuCliente/MenuCliente.jsx";
 
 
 import "./styles/global.css";

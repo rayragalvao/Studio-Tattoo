@@ -51,7 +51,7 @@ function App() {
             <Estoque />
           </AdminRoute>
         } />
-        <Route path="/admin/orcamentos" element={
+        <Route path="/orcamentoAdmin/Orcamentos" element={
           <AdminRoute>
             <AdminOrcamentos />
           </AdminRoute>

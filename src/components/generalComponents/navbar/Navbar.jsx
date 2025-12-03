@@ -113,7 +113,7 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
       // Para admin: ocultar Portfólio e usar Orçamentos (admin)
       menuItems = [
         { label: "Início", to: "/" },
-        { label: "Orçamentos", to: "/admin/orcamentos" },
+        { label: "Orçamentos", to: "/orcamentoAdmin/Orcamentos" },
         { label: "Dashboard", to: "/dashboard" },
         { label: "Estoque", to: "/estoque" }
       ];

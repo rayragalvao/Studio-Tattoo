@@ -10,6 +10,7 @@ import { Orcamento } from "./pages/orcamento/Orcamento.jsx";
 // Páginas protegidas
 import { Estoque } from "./pages/estoque/Estoque.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
+import { MenuCliente } from "./pages/menuCliente/MenuCliente.jsx";
 
 
 import "./styles/global.css";
@@ -23,6 +24,11 @@ function App() {
         <Route path="/agendamento" element={
           <UserRoute>
             <Agendamento />
+          </UserRoute>
+        } />
+        <Route path="/menu-cliente" element={
+          <UserRoute>
+            <MenuCliente />
           </UserRoute>
         } />
         

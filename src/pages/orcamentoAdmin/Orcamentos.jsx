@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar } from '../../components/generalComponents/navbar/Navbar.jsx';
 import { Footer } from '../../components/generalComponents/footer/Footer.jsx';
-import OrcamentosList from '../../components/admin/OrcamentosList.jsx';
-import OrcamentoDetail from '../../components/admin/OrcamentoDetail.jsx';
-import ModalSucesso from '../../components/admin/ModalSucesso.jsx';
-import CriarOrcamento from '../../components/admin/CriarOrcamento.jsx';
+import OrcamentosList from '../../components/orcamentoAdminComponents/orcamentosList/OrcamentosList.jsx';
+import OrcamentoDetail from '../../components/orcamentoAdminComponents/orcamentoDetailComponent/OrcamentoDetail.jsx';
+import ModalSucesso from '../../components/orcamentoAdminComponents/modalSucessoComponent/ModalSucesso.jsx';
+import CriarOrcamento from '../../components/orcamentoAdminComponents/criarOrcamentoComponent/CriarOrcamento.jsx';
 import './orcamentos.css';
 import orcamentoService from '../../services/OrcamentoService.js';
-import '../../styles/global.css';
 
 const AdminOrcamentos = () => {
   const [orcamentos, setOrcamentos] = useState([]);
@@ -169,7 +168,7 @@ const AdminOrcamentos = () => {
 
   return (
     <>
-      <Navbar hideLogo />
+      <Navbar />
         <div className="admin-orc-wrapper">
           <div className="admin-orc-grid">
           <OrcamentosList

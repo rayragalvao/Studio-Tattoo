@@ -1,12 +1,19 @@
 import api from './api.js';
 
 class OrcamentoService {
+  /**
+   * Busca orçamentos de um usuário específico
+   */
   async buscarOrcamentosUsuario(usuarioId) {
     try {
       const response = await api.get(`/orcamento/usuario/${usuarioId}`);
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar orçamentos do usuário:', error);
+      throw error;
+    }
+  }
+
   /**
    * Busca todos os orçamentos (admin)
    */
@@ -27,7 +34,6 @@ class OrcamentoService {
     }
   }
 
-  async buscarOrcamentoPorCodigo(codigo) {
   /**
    * Busca orçamento por código
    */
@@ -41,20 +47,6 @@ class OrcamentoService {
     }
   }
 
-  async atualizarOrcamento(codigo, dados) {
-    try {
-      console.log('Atualizando orçamento:', codigo, dados);
-      const response = await api.put(`/orcamento/${codigo}`, dados, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      console.log('Resposta da atualização:', response.data);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao atualizar orçamento:', error);
-      console.error('Status:', error.response?.status);
-      console.error('Dados do erro:', error.response?.data);
   /**
    * Cria novo orçamento
    */
@@ -86,14 +78,25 @@ class OrcamentoService {
    */
   async atualizar(codigo, dados) {
     try {
-      const response = await api.put(`/orcamento/${codigo}`, dados);
+      console.log('Atualizando orçamento:', codigo, dados);
+      const response = await api.put(`/orcamento/${codigo}`, dados, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      console.log('Resposta da atualização:', response.data);
       return response.data;
     } catch (error) {
       console.error('Erro ao atualizar orçamento:', error);
+      console.error('Status:', error.response?.status);
+      console.error('Dados do erro:', error.response?.data);
       throw error;
     }
   }
 
+  /**
+   * Verifica se orçamento tem agendamento associado
+   */
   async verificarSeTemAgendamento(codigo) {
     try {
       const response = await api.get(`/orcamento/${codigo}/tem-agendamento`);
@@ -104,7 +107,6 @@ class OrcamentoService {
     }
   }
 
-  async deletarOrcamento(codigo) {
   /**
    * Responde orçamento (admin envia resposta ao cliente)
    */

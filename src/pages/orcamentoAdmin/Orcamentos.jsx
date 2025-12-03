@@ -168,7 +168,7 @@ const AdminOrcamentos = () => {
 
   return (
     <>
-      <Navbar hideLogo />
+      <Navbar />
         <div className="admin-orc-wrapper">
           <div className="admin-orc-grid">
           <OrcamentosList

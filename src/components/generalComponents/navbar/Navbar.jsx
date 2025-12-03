@@ -118,8 +118,6 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         { label: "Estoque", to: "/estoque" }
       ];
     } else {
-      menuItems.push({ label: "Agendar", to: "/agendamento" });
-      menuItems.push({ label: "Menu", to: "/meu-perfil" });
       menuItems = [...baseMenuItems];
       if (isAuthenticated) {
         menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });

@@ -118,10 +118,15 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         { label: "Estoque", to: "/estoque" }
       ];
     } else {
-      menuItems = [...baseMenuItems];
-      if (isAuthenticated) {
-        menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
-      }
+
+      // Para usuários não autenticados ou clientes
+      menuItems = [
+        { label: "Início", to: "/" },
+        { label: "Portfólio", to: "/portfolio" },
+        { label: "Agendar", to: "/agendamento" },
+        { label: "Orçamento", to: "/orcamento" },
+        { label: "Menu", to: "/menu-cliente" }
+      ];
     }
   }
 
@@ -195,11 +200,13 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         <div className="actions">
           {isAuthenticated ? (
             <div className={`user-info ${isLoggingOut ? 'logging-out' : ''}`}>
+
               {!isCustom && (
                 <span className="user-name">
                   {user?.isAdmin ? 'Olá, admin' : `Olá, ${getPrimeiroNome(user?.nome)}`}
                 </span>
               )}
+              
               <button onClick={handleLogout} className={`btn-logout ${isLoggingOut ? 'loading' : ''}`} disabled={isLoggingOut}>
                 {isLoggingOut ? (
                   <span className="logout-animation">

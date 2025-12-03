@@ -104,11 +104,6 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
     menuItems = customMenuItems;
   } else {
     // Lógica padrão original
-    const baseMenuItems = [
-      { label: "Início", to: "/" },
-      { label: "Portfólio", to: "/portfolio" },
-      { label: "Orçamento", to: "/orcamento" }
-    ];
     if (isAuthenticated && user?.isAdmin) {
       // Para admin: ocultar Portfólio e usar Orçamentos (admin)
       menuItems = [
@@ -118,10 +113,14 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         { label: "Estoque", to: "/estoque" }
       ];
     } else {
-      menuItems = [...baseMenuItems];
-      if (isAuthenticated) {
-        menuItems.splice(2, 0, { label: "Agendamento", to: "/agendamento" });
-      }
+      // Para usuários não autenticados ou clientes
+      menuItems = [
+        { label: "Início", to: "/" },
+        { label: "Portfólio", to: "/portfolio" },
+        { label: "Agendar", to: "/agendamento" },
+        { label: "Orçamento", to: "/orcamento" },
+        { label: "Menu", to: "/menu-cliente" }
+      ];
     }
   }
 

@@ -27,7 +27,7 @@ function App() {
             <Agendamento />
           </UserRoute>
         } />
-        <Route path="/meu-perfil" element={
+        <Route path="/menu-cliente" element={
           <UserRoute>
             <MenuCliente />
           </UserRoute>

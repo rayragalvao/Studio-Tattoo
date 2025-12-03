@@ -3,7 +3,7 @@
   width: 100%;
 }
 
-.perfil-header {
+.perfil-usuario .perfil-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -12,7 +12,7 @@
   border-bottom: 2px solid #f0f0f0;
 }
 
-.success-message {
+.perfil-usuario .success-message {
   background: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
@@ -21,10 +21,10 @@
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 500;
-  animation: slideDown 0.3s ease-out;
+  animation: perfilSlideDown 0.3s ease-out;
 }
 
-@keyframes slideDown {
+@keyframes perfilSlideDown {
   from {
     opacity: 0;
     transform: translateY(-10px);
@@ -35,7 +35,7 @@
   }
 }
 
-.perfil-header h2 {
+.perfil-usuario .perfil-header h2 {
   margin: 0;
   font-size: 28px;
   font-weight: 700;
@@ -43,8 +43,8 @@
   font-family: "Montserrat Alternates", sans-serif;
 }
 
-.btn-editar {
-  background: var(--vermelho);
+.perfil-usuario .btn-editar {
+  background: #666;
   color: #ffffff;
   border: none;
   padding: 10px 20px;
@@ -55,23 +55,23 @@
   transition: all 0.3s ease;
 }
 
-.btn-editar:hover {
-  background: #a50f11;
+.perfil-usuario .btn-editar:hover {
+  background: #a50f11;  
   transform: translateY(-2px);
 }
 
-.perfil-info {
+.perfil-usuario .perfil-info {
   display: grid;
   gap: 24px;
 }
 
-.info-group {
+.perfil-usuario .info-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.info-group label {
+.perfil-usuario .info-group label {
   font-size: 13px;
   font-weight: 600;
   color: #666;
@@ -79,7 +79,7 @@
   letter-spacing: 0.5px;
 }
 
-.info-group p {
+.perfil-usuario .info-group p {
   font-size: 16px;
   color: #333;
   margin: 0;
@@ -89,18 +89,18 @@
   border: 1px solid #e0e0e0;
 }
 
-.perfil-form {
+.perfil-usuario .perfil-form {
   display: grid;
   gap: 24px;
 }
 
-.form-group {
+.perfil-usuario .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-.form-group label {
+.perfil-usuario .form-group label {
   font-size: 13px;
   font-weight: 600;
   color: #666;
@@ -108,7 +108,7 @@
   letter-spacing: 0.5px;
 }
 
-.form-group input {
+.perfil-usuario .form-group input {
   padding: 12px 16px;
   border: 1px solid #d0d0d0;
   border-radius: 8px;
@@ -118,31 +118,31 @@
   font-family: inherit;
 }
 
-.form-group input:focus {
+.perfil-usuario .form-group input:focus {
   outline: none;
   border-color: var(--vermelho);
   box-shadow: 0 0 0 3px rgba(135, 12, 14, 0.1);
 }
 
-.form-group input:disabled {
+.perfil-usuario .form-group input:disabled {
   background-color: #f5f5f5;
   color: #999;
   cursor: not-allowed;
 }
 
-.form-group input.error {
+.perfil-usuario .form-group input.error {
   border-color: #d32f2f;
 }
 
-.form-group input::placeholder {
+.perfil-usuario .form-group input::placeholder {
   color: #999;
 }
 
-.input-with-error {
+.perfil-usuario .input-with-error {
   position: relative;
 }
 
-.error-tooltip {
+.perfil-usuario .error-tooltip {
   position: absolute;
   top: 50%;
   left: calc(100% + 15px);
@@ -155,7 +155,7 @@
   padding: 8px 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
-  animation: tooltipFadeIn 0.3s ease-out;
+  animation: perfilTooltipFadeIn 0.3s ease-out;
   font-size: 12px;
   color: #d32f2f;
   font-family: 'Martel Sans', sans-serif;
@@ -163,7 +163,7 @@
   line-height: 1.3;
 }
 
-.error-tooltip::before {
+.perfil-usuario .error-tooltip::before {
   content: '';
   position: absolute;
   top: 50%;
@@ -176,7 +176,7 @@
   border-right: 8px solid #d32f2f;
 }
 
-.error-tooltip::after {
+.perfil-usuario .error-tooltip::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -189,7 +189,7 @@
   border-right: 6px solid #ffffff;
 }
 
-@keyframes tooltipFadeIn {
+@keyframes perfilTooltipFadeIn {
   from {
     opacity: 0;
     transform: translateY(-50%) translateX(-10px);
@@ -200,7 +200,7 @@
   }
 }
 
-.form-actions {
+.perfil-usuario .form-actions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
@@ -209,8 +209,8 @@
   border-top: 2px solid #f0f0f0;
 }
 
-.btn-cancelar,
-.btn-salvar {
+.perfil-usuario .btn-cancelar,
+.perfil-usuario .btn-salvar {
   padding: 12px 24px;
   border-radius: 8px;
   font-size: 14px;
@@ -221,40 +221,40 @@
   font-family: inherit;
 }
 
-.btn-cancelar:disabled,
-.btn-salvar:disabled {
+.perfil-usuario .btn-cancelar:disabled,
+.perfil-usuario .btn-salvar:disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.btn-cancelar {
+.perfil-usuario .btn-cancelar {
   background: #f0f0f0;
   color: #666;
 }
 
-.btn-cancelar:hover {
+.perfil-usuario .btn-cancelar:hover {
   background: #e0e0e0;
   transform: translateY(-2px);
 }
 
-.btn-salvar {
+.perfil-usuario .btn-salvar {
   background: var(--vermelho);
   color: #ffffff;
 }
 
-.btn-salvar:hover {
+.perfil-usuario .btn-salvar:hover {
   background: #a50f11;
   transform: translateY(-2px);
 }
 
-.perfil-loading {
+.perfil-usuario .perfil-loading {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 300px;
 }
 
-.perfil-loading p {
+.perfil-usuario .perfil-loading p {
   color: #666;
   font-size: 16px;
 }

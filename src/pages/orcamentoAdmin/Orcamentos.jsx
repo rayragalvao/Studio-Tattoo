@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar } from '../../components/generalComponents/navbar/Navbar.jsx';
 import { Footer } from '../../components/generalComponents/footer/Footer.jsx';
-import OrcamentosList from '../../components/admin/OrcamentosList.jsx';
-import OrcamentoDetail from '../../components/admin/OrcamentoDetail.jsx';
-import ModalSucesso from '../../components/admin/ModalSucesso.jsx';
-import CriarOrcamento from '../../components/admin/CriarOrcamento.jsx';
+import OrcamentosList from '../../components/orcamentoAdminComponents/orcamentosList/OrcamentosList.jsx';
+import OrcamentoDetail from '../../components/orcamentoAdminComponents/orcamentoDetailComponent/OrcamentoDetail.jsx';
+import ModalSucesso from '../../components/orcamentoAdminComponents/modalSucessoComponent/ModalSucesso.jsx';
+import CriarOrcamento from '../../components/orcamentoAdminComponents/criarOrcamentoComponent/CriarOrcamento.jsx';
 import './orcamentos.css';
 import orcamentoService from '../../services/OrcamentoService.js';
-import '../../styles/global.css';
 
 const AdminOrcamentos = () => {
   const [orcamentos, setOrcamentos] = useState([]);
@@ -19,14 +18,6 @@ const AdminOrcamentos = () => {
   const [loading, setLoading] = useState(true);
   const [modalSucesso, setModalSucesso] = useState(false);
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
-
-  const customMenuItems = [
-    { label: 'Início', to: '/' },
-    { label: 'Dashboard', to: '/dashboard' },
-    { label: 'Estoque', to: '/estoque' },
-    { label: 'Orçamentos', to: '/admin/orcamentos' },
-    { label: 'Agendamentos', to: '/admin/agendamentos' }
-  ];
 
   useEffect(() => {
     carregarOrcamentos();
@@ -177,7 +168,7 @@ const AdminOrcamentos = () => {
 
   return (
     <>
-      <Navbar isCustom={true} customMenuItems={customMenuItems} hideLogo />
+      <Navbar />
         <div className="admin-orc-wrapper">
           <div className="admin-orc-grid">
           <OrcamentosList

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import orcamentoService from "../../services/OrcamentoService.js";
-import './modalSucesso.css';
+import orcamentoService from "../../../services/OrcamentoService.js";
+import '../modalSucessoComponent/modalSucesso.css';
 
 const CriarOrcamento = ({ onClose, onOrcamentoCriado }) => {
   const [cardResposta, setCardResposta] = useState(null);

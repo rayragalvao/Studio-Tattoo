@@ -44,7 +44,17 @@ export const MeusOrcamentos = () => {
       setOrcamentos(dados || []);
     } catch (error) {
       console.error("Erro ao carregar orçamentos:", error);
-      setError("Erro ao carregar orçamentos. Tente novamente.");
+      let mensagemErro = "Erro ao carregar orçamentos. Tente novamente.";
+      
+      if (error.response?.status === 500) {
+        mensagemErro = "Erro no servidor. Verifique se o backend está rodando corretamente.";
+      } else if (error.response?.status === 401) {
+        mensagemErro = "Sessão expirada. Faça login novamente.";
+      } else if (!error.response) {
+        mensagemErro = "Não foi possível conectar ao servidor. Verifique sua conexão.";
+      }
+      
+      setError(mensagemErro);
     } finally {
       setIsLoading(false);
     }

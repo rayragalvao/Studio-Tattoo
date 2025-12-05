@@ -74,15 +74,23 @@ class AgendamentoService {
   }
 
   /**
+   * Lista todos os agendamentos (admin)
    * @returns {Promise<Array>}
    */
   async listarAgendamentos() {
     try {
+      console.log('🔍 Buscando agendamentos em: GET /agendamento');
       const response = await api.get('/agendamento');
+      console.log('✅ Resposta recebida:', response.status);
+      console.log('📋 Total de agendamentos:', response.data?.length || 0);
       return response.data || [];
     } catch (error) {
-      console.error('Erro ao listar agendamentos:', error);
-      return [];
+      console.error('❌ Erro ao listar agendamentos:', error);
+      console.error('📍 URL:', error.config?.url);
+      console.error('📍 Método:', error.config?.method);
+      console.error('📍 Status:', error.response?.status);
+      console.error('📍 Resposta:', error.response?.data);
+      throw error;
     }
   }
 

@@ -55,10 +55,16 @@ class AgendamentoService {
    */
   async criarAgendamento(dadosAgendamento) {
     try {
+      console.log('🚀 Enviando POST /agendamento com:', dadosAgendamento);
       const response = await api.post('/agendamento', dadosAgendamento);
+      console.log('✅ Resposta do backend:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Erro ao criar agendamento:', error);
+      console.error('❌ Erro ao criar agendamento:', error);
+      console.error('📍 Status:', error.response?.status);
+      console.error('📍 Dados da resposta:', error.response?.data);
+      console.error('📍 Headers:', error.response?.headers);
+      console.error('📍 Config:', error.config);
       
       if (error.response?.data) {
         if (typeof error.response.data === 'string') {
@@ -66,6 +72,10 @@ class AgendamentoService {
         }
         if (error.response.data.message) {
           throw new Error(error.response.data.message);
+        }
+        // Se for um objeto, tenta extrair a mensagem
+        if (error.response.data.error) {
+          throw new Error(error.response.data.error);
         }
       }
       
@@ -104,6 +114,23 @@ class AgendamentoService {
       return response.data;
     } catch (error) {
       console.error('Erro ao buscar agendamento:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca agendamento completo com todas as informações do usuário e orçamento
+   * @param {number} id - ID do agendamento
+   * @returns {Promise<Object>} - Agendamento completo com usuário e orçamento
+   */
+  async buscarAgendamentoCompleto(id) {
+    try {
+      console.log('🔍 Buscando agendamento completo:', id);
+      const response = await api.get(`/agendamento/detalhado/${id}`);
+      console.log('✅ Agendamento completo recebido:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('❌ Erro ao buscar agendamento completo:', error);
       throw error;
     }
   }

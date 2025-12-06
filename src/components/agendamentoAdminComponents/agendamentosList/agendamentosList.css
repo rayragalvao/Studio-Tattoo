@@ -1,0 +1,246 @@
+.agend-list {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  height: 80vh;
+  width: 400px;
+  margin-left: 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.agend-list-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  color: #1f2937;
+  text-align: center;
+}
+
+.agend-list-header {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.agend-search-wrapper {
+  flex: 1;
+  position: relative;
+}
+
+.agend-search-wrapper .icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #9ca3af;
+}
+
+.agend-search {
+  width: 100%;
+  padding: 6px 32px 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #f3f4f6;
+  font-size: 13px;
+}
+
+.btn-filter {
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: 0.18s;
+}
+
+.btn-filter:hover {
+  background: #f3f4f6;
+  color: #870c0e;
+}
+
+.agend-filtros-panel {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.agend-filtro-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.agend-filtro-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.agend-filtro-group select {
+  padding: 6px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+  color: #374151;
+}
+
+.agend-btn-limpar-filtros {
+  background: #870c0e;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.agend-btn-limpar-filtros:hover {
+  background: #6b0a0c;
+}
+
+.agend-list-items {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.agend-item {
+  position: relative;
+  background: #868686;
+  color: #fff;
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: 0.18s;
+  display: flex;
+  align-items: center;
+}
+
+.agend-item.selected {
+  outline: 2px solid #870c0e;
+}
+
+.agend-item-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.agend-item-left {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex: 1;
+  padding-right: 40px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #facc15;
+}
+
+.status-dot.green {
+  background: #22c55e;
+}
+
+.status-dot.red {
+  background: #ef4444;
+}
+
+.status-dot.blue {
+  background: #3b82f6;
+}
+
+.agend-item-title {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.agend-item-sub {
+  font-size: 11px;
+  opacity: 0.9;
+}
+
+.agend-item-info-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: none;
+  color: #868686;
+  border-radius: 4px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.18s;
+}
+
+.agend-item-info-btn:hover {
+  box-shadow: 0 0 0 4px rgba(27, 16, 6, 0.2);
+  color: #870c0e;
+}
+
+.btn-criar-agendamento {
+  display: block;
+  width: 100%;
+  text-align: center;
+  background: #870c0e;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-criar-agendamento:hover {
+  background: #6b0a0c;
+}
+
+.agend-list-footer {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.agend-loading,
+.agend-empty {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .agend-list {
+    height: auto;
+    min-height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .agend-list {
+    margin-bottom: 16px;
+  }
+}

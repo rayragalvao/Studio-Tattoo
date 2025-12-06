@@ -1,5 +1,5 @@
 .admin-agend-wrapper{ padding:24px; min-height:70vh; }
-.admin-agend-grid{ display:grid; grid-template-columns: 340px 1fr; gap:32px; align-items:start; }
+.admin-agend-grid{ display:grid; grid-template-columns: 340px 750px; gap:32px; align-items:start; justify-content:center; margin-left:250px; }
 
 /* Large tablets */
 @media (max-width: 1200px){

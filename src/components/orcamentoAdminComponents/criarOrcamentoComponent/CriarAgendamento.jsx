@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import agendamentoService from '../../services/AgendamentoService.js';
+import agendamentoService from '../../../services/AgendamentoService.js';
 
 const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
-  const [nomeUsuario, setNomeUsuario] = useState('');
   const [emailUsuario, setEmailUsuario] = useState('');
   const [codigoOrcamento, setCodigoOrcamento] = useState('');
   const [dataHora, setDataHora] = useState('');
@@ -12,7 +11,7 @@ const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!nomeUsuario || !emailUsuario || !codigoOrcamento || !dataHora) {
+    if (!emailUsuario || !codigoOrcamento || !dataHora) {
       setCardResposta({
         tipo: 'erro',
         mensagem: 'Preencha todos os campos obrigatórios'
@@ -22,16 +21,21 @@ const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
 
     setLoading(true);
     try {
-      console.log('📤 Criando agendamento:', { nomeUsuario, emailUsuario, codigoOrcamento, dataHora });
+      console.log('📤 Criando agendamento com:');
+      console.log('  Email:', emailUsuario);
+      console.log('  Código Orçamento:', codigoOrcamento);
+      console.log('  Data/Hora original:', dataHora);
       
       const dados = {
-        nomeUsuario,
-        emailUsuario,
-        codigoOrcamento,
-        dataHora: new Date(dataHora).toISOString()
+        emailUsuario: emailUsuario.trim(),
+        codigoOrcamento: codigoOrcamento.trim(),
+        dataHora: new Date(dataHora).toISOString(),
+        status: 'AGUARDANDO'
       };
 
-      await agendamentoService.criarAgendamento(dados);
+      console.log('📦 Dados formatados completos:', JSON.stringify(dados, null, 2));
+      const resultado = await agendamentoService.criarAgendamento(dados);
+      console.log('✅ Agendamento criado:', resultado);
       
       setCardResposta({
         tipo: 'sucesso',
@@ -43,9 +47,21 @@ const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
       }, 1500);
     } catch (error) {
       console.error('❌ Erro ao criar agendamento:', error);
+      
+      let mensagemErro = error.message || 'Erro ao criar agendamento';
+      
+      // Mensagens mais amigáveis
+      if (mensagemErro.includes('Usuário é obrigatório') || mensagemErro.includes('Usuário não encontrado')) {
+        mensagemErro = `❌ Usuário com email "${emailUsuario}" não encontrado no sistema. Cadastre o usuário primeiro.`;
+      } else if (mensagemErro.includes('Orçamento não encontrado')) {
+        mensagemErro = `❌ Orçamento com código "${codigoOrcamento}" não encontrado.`;
+      } else if (mensagemErro.includes('Já existe um agendamento')) {
+        mensagemErro = `❌ Já existe um agendamento para este orçamento.`;
+      }
+      
       setCardResposta({
         tipo: 'erro',
-        mensagem: error.message || 'Erro ao criar agendamento'
+        mensagem: mensagemErro
       });
     } finally {
       setLoading(false);
@@ -66,18 +82,6 @@ const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
         <h3 style={{margin:"0 0 16px",textAlign:"center"}}>Criar agendamento</h3>
         <form onSubmit={handleSubmit}>
           <div style={{marginBottom:16}}>
-            <label style={{display:"block",marginBottom:4,fontSize:14,fontWeight:600,color:"#374151"}}>Nome do cliente *</label>
-            <input
-              type="text"
-              value={nomeUsuario}
-              onChange={(e) => setNomeUsuario(e.target.value)}
-              placeholder="Nome completo"
-              required
-              style={{width:"100%",padding:"8px 12px",border:"1px solid #d1d5db",borderRadius:6,fontSize:14}}
-            />
-          </div>
-
-          <div style={{marginBottom:16}}>
             <label style={{display:"block",marginBottom:4,fontSize:14,fontWeight:600,color:"#374151"}}>Email do cliente *</label>
             <input
               type="email"
@@ -87,6 +91,9 @@ const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
               required
               style={{width:"100%",padding:"8px 12px",border:"1px solid #d1d5db",borderRadius:6,fontSize:14}}
             />
+            <small style={{display:"block",marginTop:4,fontSize:12,color:"#6b7280"}}>
+              ⚠️ O usuário com este email deve estar cadastrado no sistema
+            </small>
           </div>
 
           <div style={{marginBottom:16}}>

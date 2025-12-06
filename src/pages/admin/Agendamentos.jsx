@@ -84,8 +84,20 @@ const AdminAgendamentos = () => {
     setExibir(result);
   }, [search, filtros, agendamentos]);
 
-  const handleSelect = (item) => {
-    setSelected(item);
+  const handleSelect = async (item) => {
+    console.log('🔍 Buscando detalhes completos do agendamento:', item.id);
+    try {
+      // Usa o endpoint /agendamento/detalhado/{id} que retorna usuário e orçamento completos
+      const detalhes = await agendamentoService.buscarAgendamentoCompleto(item.id);
+      console.log('✅ Detalhes completos recebidos:', detalhes);
+      console.log('📦 Tem orçamento?', !!detalhes.orcamento);
+      console.log('📦 Tem usuário?', !!detalhes.usuario);
+      setSelected(detalhes);
+    } catch (error) {
+      console.error('❌ Erro ao buscar detalhes completos:', error);
+      console.log('⚠️ Usando dados básicos da lista');
+      setSelected(item);
+    }
   };
 
   const handleConfirmar = async (id) => {

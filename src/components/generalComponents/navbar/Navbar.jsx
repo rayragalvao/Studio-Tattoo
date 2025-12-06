@@ -109,25 +109,33 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
       { label: "Portfólio", to: "/portfolio" },
       { label: "Orçamento", to: "/orcamento" }
     ];
-    if (isAuthenticated && user?.isAdmin) {
-      // Para admin: ocultar Portfólio e usar Orçamentos (admin)
-      menuItems = [
-        { label: "Início", to: "/" },
-        { label: "Orçamentos", to: "/orcamentoAdmin/Orcamentos" },
-        { label: "Dashboard", to: "/dashboard" },
-        { label: "Estoque", to: "/estoque" }
-      ];
+    if (isAuthenticated) {
+      if (user?.isAdmin) {
+        // Para admin: ocultar Portfólio e usar Orçamentos (admin)
+        menuItems = [
+          { label: "Início", to: "/" },
+          { label: "Orçamentos", to: "/orcamentoAdmin/Orcamentos" },
+          { label: "Dashboard", to: "/dashboard" },
+          { label: "Estoque", to: "/estoque" }
+        ];
+      } else {
+        // Para usuários não autenticados ou clientes
+        menuItems = [
+          { label: "Início", to: "/" },
+          { label: "Portfólio", to: "/portfolio" },
+          { label: "Agendar", to: "/agendamento" },
+          { label: "Orçamento", to: "/orcamento" },
+          { label: "Menu", to: "/menu-cliente" }
+        ];
+      }
     } else {
-
-      // Para usuários não autenticados ou clientes
       menuItems = [
-        { label: "Início", to: "/" },
-        { label: "Portfólio", to: "/portfolio" },
-        { label: "Agendar", to: "/agendamento" },
-        { label: "Orçamento", to: "/orcamento" },
-        { label: "Menu", to: "/menu-cliente" }
-      ];
+          { label: "Início", to: "/" },
+          { label: "Portfólio", to: "/portfolio" },
+          { label: "Orçamento", to: "/orcamento" }
+        ];
     }
+
   }
 
   return (

@@ -82,20 +82,48 @@
 }
 
 .proximo-agendamento-bloco-destaque {
-    background-color: var(--laranja); 
-    color: var(--branco);
-    padding: 10px 15px;
-    border-radius: 8px;
-    margin-top: 5px;
-    position: relative;
-    box-shadow: none;
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, var(--laranja) 0%, #ff6b35 100%);
+    padding: 1.2em;
+    border-radius: 0.5em;
+    box-shadow: 0 4px 12px rgba(251, 146, 60, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
 }
 
 .proximo-agendamento-bloco-destaque:hover {
-    background-color: #e87913;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 107, 15, 0.3);
+    transform: scale(1.02);
+    box-shadow: 0 6px 16px rgba(251, 146, 60, 0.35);
+}
+
+.proximo-agendamento-bloco-destaque > div {
+    flex: 1;
+}
+
+.proximo-agendamento-bloco-destaque .bt-info-orcamento {
+    background-color: var(--branco);
+    color: var(--laranja);
+    border: none;
+    border-radius: 0.3em;
+    padding: 0.5em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: none;
+}
+
+.proximo-agendamento-bloco-destaque .bt-info-orcamento:hover {
+    background-color: var(--branco);
+    color: var(--laranja);
+    transform: none;
+}
+
+.proximo-agendamento-bloco-destaque .bt-info-orcamento .material-symbols-outlined {
+    font-size: 1.2em;
 }
 
 .proximo-agendamento-bloco-destaque .nome-cliente {
@@ -170,36 +198,43 @@
 
 .agendamentos-dia-card {
     flex: 1;
-    min-height: 350px; /* Aumentado de 300px para 350px */
+    min-height: 350px; 
     display: flex;
     flex-direction: column;
 }
 
 .alerta-estoque-card {
     flex: 1;
-    min-height: 350px; /* Mantém a mesma altura para simetria */
+    min-height: 350px; 
     display: flex;
     flex-direction: column;
 }
 
-/* Igualar as proporções dos cards */
 .agendamentos-dia-card,
 .alerta-estoque-card {
-    flex: 1; /* Ambos com mesma proporção */
+    flex: 1; 
     min-height: 300px;
     display: flex;
     flex-direction: column;
 }
 
-/* Adicionar container de scroll para agendamentos também */
 .agendamentos-scroll-container {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 15px;
-    max-height: 280px; /* Aumentado de 250px para 280px */
+    max-height: 280px; 
     scrollbar-width: thin;
     scrollbar-color: var(--laranja) transparent;
 }
+.dashboard-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dashboard-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
 
 .agendamentos-scroll-container::-webkit-scrollbar {
     width: 6px;
@@ -218,7 +253,7 @@
     flex: 1;
     overflow-y: auto;
     margin-bottom: 15px;
-    max-height: 280px; /* Aumentado para manter simetria */
+    max-height: 280px;  
     scrollbar-width: thin;
     scrollbar-color: var(--vermelho) transparent;
 }
@@ -236,39 +271,19 @@
     border-radius: 3px;
 }
 
-.alerta-item-destaque {
-    background-color: var(--vermelho);
-    color: var(--branco);
-    padding: 12px;
-    border-radius: 8px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 8px;
-    transition: all 0.3s ease;
+.alertas-scroll-container .item {
+    margin-bottom: 10px;
 }
 
-.alerta-item-destaque:hover {
-    background-color: #a00a0c;
-    transform: translateX(4px);
-    box-shadow: 0 4px 12px rgba(135, 12, 14, 0.3);
-}
-
-.alerta-item-destaque:last-child {
+.alertas-scroll-container .item:last-child {
     margin-bottom: 0;
 }
 
-.item-nome-alerta {
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-}
-
-.item-quantidade-alerta {
-    font-size: 0.9rem;
-    opacity: 0.9;
+.alerta-item-vazio {
+    text-align: center;
+    padding: 30px 20px;
+    color: #999;
+    font-style: italic;
 }
 
 .btn-ver-estoque {
@@ -287,74 +302,48 @@
     transform: translateY(-1px);
 }
 
-/* Modal de detalhes do item de estoque */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
+.orcamentos-pendentes-card {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 1em;
+}
+
+.orcamentos-header {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    z-index: 1000;
-    padding: 20px;
-    backdrop-filter: blur(4px);
+    gap: 0.5em;
 }
 
-.modal-content {
-    position: relative;
-    max-width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    animation: modalSlideIn 0.3s ease-out;
+.orcamentos-header h3 {
+    margin: 0;
 }
 
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.modal-close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: var(--vermelho);
-    color: var(--branco);
+.bt-info-orcamento {
+    background-color: var(--branco);
+    color: var(--laranja);
     border: none;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    z-index: 10;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
 }
 
-.modal-close-button:hover {
-    background: #a00a0c;
+.bt-info-orcamento:hover {
+    background-color: var(--laranja);
+    color: var(--branco);
     transform: scale(1.1);
 }
 
-.modal-close-button:active {
-    transform: scale(0.95);
+.bt-info-orcamento .material-symbols-outlined {
+    font-size: 1.2em;
 }
 
-.modal-close-button .material-symbols-outlined {
-    font-size: 20px;
-}
-
-/* Media Queries para responsividade */
 @media (max-width: 900px) {
     .dashboard-row-kpis,
     .dashboard-row-listas {
@@ -370,13 +359,11 @@
         min-height: auto;
     }
 
-    /* Aumenta a altura do gráfico em telas menores */
     .grafico-wrapper {
         height: 300px; 
     }
 }
 
-/* Estilização dos itens de agendamento */
 .lista-agendamentos {
     list-style: none;
     padding: 0;
@@ -387,17 +374,17 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px; /* Aumentado de 12px para 15px */
-    margin-bottom: 10px; /* Adiciona espaço entre os itens */
-    background: #f8f8f8;
+    padding: 15px; 
+    margin-bottom: 10px;
+    background: #e8e8e8; /* Mais escuro que #f8f8f8 */
     border-radius: 8px;
-    transition: all 0.2s ease;
+    transition: none;
 }
 
 .item-agendamento:hover {
-    background: #f0f0f0;
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #e8e8e8; /* Mantém a mesma cor */
+    transform: none;
+    box-shadow: none;
 }
 
 .item-agendamento:last-child {
@@ -419,7 +406,7 @@
 
 .item-agendamento-vazio {
     text-align: center;
-    padding: 30px 20px; /* Aumentado para melhor aparência */
+    padding: 30px 20px; 
     color: #999;
     font-style: italic;
 }

@@ -14,8 +14,8 @@ import { Navbar } from '../../components/generalComponents/navbar/Navbar';
 import { Footer } from '../../components/generalComponents/footer/Footer';
 import { useAuth } from '../../contexts/AuthContext';
 import DashboardCard from '../../components/generalComponents/dashboardCard/DashboardCard';
-import { CardEstoque } from '../../components/estoqueComponents/cardEstoque/CardEstoque';
-import '../../components/estoqueComponents/cardEstoque/cardEstoque.css';
+import { ItemEstoque } from '../../components/estoqueComponents/itemEstoque/ItemEstoque';
+import '../../components/estoqueComponents/itemEstoque/itemEstoque.css';
 import "./dashboard.css";
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
@@ -102,33 +102,13 @@ const Dashboard = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
 
-    const [kpis, setKpis] = useState(null); 
-    const [faturamentoDados, setFaturamentoDados] = useState([]); 
+
     const [loading, setLoading] = useState(true);
-    const [itemEstoqueSelecionado, setItemEstoqueSelecionado] = useState(null);
-    const [mostrarDetalhesEstoque, setMostrarDetalhesEstoque] = useState(false);
+    const [itemSelecionado, setItemSelecionado] = useState(null);
+
+    const [kpis, setKpis] = useState(null);
+    const [faturamentoDados, setFaturamentoDados] = useState([]);
     
-    // ✅ NOVO: Estado para gerenciar quantidade a atualizar
-    const [qtdParaAtualizar, setQtdParaAtualizar] = useState('');
-    
-    const chartData = {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-        datasets: [
-            {
-                label: 'Faturamento',
-                data: faturamentoDados, 
-                backgroundColor: function(context) {
-                    const index = context.dataIndex;
-                    const currentMonth = new Date().getMonth();
-                    return index === currentMonth ? '#fb923c' : '#7c3aed';
-                },
-                borderRadius: 8,
-                borderSkipped: false,
-                barThickness: 24,
-                maxBarThickness: 32,
-            },
-        ],
-    };
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -156,70 +136,6 @@ const Dashboard = () => {
         fetchDashboardData();
     }, []); 
 
-    // ✅ NOVO: Função para fechar modal e limpar estado
-    const fecharModalEstoque = () => {
-        setMostrarDetalhesEstoque(false);
-        setItemEstoqueSelecionado(null);
-        setQtdParaAtualizar('');
-    };
-
-    // ✅ NOVO: Função para atualizar quantidade do item
-    const handleAtualizarQuantidade = async (operacao) => {
-        if (!qtdParaAtualizar || qtdParaAtualizar <= 0) {
-            alert('Por favor, digite uma quantidade válida');
-            return;
-        }
-
-        try {
-            const quantidade = parseInt(qtdParaAtualizar);
-            const novaQuantidade = operacao === 'soma' 
-                ? itemEstoqueSelecionado.quantidade + quantidade
-                : itemEstoqueSelecionado.quantidade - quantidade;
-
-            if (novaQuantidade < 0) {
-                alert('A quantidade não pode ser negativa');
-                return;
-            }
-
-            // Atualizar via API (ajuste o endpoint conforme sua API)
-            await api.put(`/estoque/${itemEstoqueSelecionado.id}`, {
-                ...itemEstoqueSelecionado,
-                quantidade: novaQuantidade
-            });
-
-            alert(`Quantidade ${operacao === 'soma' ? 'adicionada' : 'removida'} com sucesso!`);
-            fecharModalEstoque();
-            
-            // Recarregar dados do dashboard
-            window.location.reload();
-        } catch (error) {
-            console.error('Erro ao atualizar quantidade:', error);
-            alert('Erro ao atualizar quantidade. Tente novamente.');
-        }
-    };
-
-    // ✅ NOVO: Função para editar item
-    const handleEditarItem = () => {
-        fecharModalEstoque();
-        navigate('/estoque', { state: { itemParaEditar: itemEstoqueSelecionado } });
-    };
-
-    // ✅ NOVO: Função para excluir item
-    const handleExcluirItem = async () => {
-        if (!window.confirm(`Tem certeza que deseja excluir "${itemEstoqueSelecionado.nomeProduto}"?`)) {
-            return;
-        }
-
-        try {
-            await api.delete(`/estoque/${itemEstoqueSelecionado.id}`);
-            alert('Item excluído com sucesso!');
-            fecharModalEstoque();
-            window.location.reload();
-        } catch (error) {
-            console.error('Erro ao excluir item:', error);
-            alert('Erro ao excluir item. Tente novamente.');
-        }
-    };
     
 
     if (loading) {
@@ -283,12 +199,32 @@ const Dashboard = () => {
         horario: '' 
     };
 
+    // Recriar chartData com dados atualizados
+    const chartDataAtualizado = {
+        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+        datasets: [
+            {
+                label: 'Faturamento',
+                data: faturamentoDados && faturamentoDados.length > 0 ? faturamentoDados : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                backgroundColor: function(context) {
+                    const index = context.dataIndex;
+                    const currentMonth = new Date().getMonth();
+                    return index === currentMonth ? '#fb923c' : '#7c3aed';
+                },
+                borderRadius: 8,
+                borderSkipped: false,
+                barThickness: 24,
+                maxBarThickness: 32,
+            },
+        ],
+    };
+
 
     return (
         <>
             <Navbar />
 
-            <h1 className="h1-dashboard">Bem-vinda, {user?.nome}</h1>
+            <h1 className="h1-dashboard">Bem-vindo, {user?.nome}</h1>
 
             <div className="dashboard-container">
 
@@ -299,12 +235,30 @@ const Dashboard = () => {
                            <div className="proximo-agendamento-card">
                                 <h3>Próximo agendamento</h3>
                                 <div className="proximo-agendamento-bloco-destaque"> 
-                                    <p className="nome-cliente">{proximoAgendamentoFormatado.nome} - {proximoAgendamentoFormatado.valor}</p>
-                                    <p className="data-hora">{proximoAgendamentoFormatado.data} - {proximoAgendamentoFormatado.horario}</p>
+                                    <div>
+                                        <p className="nome-cliente">{proximoAgendamentoFormatado.nome} - {proximoAgendamentoFormatado.valor}</p>
+                                        <p className="data-hora">{proximoAgendamentoFormatado.data} - {proximoAgendamentoFormatado.horario}</p>
+                                    </div>
+                                    <button 
+                                        className="bt-info-orcamento"
+                                        onClick={() => navigate('/agendamento')}
+                                        title="Ver agendamentos"
+                                    >
+                                        <span className="material-symbols-outlined">info</span>
+                                    </button>
                                 </div>
                             </div>
                             <div className="orcamentos-pendentes-card">
-                                <h3>Orçamentos aguardando resposta</h3>
+                                <div className="orcamentos-header">
+                                    <h3>Orçamentos aguardando resposta</h3>
+                                    <button 
+                                        className="bt-info-orcamento"
+                                        onClick={() => navigate('/orcamento')}
+                                        title="Ver orçamentos"
+                                    >
+                                        <span className="material-symbols-outlined">info</span>
+                                    </button>
+                                </div>
                                 <p className="numero-pendentes">{orcamentosPendentes}</p>
                             </div>
                         </div>
@@ -312,10 +266,17 @@ const Dashboard = () => {
 
                     <DashboardCard titulo="Faturamento do mês" className="faturamento-card">
                         <div className="grafico-wrapper">
-                            <Bar 
-                                data={chartData} 
-                                options={chartOptions} 
-                            />
+                            {faturamentoDados && faturamentoDados.length > 0 ? (
+                                <Bar 
+                                    data={chartDataAtualizado} 
+                                    options={chartOptions}
+                                    key={`chart-${faturamentoDados.length}`}
+                                />
+                            ) : (
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: '#999' }}>
+                                    Nenhum dado de faturamento
+                                </div>
+                            )}
                         </div>
                     </DashboardCard>
                 </div>
@@ -353,27 +314,24 @@ const Dashboard = () => {
                         titulo={`Itens do estoque em alerta (${alertasEstoque.length})`} 
                         className="alerta-estoque-card"
                     >
+                        {console.log("ALERTAS ESTOQUE:", alertasEstoque)}
                         <div className="alertas-scroll-container">
                             {alertasEstoque.length === 0 ? (
                                 <div className="alerta-item-vazio">Estoque em ordem!</div>
                             ) : (
                                 alertasEstoque.map((alerta) => (
-                                    <div 
-                                        key={alerta.id} 
-                                        className="alerta-item-destaque"
-                                        onClick={() => {
-                                            console.log('🔍 Item clicado:', alerta);
-                                            setItemEstoqueSelecionado(alerta);
-                                            setMostrarDetalhesEstoque(true);
+                                    <ItemEstoque
+                                        key={alerta.id}
+                                        item={{
+                                            id: alerta.id,
+                                            nome: alerta.nome,
+                                            quantidade: alerta.quantidade,
+                                            minAviso: alerta.minAviso,
+                                            unidadeMedida: alerta.unidadeMedida || 'unidades'
                                         }}
-                                        style={{ cursor: 'pointer' }}
-                                        title={`Clique para ver detalhes de ${alerta.nomeProduto}`}
-                                    >
-                                        <p className="item-nome-alerta">{alerta.nomeProduto}</p>
-                                        <p className="item-quantidade-alerta">
-                                            {alerta.quantidade} {alerta.unidadeMedida || 'unidades'} restante{alerta.quantidade !== 1 ? 's' : ''}
-                                        </p>
-                                    </div>
+                                        onMostrarInformacoes={() => navigate('/estoque')}
+                                        filtrosAbertos={false}
+                                    />
                                 ))
                             )}
                         </div>
@@ -388,45 +346,26 @@ const Dashboard = () => {
                 
             </div>
             
-            {/* ✅ MODAL CORRIGIDO */}
-            {mostrarDetalhesEstoque && itemEstoqueSelecionado && (
-                <div 
-                    className="modal-overlay" 
-                    onClick={fecharModalEstoque}
-                >
-                    <div 
-                        className="modal-content" 
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <button 
-                            className="modal-close-button"
-                            onClick={fecharModalEstoque}
-                            aria-label="Fechar detalhes do item"
-                        >
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                        
-                        {/* ✅ CardEstoque com todas as props necessárias */}
-                        <CardEstoque
-                            tipo="informacoes"
-                            item={{
-                                id: itemEstoqueSelecionado.id,
-                                nome: itemEstoqueSelecionado.nomeProduto,
-                                quantidade: itemEstoqueSelecionado.quantidade,
-                                minAviso: itemEstoqueSelecionado.minAviso,
-                                unidadeMedida: itemEstoqueSelecionado.unidadeMedida
-                            }}
-                            qtdParaAtualizar={qtdParaAtualizar}
-                            setQtdParaAtualizar={setQtdParaAtualizar}
-                            onEditar={handleEditarItem}
-                            onExcluir={handleExcluirItem}
-                            onAtualizarQuantidade={handleAtualizarQuantidade}
-                        />
-                    </div>
-                </div>
-            )}
-            
             <Footer />
+            {itemSelecionado && (
+    <div className="modal-overlay">
+        <div className="modal-content">
+            <h2>{itemSelecionado.nome}</h2>
+
+            <p><strong>Quantidade:</strong> {itemSelecionado.quantidade}</p>
+            <p><strong>Unidade:</strong> {itemSelecionado.unidadeMedida}</p>
+            <p><strong>Mínimo de alerta:</strong> {itemSelecionado.minAviso}</p>
+
+            <button 
+                className="modal-close-button"
+                onClick={() => setItemSelecionado(null)}
+            >
+                Fechar
+            </button>
+        </div>
+    </div>
+)}
+
         </>
     );
 };

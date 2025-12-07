@@ -17,6 +17,11 @@ export const PerfilUsuario = () => {
 
   useEffect(() => {
     if (user) {
+      console.log('Dados do usuário carregados no perfil:', user);
+      console.log('user.telefone:', user.telefone);
+      console.log('user.dataNascimento:', user.dataNascimento);
+      console.log('user.dtNasc:', user.dtNasc);
+      
       setUserData({
         nome: user.nome || "",
         email: user.email || "",

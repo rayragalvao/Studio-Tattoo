@@ -31,21 +31,16 @@ export const MeusAgendamentos = () => {
 
   const carregarAgendamentos = async () => {
     if (!user || !user.id) {
-      console.log("Usuário não está logado ou ID não disponível:", user);
       return;
     }
 
-    console.log("Carregando agendamentos para o usuário ID:", user.id);
     setIsLoading(true);
     setError(null);
 
     try {
       const dados = await AgendamentoService.buscarAgendamentosUsuario(user.id);
-      console.log("Agendamentos recebidos do backend:", dados);
       setAgendamentos(dados || []);
     } catch (error) {
-      console.error("Erro ao carregar agendamentos:", error);
-      console.error("Detalhes do erro:", error.response?.data);
       setError("Erro ao carregar agendamentos. Tente novamente.");
     } finally {
       setIsLoading(false);
@@ -100,7 +95,9 @@ export const MeusAgendamentos = () => {
     const data = new Date(agendamento.dataHora);
     const dataFormatada = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
     setDataSelecionada(dataFormatada);
-    setHorarioSelecionado(formatarHora(agendamento.dataHora));
+    // Formatar horário no mesmo formato usado pelos botões (HH:mm)
+    const horarioFormatado = `${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`;
+    setHorarioSelecionado(horarioFormatado);
     setModalEditar(true);
   };
 
@@ -307,20 +304,22 @@ export const MeusAgendamentos = () => {
               </div>
             </div>
 
-            <div className="acoes-agendamento">
-              <button 
-                className="btn-editar"
-                onClick={() => abrirModalEditar(agendamentoSelecionado)}
-              >
-                Editar
-              </button>
-              <button 
-                className="btn-excluir"
-                onClick={() => abrirModalExcluir(agendamentoSelecionado)}
-              >
-                Excluir
-              </button>
-            </div>
+            {(agendamentoSelecionado.status === 'PENDENTE') && (
+              <div className="acoes-agendamento">
+                <button 
+                  className="btn-editar"
+                  onClick={() => abrirModalEditar(agendamentoSelecionado)}
+                >
+                  Editar
+                </button>
+                <button 
+                  className="btn-excluir"
+                  onClick={() => abrirModalExcluir(agendamentoSelecionado)}
+                >
+                  Excluir
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -443,17 +442,15 @@ export const MeusAgendamentos = () => {
             className="agendamento-card"
             onClick={() => toggleExpand(agendamento.id)}
           >
-            <div className="agendamento-header">
-              <div className="agendamento-header-info">
-                <h3>{formatarData(agendamento.dataHora)} - {formatarHora(agendamento.dataHora)}</h3>
-                <span className={`status-badge ${getStatusClass(agendamento.status)}`}>
-                  {getStatusLabel(agendamento.status)}
-                </span>
-              </div>
-              <span className="expand-icon">
-                →
+            <div className="agendamento-header-info">
+              <h3>{formatarData(agendamento.dataHora)} - {formatarHora(agendamento.dataHora)}</h3>
+              <span className={`status-badge ${getStatusClass(agendamento.status)}`}>
+                {getStatusLabel(agendamento.status)}
               </span>
             </div>
+            <span className="expand-icon material-symbols-outlined">
+              info
+            </span>
           </div>
         ))}
       </div>

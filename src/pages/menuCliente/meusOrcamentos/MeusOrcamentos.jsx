@@ -11,7 +11,7 @@ export const MeusOrcamentos = () => {
   const [expandedId, setExpandedId] = useState(null);
   const [error, setError] = useState(null);
   const [modalEditar, setModalEditar] = useState(false);
-  const [modalExcluir, setModalExcluir] = useState(false);
+  const [modalCancelar, setModalCancelar] = useState(false);
   const [orcamentoEditando, setOrcamentoEditando] = useState(null);
   const [salvando, setSalvando] = useState(false);
   const [notificacao, setNotificacao] = useState({
@@ -40,7 +40,6 @@ export const MeusOrcamentos = () => {
 
     try {
       const dados = await OrcamentoService.buscarOrcamentosUsuario(user.id);
-      console.log("Orçamentos recebidos do backend:", dados);
       setOrcamentos(dados || []);
     } catch (error) {
       console.error("Erro ao carregar orçamentos:", error);
@@ -64,12 +63,10 @@ export const MeusOrcamentos = () => {
     setExpandedId(expandedId === codigoOrcamento ? null : codigoOrcamento);
     if (codigoOrcamento) {
       const orc = orcamentos.find(o => o.codigoOrcamento === codigoOrcamento);
-      console.log("Orçamento selecionado:", orc);
     }
   };
 
   const getStatusClass = (status) => {
-    console.log("Status recebido:", status);
     const statusMap = {
       'AGUARDANDO_RESPOSTA': 'pendente',
       'RESPONDIDO': 'aprovado',
@@ -79,7 +76,6 @@ export const MeusOrcamentos = () => {
       'REJEITADO': 'rejeitado'
     };
     const classe = statusMap[status] || 'pendente';
-    console.log("Classe retornada:", classe);
     return classe;
   };
 
@@ -206,9 +202,6 @@ export const MeusOrcamentos = () => {
         ideia: formEdicao.ideia.trim()
       };
 
-      console.log("Enviando dados de atualização:", dadosAtualizacao);
-      console.log("Código do orçamento:", orcamentoEditando.codigoOrcamento);
-
       await OrcamentoService.atualizarOrcamento(
         orcamentoEditando.codigoOrcamento, 
         dadosAtualizacao
@@ -236,26 +229,26 @@ export const MeusOrcamentos = () => {
     }
   };
 
-  const handleExcluir = async () => {
+  const handleCancelar = async () => {
     setSalvando(true);
     try {
-      await OrcamentoService.deletarOrcamento(orcamentoEditando.codigoOrcamento);
+      await OrcamentoService.cancelar(orcamentoEditando.codigoOrcamento);
       await carregarOrcamentos();
-      fecharModalExcluir();
+      fecharModalCancelar();
       setExpandedId(null);
       setNotificacao({
         visivel: true,
         tipo: "sucesso",
         titulo: "Sucesso!",
-        mensagem: "Orçamento excluído com sucesso!"
+        mensagem: "Orçamento cancelado com sucesso!"
       });
     } catch (error) {
-      console.error("Erro ao excluir orçamento:", error);
+      console.error("Erro ao cancelar orçamento:", error);
       setNotificacao({
         visivel: true,
         tipo: "erro",
         titulo: "Erro",
-        mensagem: error.message || "Erro ao excluir orçamento. Tente novamente."
+        mensagem: error.message || "Erro ao cancelar orçamento. Tente novamente."
       });
     } finally {
       setSalvando(false);
@@ -348,39 +341,54 @@ export const MeusOrcamentos = () => {
                 <div className="info-block">
                   <span className="info-label-orange">Referência:</span>
                   {(() => {
-                    console.log("imagemReferencia:", orcamentoSelecionado.imagemReferencia);
-                    console.log("É array?", Array.isArray(orcamentoSelecionado.imagemReferencia));
-                    console.log("Tem length?", orcamentoSelecionado.imagemReferencia?.length);
-                    
                     if (orcamentoSelecionado.imagemReferencia && orcamentoSelecionado.imagemReferencia.length > 0) {
                       return (
                         <div className="imagens-grid">
                           {orcamentoSelecionado.imagemReferencia.map((img, index) => {
-                            const imageUrl = img.startsWith('http') 
-                              ? img 
-                              : `http://localhost:8080/${img.replace(/\\/g, '/')}`;
+                            let imageUrl;
+                            if (img.startsWith('http')) {
+                              imageUrl = img;
+                            } else {
+                              const cleanPath = img.replace(/\\/g, '/');
+                              imageUrl = `http://localhost:8080/${cleanPath}`;
+                            }
                             
-                            console.log(`Tentando carregar imagem ${index}:`, imageUrl);
                             return (
                               <div key={index} className="imagem-box">
-                                <img 
-                                  src={imageUrl} 
-                                  alt={`Referência ${index + 1}`}
-                                  onLoad={() => console.log('Imagem carregada com sucesso:', imageUrl)}
-                                  onError={(e) => {
-                                    console.error('ERRO ao carregar imagem:', imageUrl);
-                                    console.error('Detalhes do erro:', e);
-                                    e.target.style.display = 'none';
-                                    e.target.parentElement.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#999;"><p>❌</p><p style="font-size:12px;text-align:center;padding:10px;">Erro ao carregar imagem</p></div>';
-                                  }}
-                                />
+                                <a 
+                                  href={imageUrl} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="imagem-link"
+                                  title="Clique para abrir a imagem em uma nova aba"
+                                >
+                                  <img 
+                                    src={imageUrl} 
+                                    alt={`Referência ${index + 1}`}
+                                    crossOrigin="anonymous"
+                                    referrerPolicy="no-referrer"
+                                    onError={(e) => {
+                                      e.target.style.display = 'none';
+                                      const parent = e.target.parentElement.parentElement;
+                                      const fallback = document.createElement('div');
+                                      fallback.style.cssText = 'width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;color:#999;background:#f5f5f5;border:1px dashed #ddd;border-radius:8px;padding:20px;cursor:pointer;';
+                                      fallback.innerHTML = '<p style="font-size:24px;margin:0;">🔗</p><p style="font-size:12px;text-align:center;margin:8px 0 0 0;">Imagem externa</p><p style="font-size:10px;text-align:center;margin:4px 0 0 0;color:#666;">Clique para visualizar</p>';
+                                      parent.innerHTML = '';
+                                      parent.appendChild(fallback);
+                                    }}
+                                  />
+                                </a>
                               </div>
                             );
                           })}
                         </div>
                       );
                     } else {
-                      return <div className="imagem-box-placeholder"></div>;
+                      return (
+                        <div className="imagem-box-placeholder">
+                          <p style="color:#999;font-size:14px;text-align:center;">Nenhuma imagem de referência anexada</p>
+                        </div>
+                      );
                     }
                   })()}
                 </div>
@@ -412,11 +420,12 @@ export const MeusOrcamentos = () => {
               >
                 Editar
               </button>
-              <button 
-                className="btn-excluir"
-                onClick={() => abrirModalExcluir(orcamentoSelecionado)}
+              <button
+                className="btn-cancelar"
+                onClick={() => abrirModalCancelar(orcamentoSelecionado)}
+                disabled={orcamentoSelecionado.status === 'CANCELADO'}
               >
-                Excluir
+                {orcamentoSelecionado.status === 'CANCELADO' ? 'Cancelado' : 'Cancelar'}
               </button>
             </div>
           </div>
@@ -449,14 +458,28 @@ export const MeusOrcamentos = () => {
                       Local do corpo:
                       <span className="required">*</span>
                     </label>
-                    <input
-                      type="text"
+                    <select
                       name="localCorpo"
                       value={formEdicao.localCorpo}
                       onChange={handleInputChange}
-                      placeholder="Ex: Braço"
                       className="input-edicao"
-                    />
+                    >
+                      <option value="">Selecione uma opção</option>
+                      <option value="Braço">Braço</option>
+                      <option value="Antebraço">Antebraço</option>
+                      <option value="Perna">Perna</option>
+                      <option value="Costas">Costas</option>
+                      <option value="Costelas">Costelas</option>
+                      <option value="Abdômen">Abdômen</option>
+                      <option value="Glúteos">Glúteos</option>
+                      <option value="Meio dos seios">Meio dos seios</option>
+                      <option value="Cotovelo">Cotovelo</option>
+                      <option value="Ombro">Ombro</option>
+                      <option value="Punho">Punho</option>
+                      <option value="Tornozelo">Tornozelo</option>
+                      <option value="Pescoço">Pescoço</option>
+                      <option value="Outro">Outro</option>
+                    </select>
                   </div>
 
                   <div className="campo-edicao">
@@ -523,32 +546,32 @@ export const MeusOrcamentos = () => {
           </div>
         )}
 
-        {modalExcluir && (
-          <div className="modal-overlay-orcamento" onClick={fecharModalExcluir}>
+        {modalCancelar && (
+          <div className="modal-overlay-orcamento" onClick={fecharModalCancelar}>
             <div className="modal-content-orcamento modal-confirmacao" onClick={(e) => e.stopPropagation()}>
-              <h3>Confirmar Exclusão</h3>
-              <p>Tem certeza que deseja excluir este orçamento?</p>
+              <h3>Confirmar Cancelamento</h3>
+              <p>Tem certeza que deseja cancelar este orçamento?</p>
               {orcamentoTemAgendamento && (
                 <p className="aviso-exclusao">
-                  ⚠️ Este orçamento possui um agendamento vinculado que também será excluído.
+                  ⚠️ Este orçamento possui um agendamento vinculado. Considere cancelar o agendamento também.
                 </p>
               )}
-              <p className="aviso-exclusao">Esta ação não pode ser desfeita.</p>
+              <p className="aviso-exclusao">O orçamento ficará marcado como CANCELADO.</p>
               
               <div className="modal-acoes">
                 <button 
-                  onClick={handleExcluir} 
+                  onClick={handleCancelar} 
                   className="btn-confirmar-exclusao"
                   disabled={salvando}
                 >
-                  {salvando ? 'Excluindo...' : 'Sim, excluir'}
+                  {salvando ? 'Cancelando...' : 'Sim, cancelar'}
                 </button>
                 <button 
-                  onClick={fecharModalExcluir} 
+                  onClick={fecharModalCancelar} 
                   className="btn-cancelar"
                   disabled={salvando}
                 >
-                  Cancelar
+                  Voltar
                 </button>
               </div>
             </div>
@@ -576,17 +599,15 @@ export const MeusOrcamentos = () => {
             className="orcamento-card"
             onClick={() => toggleExpand(orcamento.codigoOrcamento)}
           >
-            <div className="orcamento-header">
-              <div className="orcamento-header-info">
-                <h3>Código: {orcamento.codigoOrcamento}</h3>
-                <span className={`status-badge ${getStatusClass(orcamento.status)}`}>
-                  {getStatusLabel(orcamento.status)}
-                </span>
-              </div>
-              <span className="expand-icon">
-                →
+            <div className="orcamento-header-info">
+              <h3>Código: {orcamento.codigoOrcamento}</h3>
+              <span className={`status-badge ${getStatusClass(orcamento.status)}`}>
+                {getStatusLabel(orcamento.status)}
               </span>
             </div>
+            <span className="expand-icon material-symbols-outlined">
+              info
+            </span>
           </div>
         ))}
       </div>

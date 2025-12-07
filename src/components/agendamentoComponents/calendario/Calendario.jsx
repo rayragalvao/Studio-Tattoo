@@ -3,7 +3,12 @@ import "./calendario.css";
 import AgendamentoService from "../../../services/AgendamentoService";
 
 export const Calendario = ({ onDataSelecionada, dataSelecionada, recarregarDatas }) => {
-  const [mesAtual, setMesAtual] = useState(new Date());
+  const [mesAtual, setMesAtual] = useState(() => {
+    if (dataSelecionada) {
+      return new Date(dataSelecionada + 'T12:00:00');
+    }
+    return new Date();
+  });
   const [datasDisponiveis, setDatasDisponiveis] = useState(new Set());
   const [datasOcupadas, setDatasOcupadas] = useState(new Set());
   const [carregando, setCarregando] = useState(true);
@@ -20,7 +25,6 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada, recarregarDatas
       try {
         setCarregando(true);
         const datas = await AgendamentoService.getDatasOcupadas();
-        console.log('Datas ocupadas recebidas do backend:', datas);
         setDatasOcupadas(new Set(datas));
       } catch (error) {
         console.error('Erro ao buscar datas ocupadas:', error);
@@ -67,8 +71,6 @@ export const Calendario = ({ onDataSelecionada, dataSelecionada, recarregarDatas
     const mes = mesAtual.getMonth();
     const ano = mesAtual.getFullYear();
     const novasDatasDisponiveis = gerarDatasDisponiveis(mes, ano);
-    console.log('Datas disponíveis geradas:', Array.from(novasDatasDisponiveis));
-    console.log('Datas ocupadas no state:', Array.from(datasOcupadas));
     setDatasDisponiveis(novasDatasDisponiveis);
   }, [mesAtual, datasOcupadas]);
 

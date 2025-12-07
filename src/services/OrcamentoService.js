@@ -35,7 +35,21 @@ class OrcamentoService {
   }
 
   /**
-   * Busca orçamento por código
+   * Busca um único orçamento por ID/código
+   */
+  async buscarOrcamento(id) {
+    try {
+      console.log("🔍 Buscando orçamento por ID:", id);
+      const response = await api.get(`/orcamento/${id}`);
+      return response.data;
+    } catch (error) {
+      console.error("❌ Erro ao buscar orçamento:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Busca orçamento por código (mantido para compatibilidade)
    */
   async buscarPorCodigo(codigo) {
     try {
@@ -54,14 +68,13 @@ class OrcamentoService {
     try {
       console.log('📤 Criando orçamento via POST /orcamento/cadastro');
       
-      // Para FormData, precisamos remover o Content-Type para o browser definir automaticamente
       const config = {};
       if (dados instanceof FormData) {
         config.headers = {
           'Content-Type': 'multipart/form-data'
         };
       }
-      
+
       const response = await api.post('/orcamento/cadastro', dados, config);
       console.log('✅ Orçamento criado:', response.data);
       return response.data;
@@ -74,7 +87,7 @@ class OrcamentoService {
   }
 
   /**
-   * Atualiza orçamento existente (valor e tempo)
+   * Atualiza orçamento (valor e tempo)
    */
   async atualizar(codigo, dados) {
     try {

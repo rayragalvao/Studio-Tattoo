@@ -18,6 +18,7 @@ const AdminAgendamentos = () => {
   const [loading, setLoading] = useState(true);
   const [modalSucesso, setModalSucesso] = useState(false);
   const [modalCriarAberto, setModalCriarAberto] = useState(false);
+  const [modalCancelamento, setModalCancelamento] = useState({ aberto: false, id: null });
 
   useEffect(() => {
     carregarAgendamentos();
@@ -79,7 +80,19 @@ const AdminAgendamentos = () => {
 
   const handleConfirmar = async (id) => {
     try {
-      await agendamentoService.atualizarAgendamento(id, { status: 'CONFIRMADO' });
+      const item = exibir.find(a => a.id === id) || selected;
+
+      if (!item?.emailUsuario || !item?.codigoOrcamento || !item?.dataHora) {
+        alert('Dados do agendamento incompletos (email, código de orçamento ou dataHora ausentes).');
+        return;
+      }
+
+      await agendamentoService.atualizarAgendamento(id, {
+        emailUsuario: item.emailUsuario,
+        codigoOrcamento: item.codigoOrcamento,
+        dataHora: item.dataHora,
+        status: 'CONFIRMADO'
+      });
       setModalSucesso(true);
       await carregarAgendamentos();
       setSelected(null);
@@ -90,15 +103,38 @@ const AdminAgendamentos = () => {
   };
 
   const handleCancelar = async (id) => {
-    if (!window.confirm('Tem certeza que deseja cancelar este agendamento?')) return;
-    
+    setModalCancelamento({ aberto: true, id });
+  };
+
+  const confirmarCancelamento = async () => {
+    const id = modalCancelamento.id;
+    if (!id) {
+      setModalCancelamento({ aberto: false, id: null });
+      return;
+    }
+
     try {
-      await agendamentoService.atualizarAgendamento(id, { status: 'CANCELADO' });
+      const item = exibir.find(a => a.id === id) || selected;
+
+      if (!item?.emailUsuario || !item?.codigoOrcamento || !item?.dataHora) {
+        alert('Dados do agendamento incompletos (email, código de orçamento ou dataHora ausentes).');
+        setModalCancelamento({ aberto: false, id: null });
+        return;
+      }
+
+      await agendamentoService.atualizarAgendamento(id, {
+        emailUsuario: item.emailUsuario,
+        codigoOrcamento: item.codigoOrcamento,
+        dataHora: item.dataHora,
+        status: 'CANCELADO'
+      });
       await carregarAgendamentos();
       setSelected(null);
     } catch (error) {
       console.error('❌ Erro ao cancelar agendamento:', error);
       alert('Erro ao cancelar agendamento');
+    } finally {
+      setModalCancelamento({ aberto: false, id: null });
     }
   };
 
@@ -141,6 +177,30 @@ const AdminAgendamentos = () => {
           />
         </div>
       </div>
+    
+      {modalCancelamento.aberto && (
+        <div className="cancel-modal-overlay">
+          <div className="cancel-modal">
+            <div className="cancel-modal-icon">✕</div>
+            <h3>Cancelar agendamento</h3>
+            <p>Tem certeza que deseja cancelar este agendamento?</p>
+            <div className="cancel-modal-actions">
+              <button
+                className="cancel-modal-confirm"
+                onClick={confirmarCancelamento}
+              >
+                Cancelar agendamento
+              </button>
+              <button
+                className="cancel-modal-close-btn"
+                onClick={() => setModalCancelamento({ aberto: false, id: null })}
+              >
+                Voltar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <ModalSucesso 
         isOpen={modalSucesso} 
         onClose={() => setModalSucesso(false)}

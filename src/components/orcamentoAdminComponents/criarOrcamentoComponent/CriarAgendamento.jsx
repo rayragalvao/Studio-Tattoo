@@ -1,156 +1,398 @@
-import React, { useState } from 'react';
-import agendamentoService from '../../../services/AgendamentoService.js';
+import React, { useState } from "react";
+import agendamentoService from "../../../services/AgendamentoService.js";
+import { Calendario } from "../../agendamentoComponents/calendario/Calendario.jsx";
+import { AlertaCustomizado } from "../../generalComponents/alertaCustomizado/AlertaCustomizado.jsx";
+import { useAuth } from "../../../contexts/AuthContext";
 
 const CriarAgendamento = ({ onClose, onAgendamentoCriado }) => {
-  const [emailUsuario, setEmailUsuario] = useState('');
-  const [codigoOrcamento, setCodigoOrcamento] = useState('');
-  const [dataHora, setDataHora] = useState('');
+  const { user } = useAuth();
+
+  const [codigoOrcamento, setCodigoOrcamento] = useState("");
+  const [dataSelecionada, setDataSelecionada] = useState("");
+  const [horarioSelecionado, setHorarioSelecionado] = useState("");
+  const [horariosDisponiveis, setHorariosDisponiveis] = useState([]);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [cardResposta, setCardResposta] = useState(null);
+
+  const [showAlerta, setShowAlerta] = useState(false);
+  const [alertaConfig, setAlertaConfig] = useState({
+    tipo: "success",
+    titulo: "",
+    mensagem: "",
+  });
+
+  const gerarHorariosDisponiveis = () => {
+    return [
+      "09:00", "10:00", "11:00",
+      "13:00", "14:00", "15:00",
+      "16:00", "17:00", "18:00"
+    ];
+  };
+
+  const handleCodigoChange = (e) => {
+    const valor = e.target.value;
+    setCodigoOrcamento(valor);
+
+    if (errors.codigoOrcamento) {
+      setErrors((prev) => ({ ...prev, codigoOrcamento: "" }));
+    }
+  };
+
+  const handleDataChange = (data) => {
+    setDataSelecionada(data);
+    setHorarioSelecionado("");
+
+    if (data) {
+      setHorariosDisponiveis(gerarHorariosDisponiveis(data));
+    } else {
+      setHorariosDisponiveis([]);
+    }
+
+    if (errors.dataSelecionada) {
+      setErrors((prev) => ({ ...prev, dataSelecionada: "" }));
+    }
+  };
+
+  const handleHorarioChange = (horario) => {
+    setHorarioSelecionado(horario);
+
+    if (errors.horarioSelecionado) {
+      setErrors((prev) => ({ ...prev, horarioSelecionado: "" }));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!codigoOrcamento.trim()) {
+      newErrors.codigoOrcamento = "Código do orçamento é obrigatório";
+    }
+
+    if (!dataSelecionada) {
+      newErrors.dataSelecionada = "Data é obrigatória";
+    }
+
+    if (!horarioSelecionado) {
+      newErrors.horarioSelecionado = "Horário é obrigatório";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const limparFormulario = () => {
+    setCodigoOrcamento("");
+    setDataSelecionada("");
+    setHorarioSelecionado("");
+    setHorariosDisponiveis([]);
+    setErrors({});
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    if (!emailUsuario || !codigoOrcamento || !dataHora) {
-      setCardResposta({
-        tipo: 'erro',
-        mensagem: 'Preencha todos os campos obrigatórios'
+
+    if (!validateForm()) return;
+
+    if (!user?.email) {
+      setAlertaConfig({
+        tipo: "error",
+        titulo: "Login Necessário",
+        mensagem:
+          "Você precisa estar logado para fazer um agendamento. Por favor, faça login e tente novamente.",
       });
+      setShowAlerta(true);
       return;
     }
 
-    setLoading(true);
     try {
-      console.log('📤 Criando agendamento com:');
-      console.log('  Email:', emailUsuario);
-      console.log('  Código Orçamento:', codigoOrcamento);
-      console.log('  Data/Hora original:', dataHora);
-      
+      setLoading(true);
+
+      const isCodigoValido = await agendamentoService.validarCodigoOrcamento(
+        codigoOrcamento
+      );
+
+      if (!isCodigoValido) {
+        setErrors({
+          codigoOrcamento:
+            "Código de orçamento inválido ou já possui agendamento",
+        });
+
+        setAlertaConfig({
+          tipo: "error",
+          titulo: "Código Inválido",
+          mensagem:
+            "O código do orçamento não foi encontrado ou já possui um agendamento cadastrado.",
+        });
+        setShowAlerta(true);
+        setLoading(false);
+        return;
+      }
+
+      const [hora, minuto] = horarioSelecionado.split(":");
+      const dataHoraCompleta = `${dataSelecionada}T${hora.padStart(
+        2,
+        "0"
+      )}:${minuto.padStart(2, "0")}:00`;
+
       const dados = {
-        emailUsuario: emailUsuario.trim(),
-        codigoOrcamento: codigoOrcamento.trim(),
-        dataHora: new Date(dataHora).toISOString(),
-        status: 'AGUARDANDO'
+        emailUsuario: user.email,
+        codigoOrcamento,
+        dataHora: dataHoraCompleta,
       };
 
-      console.log('📦 Dados formatados completos:', JSON.stringify(dados, null, 2));
-      const resultado = await agendamentoService.criarAgendamento(dados);
-      console.log('✅ Agendamento criado:', resultado);
-      
-      setCardResposta({
-        tipo: 'sucesso',
-        mensagem: 'Agendamento criado com sucesso!'
+      await agendamentoService.criarAgendamento(dados);
+
+      setAlertaConfig({
+        tipo: "success",
+        titulo: "Agendamento Confirmado!",
+        mensagem: `Sua sessão foi agendada para o dia ${new Date(
+          dataSelecionada + "T00:00:00"
+        ).toLocaleDateString("pt-BR")} às ${horarioSelecionado}.`,
       });
+      setShowAlerta(true);
 
       setTimeout(() => {
         onAgendamentoCriado();
-      }, 1500);
+      }, 1200);
     } catch (error) {
-      console.error('❌ Erro ao criar agendamento:', error);
-      
-      let mensagemErro = error.message || 'Erro ao criar agendamento';
-      
-      // Mensagens mais amigáveis
-      if (mensagemErro.includes('Usuário é obrigatório') || mensagemErro.includes('Usuário não encontrado')) {
-        mensagemErro = `❌ Usuário com email "${emailUsuario}" não encontrado no sistema. Cadastre o usuário primeiro.`;
-      } else if (mensagemErro.includes('Orçamento não encontrado')) {
-        mensagemErro = `❌ Orçamento com código "${codigoOrcamento}" não encontrado.`;
-      } else if (mensagemErro.includes('Já existe um agendamento')) {
-        mensagemErro = `❌ Já existe um agendamento para este orçamento.`;
+      console.error("Erro ao criar agendamento:", error);
+
+      let mensagem = "Ocorreu um erro ao criar o agendamento.";
+
+      if (error.response?.status === 409) {
+        mensagem = "Este código já possui um agendamento.";
+        setErrors({ codigoOrcamento: mensagem });
       }
-      
-      setCardResposta({
-        tipo: 'erro',
-        mensagem: mensagemErro
+
+      setAlertaConfig({
+        tipo: "error",
+        titulo: "Erro ao Agendar",
+        mensagem,
       });
+      setShowAlerta(true);
     } finally {
       setLoading(false);
     }
   };
 
-  const fecharFeedback = () => {
-    setCardResposta(null);
-    if (cardResposta?.tipo === 'sucesso') {
+  const handleCloseAlerta = () => {
+    setShowAlerta(false);
+
+    if (alertaConfig.tipo === "success") {
+      limparFormulario();
       onClose();
     }
   };
 
   return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999}}>
-      <div style={{background:"#fff",borderRadius:8,padding:24,width:"90%",maxWidth:500,position:"relative"}}>
-        <button onClick={onClose} aria-label="Fechar" style={{position:"absolute",top:12,right:12,background:"#B70D07",color:"#fff",border:"none",cursor:"pointer",fontSize:20,fontWeight:"bold",lineHeight:1,width:36,height:36,borderRadius:"50%",transition:"all 0.2s",boxShadow:"0 2px 8px rgba(0,0,0,0.2)",display:"flex",alignItems:"center",justifyContent:"center"}} onMouseOver={(e)=>{e.target.style.background="#8A0A05";e.target.style.transform="scale(1.1)";}} onMouseOut={(e)=>{e.target.style.background="#B70D07";e.target.style.transform="scale(1)";}}>×</button>
-        <h3 style={{margin:"0 0 16px",textAlign:"center"}}>Criar agendamento</h3>
-        <form onSubmit={handleSubmit}>
-          <div style={{marginBottom:16}}>
-            <label style={{display:"block",marginBottom:4,fontSize:14,fontWeight:600,color:"#374151"}}>Email do cliente *</label>
-            <input
-              type="email"
-              value={emailUsuario}
-              onChange={(e) => setEmailUsuario(e.target.value)}
-              placeholder="email@exemplo.com"
-              required
-              style={{width:"100%",padding:"8px 12px",border:"1px solid #d1d5db",borderRadius:6,fontSize:14}}
-            />
-            <small style={{display:"block",marginTop:4,fontSize:12,color:"#6b7280"}}>
-              ⚠️ O usuário com este email deve estar cadastrado no sistema
-            </small>
-          </div>
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.5)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 9999,
+        overflowY: "auto",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: 8,
+          padding: 24,
+          width: "90%",
+          maxWidth: 520,
+          position: "relative",
+          maxHeight: "95vh",
+          overflowY: "auto",
+          color: "#000",
+        }}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Fechar"
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            background: "#B70D07",
+            color: "#fff",
+            border: "none",
+            cursor: "pointer",
+            fontSize: 20,
+            width: 36,
+            height: 36,
+            borderRadius: "50%",
+          }}
+        >
+          ×
+        </button>
 
-          <div style={{marginBottom:16}}>
-            <label style={{display:"block",marginBottom:4,fontSize:14,fontWeight:600,color:"#374151"}}>Código do orçamento *</label>
+        <h2 style={{ textAlign: "center", marginBottom: 20, color: "#000" }}>
+          Criar Agendamento
+        </h2>
+
+        <form onSubmit={handleSubmit}>
+          {/* Código */}
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ fontWeight: 600, color: "#000" }}>
+              Código do Orçamento *
+            </label>
             <input
               type="text"
               value={codigoOrcamento}
-              onChange={(e) => setCodigoOrcamento(e.target.value)}
-              placeholder="Ex: ORC-12345"
-              required
-              style={{width:"100%",padding:"8px 12px",border:"1px solid #d1d5db",borderRadius:6,fontSize:14}}
+              onChange={handleCodigoChange}
+              className={errors.codigoOrcamento ? "error" : ""}
+              style={{
+                width: "100%",
+                padding: 10,
+                border: errors.codigoOrcamento
+                  ? "2px solid #ef4444"
+                  : "1px solid #ccc",
+                borderRadius: 6,
+                color: "#000",
+                background: "#f3f4f6",
+              }}
             />
+            {errors.codigoOrcamento && (
+              <small style={{ color: "#ef4444" }}>
+                {errors.codigoOrcamento}
+              </small>
+            )}
           </div>
 
-          <div style={{marginBottom:16}}>
-            <label style={{display:"block",marginBottom:4,fontSize:14,fontWeight:600,color:"#374151"}}>Data e hora *</label>
-            <input
-              type="datetime-local"
-              value={dataHora}
-              onChange={(e) => setDataHora(e.target.value)}
-              required
-              style={{width:"100%",padding:"8px 12px",border:"1px solid #d1d5db",borderRadius:6,fontSize:14}}
-            />
+          {/* Data */}
+          <div style={{ marginBottom: 8, textAlign: "center", color: "#000" }}>
+            <label style={{ fontWeight: 800, color: "#000" }}>Selecione uma data*</label>
+
+            <div style={{ display: "flex", justifyContent: "center", marginTop: -12 }}>
+              <div style={{ transform: "scale(0.88)" }}>
+                <Calendario
+                  onDataSelecionada={handleDataChange}
+                  dataSelecionada={dataSelecionada}
+                />
+              </div>
+            </div>
+
+            {errors.dataSelecionada && (
+              <small style={{ color: "#ef4444" }}>{errors.dataSelecionada}</small>
+            )}
+          </div>
+
+          {/* Horários */}
+          <div style={{ marginBottom: 16, color: "#000" }}>
+            <label style={{ fontWeight: 800, color: "#000" }}>
+              Horários Disponíveis *
+            </label>
+
+            {horariosDisponiveis.length > 0 ? (
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: 12,
+                  marginTop: 10,
+                  padding: 10,
+                  background: "#f8f9fa",
+                  borderRadius: 8,
+                  border: "2px solid #e9ecef",
+                }}
+              >
+                {horariosDisponiveis.map((hora) => (
+                  <button
+                    key={hora}
+                    type="button"
+                    onClick={() => handleHorarioChange(hora)}
+                    onMouseEnter={(e) => {
+                      if (horarioSelecionado !== hora) {
+                        e.target.style.background = "#d1fae5";
+                        e.target.style.borderColor = "#6ee7b7";
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (horarioSelecionado !== hora) {
+                        e.target.style.background = "#ecfdf5";
+                        e.target.style.borderColor = "#d1fae5";
+                      }
+                    }}
+                    style={{
+                      padding: "8px 6px",
+                      border: horarioSelecionado === hora
+                        ? "2px solid #059669"
+                        : "2px solid #d1fae5",
+                      borderRadius: 5,
+                      background: horarioSelecionado === hora
+                        ? "#059669"
+                        : "#ecfdf5",
+                      color: horarioSelecionado === hora
+                        ? "#fff"
+                        : "#1f2937",
+                      fontFamily: "'Martel Sans', sans-serif",
+                      fontSize: 11,
+                      fontWeight: 600,
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                      textAlign: "center",
+                    }}
+                  >
+                    {hora}
+                  </button>
+                ))}
+              </div>
+            ) : dataSelecionada ? (
+              <p style={{ color: "#444" }}>
+                Não há horários disponíveis para esta data.
+              </p>
+            ) : (
+              <p style={{ color: "#444" }}>
+                Selecione uma data para ver os horários disponíveis.
+              </p>
+            )}
+
+            {errors.horarioSelecionado && (
+              <small style={{ color: "#ef4444" }}>
+                {errors.horarioSelecionado}
+              </small>
+            )}
           </div>
 
           <button
             type="submit"
-            disabled={loading}
-            style={{width:"100%",padding:"10px 20px",background:"#B70D07",color:"#fff",border:"none",borderRadius:6,fontSize:14,fontWeight:600,cursor:loading?"not-allowed":"pointer",opacity:loading?0.6:1}}
+            disabled={
+              loading ||
+              !codigoOrcamento ||
+              !dataSelecionada ||
+              !horarioSelecionado
+            }
+            style={{
+              width: "100%",
+              padding: 12,
+              background: "#870c0e",
+              color: "#fff",
+              border: "none",
+              borderRadius: 6,
+              fontWeight: 600,
+              fontSize: 13,
+              cursor: "pointer",
+              fontFamily: "'Martel Sans', sans-serif",
+            }}
           >
-            {loading ? 'Criando...' : 'Criar agendamento'}
+            {loading ? "Criando..." : "Confirmar Agendamento"}
           </button>
         </form>
-
-        {cardResposta && (
-          <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.5)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:10000}}>
-            <div className="modal-sucesso-content" style={{background:"#fff",borderRadius:12,padding:32,maxWidth:400,width:"90%",textAlign:"center",boxShadow:"0 20px 60px rgba(0,0,0,0.3)",animation:"fadeIn 0.3s ease"}}>
-              <div className="modal-sucesso-icon" style={{width:64,height:64,margin:"0 auto 16px",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",background:cardResposta.tipo==='sucesso'?"#d1fae5":"#fee2e2"}}>
-                {cardResposta.tipo==='sucesso' ? (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 13l4 4L19 7" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                ) : (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
-                    <path d="M15 9l-6 6M9 9l6 6" stroke="#ef4444" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                )}
-              </div>
-              <h2 className="modal-sucesso-titulo" style={{fontSize:20,fontWeight:700,marginBottom:8,color:"#1f2937"}}>{cardResposta.tipo==='sucesso'?'Sucesso!':'Erro'}</h2>
-              <p className="modal-sucesso-mensagem" style={{fontSize:14,color:"#6b7280",marginBottom:20}}>{cardResposta.mensagem}</p>
-              <button className="modal-sucesso-btn" onClick={fecharFeedback} style={{padding:"10px 24px",borderRadius:8,border:"none",fontSize:14,fontWeight:600,cursor:"pointer",background:cardResposta.tipo==='sucesso'?'#10b981':'#ef4444',color:"#fff",transition:"all 0.2s"}}>
-                Fechar
-              </button>
-            </div>
-          </div>
-        )}
       </div>
+
+      <AlertaCustomizado
+        isVisible={showAlerta}
+        onClose={handleCloseAlerta}
+        tipo={alertaConfig.tipo}
+        titulo={alertaConfig.titulo}
+        mensagem={alertaConfig.mensagem}
+        botaoTexto="Entendi"
+      />
     </div>
   );
 };

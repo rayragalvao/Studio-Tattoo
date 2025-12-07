@@ -231,6 +231,47 @@ class AgendamentoService {
       throw error;
     }
   }
+
+  /**
+   * Completa um agendamento com informações de tempo e pagamento
+   * @param {number} id - ID do agendamento
+   * @param {Object} dados - Dados da conclusão
+   * @param {number} dados.tempoDuracao - Tempo da sessão em minutos
+   * @param {boolean} dados.pagamentoFeito - Se o pagamento foi feito
+   * @param {string} dados.formaPagamento - Forma de pagamento (pix, dinheiro, cartao)
+   * @returns {Promise<Object>} - Agendamento atualizado
+   */
+  async completarAgendamento(id, dados) {
+    try {
+      // Usa o endpoint de atualização existente com status CONCLUIDO
+      const response = await api.put(`/agendamento/${id}`, {
+        ...dados,
+        status: 'CONCLUIDO'
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao completar agendamento:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Adiciona materiais usados a um agendamento
+   * @param {number} id - ID do agendamento
+   * @param {Array} materiais - Lista de materiais usados
+   * @param {number} materiais[].materialId - ID do material
+   * @param {number} materiais[].quantidade - Quantidade usada
+   * @returns {Promise<Object>} - Resposta do backend
+   */
+  async adicionarMateriaisUsados(id, materiais) {
+    try {
+      const response = await api.post(`/agendamento/${id}/materiais`, { materiais });
+      return response.data;
+    } catch (error) {
+      console.error('Erro ao adicionar materiais usados:', error);
+      throw error;
+    }
+  }
 }
 
 export default new AgendamentoService();

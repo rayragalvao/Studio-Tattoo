@@ -57,6 +57,54 @@
   background-color: #15803d;
 }
 
+.success-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.success-modal {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 24px;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
+
+.success-modal h3 {
+  margin: 0 0 8px;
+  color: #16a34a;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.success-modal p {
+  margin: 0 0 18px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.success-modal-button {
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.success-modal-button:hover {
+  background-color: #15803d;
+}
+
 /* Blocos de informação */
 .info-block {
   background-color: transparent;
@@ -201,3 +249,25 @@
     gap: 6px;
   }
 }
+
+/* Container para modais lado a lado */
+.side-by-side-modals {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 40px;
+}
+
+.side-by-side-modals > * {
+  flex: 1;
+  max-width: 500px;
+}
+

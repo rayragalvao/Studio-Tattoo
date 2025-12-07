@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar } from '../../components/generalComponents/navbar/Navbar.jsx';
 import { Footer } from '../../components/generalComponents/footer/Footer.jsx';
-import AgendamentosList from '../../components/admin/AgendamentosList.jsx';
-import AgendamentoDetail from '../../components/admin/AgendamentoDetail.jsx';
-import ModalSucesso from '../../components/admin/ModalSucesso.jsx';
-import CriarAgendamento from '../../components/admin/CriarAgendamento.jsx';
+import AgendamentosList from '../../components/agendamentoAdminComponents/agendamentosListComponent/AgendamentosList.jsx';
+import AgendamentoDetail from '../../components/agendamentoAdminComponents/agendamentoDetailComponent/AgendamentoDetail.jsx';
+import ModalSucesso from '../../components/orcamentoAdminComponents/modalSucessoComponent/ModalSucesso.jsx';
+import CriarAgendamento from '../../components/orcamentoAdminComponents/criarOrcamentoComponent/CriarAgendamento.jsx';
 import './agendamentos.css';
 import agendamentoService from '../../services/AgendamentoService.js';
 import '../../styles/global.css';

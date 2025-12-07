@@ -8,6 +8,7 @@ import { Agendamento } from "./pages/agendamento/Agendamento.jsx";
 import { Orcamento } from "./pages/orcamento/Orcamento.jsx";
 import { MenuCliente } from "./pages/menuCliente/MenuCliente.jsx";
 import AdminOrcamentos from "./pages/orcamentoAdmin/Orcamentos.jsx";
+import AdminAgendamentos from "./pages/agendamentoAdmin/Agendamentos.jsx";
 
 // Páginas protegidas
 import { Estoque } from "./pages/estoque/Estoque.jsx";
@@ -55,6 +56,11 @@ function App() {
         <Route path="/orcamentoAdmin/Orcamentos" element={
           <AdminRoute>
             <AdminOrcamentos />
+          </AdminRoute>
+        } />
+        <Route path="/agendamentoAdmin/Agendamentos" element={
+          <AdminRoute>
+            <AdminAgendamentos />
           </AdminRoute>
         } />
       </Routes>

@@ -1,0 +1,212 @@
+.modal-overlay-materiais {
+  position: relative;
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  z-index: 1001;
+}
+
+.modal-content-materiais {
+  position: relative;
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 28px;
+  color: #6b7280;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  color: #870c0e;
+}
+
+.modal-content-materiais h2 {
+  margin: 0 0 12px 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1f2937;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.info-agendamento-materiais {
+  background: #870c0e;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.info-agendamento-materiais p {
+  margin: 3px 0;
+  font-size: 11px;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.info-agendamento-materiais strong {
+  font-weight: 600;
+}
+
+.materiais-grid {
+  margin-bottom: 12px;
+}
+
+.material-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.material-row:last-child {
+  border-bottom: none;
+}
+
+.material-field label,
+.quantidade-field label {
+  display: block;
+  margin-bottom: 4px;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 11px;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.material-field select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Martel Sans', sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.material-field select:focus {
+  outline: none;
+  border-color: #870c0e;
+}
+
+.quantidade-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantidade-input-wrapper input {
+  width: 55px;
+  padding: 6px 8px;
+  border: 2px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'Martel Sans', sans-serif;
+  background: #f3f4f6;
+  color: #1f2937;
+  transition: border-color 0.3s ease;
+}
+
+.quantidade-input-wrapper input:focus {
+  outline: none;
+  border-color: #870c0e;
+}
+
+.quantidade-input-wrapper span {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 500;
+  white-space: nowrap;
+  font-family: 'Martel Sans', sans-serif;
+}
+
+.btn-adicionar-material {
+  width: 70%;
+  padding: 10px;
+  background: #870c0e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Martel Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-bottom: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.btn-adicionar-material:hover {
+  background: #6b0a0b;
+}
+
+.btn-salvar-materiais {
+  width: 70%;
+  padding: 10px;
+  background: #870c0e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Martel Sans', sans-serif;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.btn-salvar-materiais:hover {
+  background: #6b0a0b;
+}
+
+.btn-salvar-materiais:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Scrollbar padrão do sistema */
+.modal-content-materiais::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content-materiais::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.modal-content-materiais::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+}
+
+.modal-content-materiais::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}

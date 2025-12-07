@@ -1,0 +1,117 @@
+/* Layout principal da página de agendamentos admin */
+.admin-agend-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  padding: 20px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.admin-agend-grid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 24px;
+  max-width: 1600px;
+  margin: 0 auto;
+  height: calc(100vh - 40px);
+}
+
+.cancel-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+}
+
+.cancel-modal {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 24px;
+  width: 90%;
+  max-width: 420px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  text-align: center;
+  position: relative;
+}
+
+.cancel-modal-icon {
+  font-size: 64px;
+  color: #dc2626;
+  margin-bottom: 12px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.cancel-modal h3 {
+  margin: 0 0 8px;
+  color: #dc2626;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.cancel-modal p {
+  margin: 0 0 18px;
+  color: #374151;
+  font-size: 14px;
+}
+
+.cancel-modal-actions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cancel-modal-confirm {
+  background: #dc2626;
+  color: #ffffff;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+.cancel-modal-confirm:hover {
+  background: #b91c1c;
+}
+
+.cancel-modal-close-btn {
+  background: #e5e7eb;
+  color: #1f2937;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+.cancel-modal-close-btn:hover {
+  background: #d1d5db;
+}
+
+/* Responsividade */
+@media (max-width: 1024px) {
+  .admin-agend-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-agend-wrapper {
+    padding: 12px;
+  }
+
+  .admin-agend-grid {
+    gap: 16px;
+  }
+}

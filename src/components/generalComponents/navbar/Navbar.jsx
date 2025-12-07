@@ -109,12 +109,14 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
       { label: "Portfólio", to: "/portfolio" },
       { label: "Orçamento", to: "/orcamento" }
     ];
+
     if (isAuthenticated) {
       if (user?.isAdmin) {
         // Para admin: ocultar Portfólio e usar Orçamentos (admin)
         menuItems = [
           { label: "Início", to: "/" },
           { label: "Orçamentos", to: "/orcamentoAdmin/Orcamentos" },
+          { label: "Agendamentos", to: "/agendamentoAdmin/Agendamentos" },
           { label: "Dashboard", to: "/dashboard" },
           { label: "Estoque", to: "/estoque" }
         ];
@@ -128,6 +130,7 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
           { label: "Menu", to: "/menu-cliente" }
         ];
       }
+
     } else {
       menuItems = [
           { label: "Início", to: "/" },

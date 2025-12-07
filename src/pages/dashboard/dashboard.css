@@ -54,14 +54,14 @@
 }
 
 .kpi-principal {
-    flex: 1.5; 
-    min-height: 250px;
+    flex: 1;
+    min-height: auto;
 }
 
 .agendamento-info-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    display: flex;
+    flex-direction: column; 
+    gap: 15px;
     flex-grow: 1;
 }
 
@@ -72,6 +72,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    width: 100%; 
 }
 
 .proximo-agendamento-card h3 {
@@ -176,6 +177,7 @@
     align-items: center;
     padding: 15px;
     transition: all 0.3s ease;
+    width: 100%; 
 }
 
 .orcamentos-pendentes-card:hover {
@@ -376,13 +378,13 @@
     align-items: center;
     padding: 15px; 
     margin-bottom: 10px;
-    background: #e8e8e8; /* Mais escuro que #f8f8f8 */
+    background: #e8e8e8; 
     border-radius: 8px;
     transition: none;
 }
 
 .item-agendamento:hover {
-    background: #e8e8e8; /* Mantém a mesma cor */
+    background: #e8e8e8; 
     transform: none;
     box-shadow: none;
 }

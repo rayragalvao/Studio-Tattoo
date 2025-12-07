@@ -155,11 +155,25 @@ class AuthService {
         dtNasc: userData.dataNascimento || null
       });
 
+      let dataNascimentoFormatada = '';
+      if (response.dtNasc) {
+        if (typeof response.dtNasc === 'string' && response.dtNasc.match(/^\d{4}-\d{2}-\d{2}$/)) {
+          dataNascimentoFormatada = response.dtNasc;
+        } else {
+          const date = new Date(response.dtNasc);
+          if (!isNaN(date.getTime())) {
+            dataNascimentoFormatada = date.toISOString().split('T')[0];
+          }
+        }
+      } else if (userData.dataNascimento) {
+        dataNascimentoFormatada = userData.dataNascimento;
+      }
+
       const updatedUser = {
         ...currentUser,
         nome: response.nome || userData.nome,
         telefone: response.telefone || userData.telefone || '',
-        dataNascimento: response.dtNasc || userData.dataNascimento || ''
+        dataNascimento: dataNascimentoFormatada
       };
       
       const rememberMe = AuthStorage.getToken() !== null;

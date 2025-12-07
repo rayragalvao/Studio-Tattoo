@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Navbar } from '../../components/generalComponents/navbar/Navbar.jsx';
 import { Footer } from '../../components/generalComponents/footer/Footer.jsx';
-import AgendamentosList from '../../components/admin/AgendamentosList.jsx';
-import AgendamentoDetail from '../../components/admin/AgendamentoDetail.jsx';
-import ModalSucesso from '../../components/admin/ModalSucesso.jsx';
-import CriarAgendamento from '../../components/admin/CriarAgendamento.jsx';
+import AgendamentosList from '../../components/agendamentoAdminComponents/agendamentosListComponent/AgendamentosList.jsx';
+import AgendamentoDetail from '../../components/agendamentoAdminComponents/agendamentoDetailComponent/AgendamentoDetail.jsx';
+import ModalSucesso from '../../components/orcamentoAdminComponents/modalSucessoComponent/ModalSucesso.jsx';
+import CriarAgendamento from '../../components/orcamentoAdminComponents/criarOrcamentoComponent/CriarAgendamento.jsx';
 import './agendamentos.css';
 import agendamentoService from '../../services/AgendamentoService.js';
 import '../../styles/global.css';
@@ -84,8 +84,20 @@ const AdminAgendamentos = () => {
     setExibir(result);
   }, [search, filtros, agendamentos]);
 
-  const handleSelect = (item) => {
-    setSelected(item);
+  const handleSelect = async (item) => {
+    console.log('🔍 Buscando detalhes completos do agendamento:', item.id);
+    try {
+      // Usa o endpoint /agendamento/detalhado/{id} que retorna usuário e orçamento completos
+      const detalhes = await agendamentoService.buscarAgendamentoCompleto(item.id);
+      console.log('✅ Detalhes completos recebidos:', detalhes);
+      console.log('📦 Tem orçamento?', !!detalhes.orcamento);
+      console.log('📦 Tem usuário?', !!detalhes.usuario);
+      setSelected(detalhes);
+    } catch (error) {
+      console.error('❌ Erro ao buscar detalhes completos:', error);
+      console.log('⚠️ Usando dados básicos da lista');
+      setSelected(item);
+    }
   };
 
   const handleConfirmar = async (id) => {

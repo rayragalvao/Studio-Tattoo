@@ -58,70 +58,84 @@
 }
 
 .orcamento-card {
-  background: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--cinza);
+  color: var(--branco);
+  border-radius: 0.3em;
+  padding: 1em;
+  font-size: 0.8em;
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  align-items: center;
+  justify-content: space-between;
   transition: all 0.3s ease;
   cursor: pointer;
+  border: none;
 }
 
 .orcamento-card:hover {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transform: translateY(-2px);
-}
-
-.orcamento-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 14px;
-  user-select: none;
+  box-shadow: 0 0 0 4px rgba(27, 16, 6, 0.2);
+  transform: translateY(-1px);
 }
 
 .orcamento-header-info {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 4px;
   flex: 1;
 }
 
 .orcamento-header-info h3 {
   margin: 0;
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--branco);
   font-family: "Montserrat Alternates", sans-serif;
 }
 
 .status-badge {
+  display: inline-block;
   padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 600;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  width: fit-content;
+  min-width: 90px;
+  text-align: center;
 }
 
 .status-badge.pendente {
-  background: #fff3cd;
-  color: #856404;
+  background: #ffc107;
+  color: #1b1006;
 }
 
 .status-badge.aprovado {
-  background: #d4edda;
-  color: #155724;
+  background: #28a745;
+  color: #fff;
 }
 
 .status-badge.rejeitado {
-  background: #f8d7da;
-  color: #721c24;
+  background: #dc3545;
+  color: #fff;
 }
 
 .expand-icon {
-  font-size: 12px;
-  color: #666;
-  transition: transform 0.3s ease;
+  background-color: var(--branco);
+  color: var(--cinza);
+  border: none;
+  border-radius: 0.1em;
+  padding: 0.5em;
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  transition: all 0.3s ease;
 }
 
 .expand-icon.rotated {
@@ -167,7 +181,7 @@
 }
 
 .btn-voltar:hover {
-  color: var(--laranja);
+  color: #555;
 }
 
 .status-header {
@@ -182,70 +196,106 @@
 }
 
 .status-value {
+  display: inline-block;
   margin-left: 8px;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  min-width: 90px;
+  text-align: center;
 }
 
 .status-value.pendente {
-  color: #856404;
+  background: #ffc107;
+  color: #1b1006;
 }
 
 .status-value.aprovado {
-  color: #155724;
+  background: #28a745;
+  color: #fff;
 }
 
 .status-value.rejeitado {
-  color: #721c24;
+  background: #dc3545;
+  color: #fff;
+}
+
+.status-value.cancelado {
+  background: #6c757d;
+  color: #fff;
 }
 
 .info-columns {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .info-column {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e8e8e8;
 }
 
 .column-title {
-  margin: 0 0 2px 0;
-  font-size: 12px;
+  margin: 0 0 8px 0;
+  font-size: 14px;
   font-weight: 700;
   color: #333;
   font-family: "Montserrat Alternates", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #333;
 }
 
 .info-row {
   display: flex;
   flex-direction: column;
-  gap: 0px;
+  gap: 4px;
+  padding: 8px 0;
 }
 
 .info-block {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 4px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.info-block:last-child {
+  border-bottom: none;
 }
 
 .info-label-orange {
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--laranja);
+  font-size: 12px;
+  font-weight: 700;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .info-text {
-  font-size: 10px;
+  font-size: 14px;
   color: #333;
-  line-height: 1.2;
+  line-height: 1.5;
   margin: 0;
+  font-weight: 500;
 }
 
 .info-orange {
-  color: var(--laranja);
-  font-weight: 600;
+  color: #333;
+  font-weight: 700;
+  font-size: 15px;
 }
 
 .imagens-grid {
@@ -276,9 +326,24 @@
   width: 100%;
   max-width: 450px;
   height: 280px;
-  background: #cccccc;
+  background: #f5f5f5;
   border-radius: 4px;
   margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.imagem-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.imagem-link:hover {
+  opacity: 0.85;
 }
 
 @media (max-width: 768px) {
@@ -325,7 +390,7 @@
 }
 
 .btn-editar,
-.btn-excluir {
+.btn-cancelar {
   padding: 6px 12px;
   border: none;
   border-radius: 4px;
@@ -347,15 +412,21 @@
   box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
 }
 
-.btn-excluir {
+.btn-cancelar {
   background: var(--vermelho);
   color: white;
 }
 
-.btn-excluir:hover {
+.btn-cancelar:hover:not(:disabled) {
   background: #a50f11;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(198, 15, 19, 0.3);
+}
+
+.btn-cancelar:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .modal-overlay-orcamento {

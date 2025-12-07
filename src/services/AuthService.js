@@ -11,9 +11,22 @@ class AuthService {
 
       if (response.token) {
         const rememberMe = credentials.permanecerConectado || false;
+        
+        console.log('Resposta do login (básica):', response);
+        
         AuthStorage.saveToken(response.token, rememberMe);
-        AuthStorage.saveUser(response, rememberMe);
-        return response;
+        
+        const profileData = await this.fetchUserProfile(response.id);
+        
+        const normalizedUser = {
+          ...response,
+          telefone: profileData?.telefone || '',
+          dataNascimento: profileData?.dataNascimento || ''
+        };
+        
+        
+        AuthStorage.saveUser(normalizedUser, rememberMe);
+        return normalizedUser;
       }
 
       throw new Error('Token não recebido do servidor');
@@ -33,8 +46,18 @@ class AuthService {
 
       if (response.token) {
         AuthStorage.saveToken(response.token, true);
-        AuthStorage.saveUser(response, true);
-        return response;
+        
+        const profileData = await this.fetchUserProfile(response.id);
+        
+        // Combinar dados
+        const normalizedUser = {
+          ...response,
+          telefone: profileData?.telefone || '',
+          dataNascimento: profileData?.dataNascimento || ''
+        };
+        
+        AuthStorage.saveUser(normalizedUser, true);
+        return normalizedUser;
       }
 
       throw new Error('Token não recebido');
@@ -47,6 +70,8 @@ class AuthService {
         email: googleUser.email,
         nome: googleUser.displayName,
         photoURL: googleUser.photoURL,
+        telefone: '',
+        dataNascimento: '',
         isAdmin: false,
         loginType: 'google'
       };
@@ -93,6 +118,33 @@ class AuthService {
     return AuthStorage.getToken();
   }
 
+  static async fetchUserProfile(userId) {
+    try {
+      const response = await ApiService.get(`/usuario/${userId}`);
+      console.log('Dados completos do perfil do backend:', response);
+      
+      let dataNascimento = '';
+      if (response.dtNasc) {
+        try {
+          const date = new Date(response.dtNasc);
+          dataNascimento = date.toISOString().split('T')[0];
+        } catch (e) {
+          console.error('Erro ao formatar data do perfil:', e);
+          dataNascimento = response.dtNasc;
+        }
+      }
+      
+      return {
+        ...response,
+        telefone: response.telefone || '',
+        dataNascimento: dataNascimento || response.dataNascimento || ''
+      };
+    } catch (error) {
+      console.error('Erro ao buscar perfil completo:', error);
+      return null;
+    }
+  }
+
   static async updateProfile(userId, userData) {
     try {
       const currentUser = AuthStorage.getUser();
@@ -106,8 +158,8 @@ class AuthService {
       const updatedUser = {
         ...currentUser,
         nome: response.nome || userData.nome,
-        telefone: response.telefone || userData.telefone,
-        dataNascimento: userData.dataNascimento
+        telefone: response.telefone || userData.telefone || '',
+        dataNascimento: response.dtNasc || userData.dataNascimento || ''
       };
       
       const rememberMe = AuthStorage.getToken() !== null;

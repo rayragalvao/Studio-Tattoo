@@ -202,7 +202,7 @@ export const MeusOrcamentos = () => {
         ideia: formEdicao.ideia.trim()
       };
 
-      await OrcamentoService.atualizarOrcamento(
+      await OrcamentoService.atualizar(
         orcamentoEditando.codigoOrcamento, 
         dadosAtualizacao
       );
@@ -318,6 +318,11 @@ export const MeusOrcamentos = () => {
               <div className="info-column">
                 <h3 className="column-title">Informações do orçamento</h3>
                 
+                <div className="info-row">
+                  <span className="info-label-orange">Código:</span>
+                  <span className="info-text">{orcamentoSelecionado.codigoOrcamento}</span>
+                </div>
+
                 <div className="info-row">
                   <span className="info-label-orange">Tamanho:</span>
                   <span className="info-text">{orcamentoSelecionado.tamanho ? `${orcamentoSelecionado.tamanho}cm` : 'Não informado'}</span>

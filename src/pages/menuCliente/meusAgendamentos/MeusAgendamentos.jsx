@@ -95,7 +95,6 @@ export const MeusAgendamentos = () => {
     const data = new Date(agendamento.dataHora);
     const dataFormatada = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
     setDataSelecionada(dataFormatada);
-    // Formatar horário no mesmo formato usado pelos botões (HH:mm)
     const horarioFormatado = `${String(data.getHours()).padStart(2, '0')}:${String(data.getMinutes()).padStart(2, '0')}`;
     setHorarioSelecionado(horarioFormatado);
     setModalEditar(true);

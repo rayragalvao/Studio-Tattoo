@@ -14,20 +14,16 @@ class AuthService {
         
         console.log('Resposta do login (básica):', response);
         
-        // Salvar token primeiro para poder fazer requisições autenticadas
         AuthStorage.saveToken(response.token, rememberMe);
         
-        // Buscar dados completos do perfil
         const profileData = await this.fetchUserProfile(response.id);
         
-        // Combinar dados do login com dados do perfil
         const normalizedUser = {
           ...response,
           telefone: profileData?.telefone || '',
           dataNascimento: profileData?.dataNascimento || ''
         };
         
-        console.log('Usuário completo após buscar perfil:', normalizedUser);
         
         AuthStorage.saveUser(normalizedUser, rememberMe);
         return normalizedUser;
@@ -49,10 +45,8 @@ class AuthService {
       });
 
       if (response.token) {
-        // Salvar token primeiro
         AuthStorage.saveToken(response.token, true);
         
-        // Buscar dados completos do perfil
         const profileData = await this.fetchUserProfile(response.id);
         
         // Combinar dados
@@ -129,7 +123,6 @@ class AuthService {
       const response = await ApiService.get(`/usuario/${userId}`);
       console.log('Dados completos do perfil do backend:', response);
       
-      // Normalizar dados do perfil
       let dataNascimento = '';
       if (response.dtNasc) {
         try {
@@ -162,7 +155,6 @@ class AuthService {
         dtNasc: userData.dataNascimento || null
       });
 
-      // Normalizar dados atualizados
       const updatedUser = {
         ...currentUser,
         nome: response.nome || userData.nome,

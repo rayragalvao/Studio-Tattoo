@@ -4,7 +4,6 @@ import AgendamentoService from "../../../services/AgendamentoService";
 
 export const Calendario = ({ onDataSelecionada, dataSelecionada, recarregarDatas }) => {
   const [mesAtual, setMesAtual] = useState(() => {
-    // Se já tem uma data selecionada, inicializa o calendário nesse mês
     if (dataSelecionada) {
       return new Date(dataSelecionada + 'T12:00:00');
     }

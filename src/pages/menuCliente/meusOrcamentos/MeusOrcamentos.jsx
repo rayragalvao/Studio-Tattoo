@@ -345,12 +345,10 @@ export const MeusOrcamentos = () => {
                       return (
                         <div className="imagens-grid">
                           {orcamentoSelecionado.imagemReferencia.map((img, index) => {
-                            // Processa o caminho da imagem
                             let imageUrl;
                             if (img.startsWith('http')) {
                               imageUrl = img;
                             } else {
-                              // Remove barras invertidas e garante que começa com uploads/
                               const cleanPath = img.replace(/\\/g, '/');
                               imageUrl = `http://localhost:8080/${cleanPath}`;
                             }

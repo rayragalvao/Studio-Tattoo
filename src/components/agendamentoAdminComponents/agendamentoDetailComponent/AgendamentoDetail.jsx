@@ -12,8 +12,10 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
   const [modalMateriaisAberto, setModalMateriaisAberto] = useState(false);
   const [dadosCompletamento, setDadosCompletamento] = useState(null);
   const [modalSucesso, setModalSucesso] = useState(false);
+  const [agendamentoLocal, setAgendamentoLocal] = useState(agendamento);
 
-  const isLoading = !agendamento;
+  const agendamentoDados = agendamentoLocal ?? agendamento;
+  const isLoading = !agendamentoDados;
 
   const handleSalvarCompletamento = useCallback((dados) => {
     console.log('✅ Dados completamento salvos:', dados);
@@ -24,7 +26,15 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
     if (agendamento?.codigoOrcamento) {
       carregarOrcamentoCompleto(agendamento.codigoOrcamento);
     }
-  }, [agendamento?.codigoOrcamento]);
+    // Mantém estado local sincronizado com prop
+    setAgendamentoLocal(agendamento || null);
+
+    // Debug: verificar dados de pagamento vindos do backend
+    console.log('📊 Dados do agendamento carregados:');
+    console.log('  pagamentoFeito:', agendamento?.pagamentoFeito);
+    console.log('  formaPagamento:', agendamento?.formaPagamento);
+    console.log('  tempoDuracao:', agendamento?.tempoDuracao);
+  }, [agendamento?.codigoOrcamento, agendamento?.id, agendamento]);
 
   const carregarOrcamentoCompleto = async (codigoOrcamento) => {
     try {
@@ -81,17 +91,23 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
     });
   };
 
-  const orcamento = orcamentoCompleto ?? agendamento?.orcamento ?? {};
-  const usuario = agendamento?.usuario ?? {};
+  const orcamento = orcamentoCompleto ?? agendamentoDados?.orcamento ?? {};
+  const usuario = agendamentoDados?.usuario ?? {};
 
   const pagamentoFeito =
-    agendamento?.pagamentoFeito ?? dadosCompletamento?.pagamentoFeito ?? null;
+    agendamentoDados?.pagamentoFeito !== undefined 
+      ? agendamentoDados.pagamentoFeito
+      : dadosCompletamento?.pagamentoFeito ?? null;
   const formaPagamento =
-    agendamento?.formaPagamento ?? dadosCompletamento?.formaPagamento ?? '';
+    agendamentoDados?.formaPagamento 
+      ? agendamentoDados.formaPagamento
+      : dadosCompletamento?.formaPagamento ?? '';
   const tempoSessao =
-    agendamento?.tempoDuracao ?? dadosCompletamento?.tempoDuracao ?? null;
+    agendamentoDados?.tempoDuracao 
+      ? agendamentoDados.tempoDuracao
+      : dadosCompletamento?.tempoDuracao ?? null;
 
-  if (!agendamento) {
+  if (!agendamentoDados) {
     return (
       <section className="agend-detail empty">
         <p>Selecione um agendamento à esquerda para ver os detalhes.</p>
@@ -105,14 +121,14 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
       {/* Status */}
       <div className="status-header">
         <span className="status-label">Status:</span>
-        <span className="status-value">{getStatusLabel(agendamento.status)}</span>
+        <span className="status-value">{getStatusLabel(agendamentoDados.status)}</span>
 
-        {agendamento.status !== 'CONFIRMADO' &&
-          agendamento.status !== 'CANCELADO' &&
-          agendamento.status !== 'CONCLUIDO' && (
+        {agendamentoDados.status !== 'CONFIRMADO' &&
+          agendamentoDados.status !== 'CANCELADO' &&
+          agendamentoDados.status !== 'CONCLUIDO' && (
             <button
               className="btn-confirmar-top"
-              onClick={() => onConfirmar?.(agendamento.id)}
+              onClick={() => onConfirmar?.(agendamentoDados.id)}
             >
               Confirmar agendamento
             </button>
@@ -126,7 +142,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
           <div className="info-item">
             <span className="label">Cliente:</span>
             <span className="value">
-              {agendamento.nomeUsuario || usuario.nome || 'Não informado'}
+              {agendamentoDados.nomeUsuario || usuario.nome || 'Não informado'}
             </span>
           </div>
           <div className="info-item">
@@ -159,7 +175,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
           </div>
           <div className="info-item">
             <span className="label">Data/Horário:</span>
-            <span className="value">{formatarDataHora(agendamento.dataHora)}</span>
+            <span className="value">{formatarDataHora(agendamentoDados.dataHora)}</span>
           </div>
         </div>
       </div>
@@ -171,29 +187,29 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
           <div className="info-item">
             <span className="label">Tamanho:</span>
             <span className="value">
-              {formatarTamanho(agendamento.tamanho || orcamento.tamanho)}
+              {formatarTamanho(agendamentoDados.tamanho || orcamento.tamanho)}
             </span>
           </div>
           <div className="info-item">
             <span className="label">Local do corpo:</span>
             <span className="value">
-              {agendamento.localCorpo || orcamento.localCorpo || 'Não informado'}
+              {agendamentoDados.localCorpo || orcamento.localCorpo || 'Não informado'}
             </span>
           </div>
 
-          {(agendamento.cores || orcamento.cores) && (
+          {(agendamentoDados.cores || orcamento.cores) && (
             <div className="info-item">
               <span className="label">Cores:</span>
-              <span className="value">{agendamento.cores || orcamento.cores}</span>
+              <span className="value">{agendamentoDados.cores || orcamento.cores}</span>
             </div>
           )}
         </div>
 
-        {(agendamento.ideia || orcamento.ideia) && (
+        {(agendamentoDados.ideia || orcamento.ideia) && (
           <div className="descricao-block">
             <span className="label">Descrição:</span>
             <p className="descricao-text">
-              {agendamento.ideia || orcamento.ideia}
+              {agendamentoDados.ideia || orcamento.ideia}
             </p>
           </div>
         )}
@@ -236,8 +252,8 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
 
       {/* Ações */}
       <div className="action-buttons">
-        {agendamento.status !== 'CONCLUIDO' &&
-          agendamento.status !== 'CANCELADO' && (
+        {agendamentoDados.status !== 'CONCLUIDO' &&
+          agendamentoDados.status !== 'CANCELADO' && (
             <button
               className="btn-completar"
               onClick={() => {
@@ -251,10 +267,10 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
             </button>
           )}
 
-        {agendamento.status !== 'CANCELADO' && (
+        {agendamentoDados.status !== 'CANCELADO' && (
           <button
             className="btn-cancelar-bottom"
-            onClick={() => onCancelar?.(agendamento.id)}
+            onClick={() => onCancelar?.(agendamentoDados.id)}
           >
             Cancelar agendamento
           </button>
@@ -266,7 +282,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
         <div className="side-by-side-modals">
           {modalCompletarAberto && (
             <CompletarAgendamento
-              agendamento={agendamento}
+              agendamento={agendamentoDados}
               onClose={() => setModalCompletarAberto(false)}
               onSalvar={handleSalvarCompletamento}
             />
@@ -274,7 +290,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
 
           {modalMateriaisAberto && (
             <MateriaisUsados
-              agendamento={agendamento}
+              agendamento={agendamentoDados}
               dadosCompletar={dadosCompletamento}
               onClose={() => {
                 setModalMateriaisAberto(false);
@@ -292,18 +308,18 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
                   console.log('💾 Salvando materiais:', materiais);
                   console.log('💾 Dados completamento:', dadosCompletamento);
 
-                  if (!agendamento?.emailUsuario || !agendamento?.codigoOrcamento || !agendamento?.dataHora) {
+                  if (!agendamentoDados?.emailUsuario || !agendamentoDados?.codigoOrcamento || !agendamentoDados?.dataHora) {
                     alert('Dados do agendamento incompletos (email, código de orçamento ou dataHora ausentes).');
                     return;
                   }
                   
                   // Atualiza o agendamento para CONCLUIDO com dados de tempo e pagamento
-                  await agendamentoService.completarAgendamento(
-                    agendamento.id,
+                  const agendamentoAtualizado = await agendamentoService.completarAgendamento(
+                    agendamentoDados.id,
                     {
-                      emailUsuario: agendamento.emailUsuario,
-                      codigoOrcamento: agendamento.codigoOrcamento,
-                      dataHora: agendamento.dataHora,
+                      emailUsuario: agendamentoDados.emailUsuario,
+                      codigoOrcamento: agendamentoDados.codigoOrcamento,
+                      dataHora: agendamentoDados.dataHora,
                       status: 'CONCLUIDO',
                       tempoDuracao: dadosCompletamento.tempoDuracao,
                       pagamentoFeito: dadosCompletamento.pagamentoFeito,
@@ -311,11 +327,10 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
                     }
                   );
 
-                  // TODO: Implementar endpoint no backend para salvar materiais usados
-                  // await agendamentoService.adicionarMateriaisUsados(
-                  //   agendamento.id,
-                  //   materiais
-                  // );
+                  console.log('✅ Agendamento atualizado com sucesso:', agendamentoAtualizado);
+
+                  // Atualiza estado local para refletir imediatamente na UI
+                  setAgendamentoLocal(agendamentoAtualizado);
 
                   setModalMateriaisAberto(false);
                   setModalCompletarAberto(false);

@@ -243,11 +243,17 @@ class AgendamentoService {
    */
   async completarAgendamento(id, dados) {
     try {
+      console.log('🔄 Completando agendamento ID:', id);
+      console.log('📦 Dados enviados:', dados);
       // Usa o endpoint de atualização existente com status CONCLUIDO
       const response = await api.put(`/agendamento/${id}`, {
         ...dados,
         status: 'CONCLUIDO'
       });
+      console.log('✅ Resposta do backend:', response.data);
+      console.log('  - pagamentoFeito:', response.data?.pagamentoFeito);
+      console.log('  - formaPagamento:', response.data?.formaPagamento);
+      console.log('  - tempoDuracao:', response.data?.tempoDuracao);
       return response.data;
     } catch (error) {
       console.error('Erro ao completar agendamento:', error);

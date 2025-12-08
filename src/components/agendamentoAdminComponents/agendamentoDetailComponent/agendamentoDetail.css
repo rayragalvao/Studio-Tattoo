@@ -1,15 +1,18 @@
 .agend-detail {
-  background-color: #e8e8e8;
+  background-color: #ffff;
   border-radius: 6px;
   padding: 12px 20px;
-  overflow-y: hidden;
-  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  height: 80vh;
+  min-height: 600px;
   max-width: 800px;
+  width: 100%;
   margin-left: 50px;
   margin-right: 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
+  box-sizing: border-box;
 }
 
 .agend-detail.empty {
@@ -242,23 +245,127 @@
   background-color: #6a0a0b;
 }
 
+/* Responsividade para tablets */
+@media (max-width: 1024px) {
+  .agend-detail {
+    margin-left: 20px;
+    margin-right: 20px;
+    max-width: 100%;
+    padding: 16px;
+  }
+  
+  .info-grid {
+    gap: 8px 16px;
+  }
+}
+
+/* Responsividade para mobile */
 @media (max-width: 768px) {
   .agend-detail {
+    margin-left: 0;
+    margin-right: 0;
     padding: 12px;
+    gap: 12px;
+    height: auto;
+    min-height: 500px;
+    overflow-y: auto;
+  }
+
+  .agend-detail.empty {
+    padding: 24px 12px;
+    font-size: 13px;
+  }
+
+  .status-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 0;
+  }
+
+  .btn-confirmar-top {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 12px;
   }
 
   .info-grid {
-    grid-template-columns: 1fr 1fr !important;
-    gap: 6px 12px;
+    grid-template-columns: 1fr !important;
+    gap: 8px;
+  }
+  
+  .info-row {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .info-label {
+    font-size: 13px;
+    margin-bottom: 4px;
+    display: block;
+  }
+  
+  .info-value {
+    font-size: 14px;
+    font-weight: 500;
   }
   
   .referencias-grid {
-    grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 8px;
+  }
+  
+  .referencia-image {
+    width: 100%;
+    height: 80px;
   }
   
   .action-buttons {
     flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  
+  .action-buttons button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+  .agend-detail {
+    padding: 8px;
+    gap: 10px;
+    border-radius: 4px;
+  }
+
+  .status-label,
+  .status-value {
+    font-size: 13px;
+  }
+
+  .info-label {
+    font-size: 12px;
+  }
+  
+  .info-value {
+    font-size: 13px;
+  }
+  
+  .referencias-grid {
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
     gap: 6px;
+  }
+  
+  .referencia-image {
+    height: 60px;
+  }
+  
+  .action-buttons button {
+    padding: 10px;
+    font-size: 13px;
   }
 }
 

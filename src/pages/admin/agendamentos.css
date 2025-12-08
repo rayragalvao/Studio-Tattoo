@@ -1,19 +1,47 @@
-.admin-agend-wrapper{ padding:24px; min-height:70vh; }
-.admin-agend-grid{ display:grid; grid-template-columns: 340px 750px; gap:32px; align-items:start; justify-content:center; margin-left:250px; }
+.admin-agend-wrapper {
+  padding: 24px;
+  min-height: 80vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.admin-agend-grid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 32px;
+  align-items: start;
+  max-width: 1400px;
+  width: 100%;
+}
 
 /* Large tablets */
-@media (max-width: 1200px){
-  .admin-agend-grid{ grid-template-columns: 300px 1fr; gap:24px; }
+@media (max-width: 1200px) {
+  .admin-agend-grid {
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+    padding: 0 20px;
+  }
 }
 
 /* Tablets */
-@media (max-width: 992px){
-  .admin-agend-wrapper{ padding:16px; }
-  .admin-agend-grid{ grid-template-columns: 1fr; gap:16px; }
+@media (max-width: 992px) {
+  .admin-agend-wrapper {
+    padding: 16px;
+  }
+  .admin-agend-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 0;
+  }
 }
 
 /* Mobile */
-@media (max-width: 480px){
-  .admin-agend-wrapper{ padding:12px; }
-  .admin-agend-grid{ gap:12px; }
+@media (max-width: 480px) {
+  .admin-agend-wrapper {
+    padding: 12px;
+  }
+  .admin-agend-grid {
+    gap: 12px;
+  }
 }

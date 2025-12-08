@@ -1,7 +1,7 @@
 .agend-detail {
   background-color: #ffff;
   border-radius: 6px;
-  padding: 12px 20px;
+  padding: 12px 20px 16px;
   overflow-y: auto;
   height: 80vh;
   min-height: 600px;
@@ -245,21 +245,36 @@
   background-color: #6a0a0b;
 }
 
-/* Responsividade para tablets */
-@media (max-width: 1024px) {
+
+/* Tablets em landscape */
+@media (max-width: 1200px) {
   .agend-detail {
-    margin-left: 20px;
-    margin-right: 20px;
-    max-width: 100%;
-    padding: 16px;
-  }
-  
-  .info-grid {
-    gap: 8px 16px;
+    margin-left: 30px;
+    max-width: 700px;
   }
 }
 
-/* Responsividade para mobile */
+/* Tablets em portrait */
+@media (max-width: 1024px) {
+  .agend-detail {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+    max-height: none;
+    overflow-y: auto;
+  }
+
+  .info-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  .side-by-side-modals {
+    padding: 20px;
+    gap: 16px;
+  }
+}
+
+/* Mobile landscape */
 @media (max-width: 768px) {
   .agend-detail {
     margin-left: 0;
@@ -314,7 +329,7 @@
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 8px;
   }
-  
+
   .referencia-image {
     width: 100%;
     height: 80px;
@@ -323,48 +338,116 @@
   .action-buttons {
     flex-direction: column;
     gap: 8px;
-    margin-top: 16px;
+
   }
-  
-  .action-buttons button {
+
+  .btn-completar-agend,
+  .btn-cancelar-bottom {
     width: 100%;
-    padding: 12px;
-    font-size: 14px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+
+  .side-by-side-modals {
+    flex-direction: column;
+    padding: 16px;
+    gap: 12px;
+    overflow-y: auto;
+  }
+
+  .side-by-side-modals > * {
+    max-width: 100%;
+  }
+
+  .success-modal {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .success-modal h3 {
+    font-size: 16px;
+  }
+
+  .success-modal p {
+    font-size: 13px;
   }
 }
 
-/* Mobile pequeno */
+/* Mobile portrait */
 @media (max-width: 480px) {
   .agend-detail {
-    padding: 8px;
-    gap: 10px;
-    border-radius: 4px;
+    padding: 10px;
+    gap: 12px;
   }
 
   .status-label,
   .status-value {
-    font-size: 13px;
+    font-size: 12px;
+  }
+
+  .btn-confirmar-top {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .block-title {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .info-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px;
   }
 
   .info-label {
+    font-size: 9px;
+  }
+
+  .info-value {
+    font-size: 11px;
+  }
+
+  .descricao-box,
+  .referencia-box {
+    padding: 8px;
     font-size: 12px;
   }
-  
-  .info-value {
-    font-size: 13px;
-  }
-  
+
   .referencias-grid {
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
-  
+
   .referencia-image {
-    height: 60px;
+    height: 70px;
   }
-  
-  .action-buttons button {
-    padding: 10px;
+
+  .btn-completar-agend,
+  .btn-cancelar-bottom {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
+  .side-by-side-modals {
+    padding: 12px;
+  }
+
+  .success-modal {
+    padding: 16px;
+  }
+
+  .success-modal h3 {
+    font-size: 15px;
+  }
+
+  .success-modal p {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+
+  .success-modal-button {
+    padding: 8px 14px;
     font-size: 13px;
   }
 }
@@ -380,9 +463,10 @@
   z-index: 9999;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 24px;
-  padding: 40px;
+  padding: 24px 20px;
+  overflow-y: auto;
 }
 
 .side-by-side-modals > * {

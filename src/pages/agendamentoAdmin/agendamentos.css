@@ -97,13 +97,28 @@
 }
 
 /* Responsividade */
-@media (max-width: 1024px) {
+/* Tablets em landscape e desktops pequenos */
+@media (max-width: 1200px) {
   .admin-agend-grid {
-    grid-template-columns: 1fr;
-    height: auto;
+    grid-template-columns: 350px 1fr;
+    gap: 20px;
   }
 }
 
+/* Tablets em portrait */
+@media (max-width: 1024px) {
+  .admin-agend-wrapper {
+    padding: 16px;
+  }
+
+  .admin-agend-grid {
+    grid-template-columns: 1fr;
+    height: auto;
+    gap: 20px;
+  }
+}
+
+/* Mobile landscape e tablets pequenos */
 @media (max-width: 768px) {
   .admin-agend-wrapper {
     padding: 12px;
@@ -111,5 +126,48 @@
 
   .admin-agend-grid {
     gap: 16px;
+  }
+
+  .cancel-modal {
+    max-width: 360px;
+    padding: 20px;
+  }
+
+  .cancel-modal-icon {
+    font-size: 48px;
+  }
+
+  .cancel-modal h3 {
+    font-size: 16px;
+  }
+
+  .cancel-modal p {
+    font-size: 13px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .admin-agend-wrapper {
+    padding: 8px;
+  }
+
+  .admin-agend-grid {
+    gap: 12px;
+  }
+
+  .cancel-modal {
+    max-width: calc(100% - 32px);
+    padding: 16px;
+  }
+
+  .cancel-modal-actions {
+    gap: 8px;
+  }
+
+  .cancel-modal-confirm,
+  .cancel-modal-close-btn {
+    padding: 10px 16px;
+    font-size: 13px;
   }
 }

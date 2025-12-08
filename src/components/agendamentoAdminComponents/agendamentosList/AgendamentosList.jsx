@@ -68,7 +68,6 @@ const AgendamentosList = ({
               onChange={e => onAtualizarFiltro('status', e.target.value)}
             >
               <option value="Todos">Todos</option>
-              <option value="AGUARDANDO">Aguardando</option>
               <option value="CONFIRMADO">Confirmado</option>
               <option value="CANCELADO">Cancelado</option>
               <option value="CONCLUIDO">Concluído</option>

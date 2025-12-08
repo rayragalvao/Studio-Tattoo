@@ -84,6 +84,18 @@
   font-weight: 700;
 }
 
+.success-modal.info-modal h3 {
+  color: #d97706;
+}
+
+.success-modal.info-modal .success-modal-button {
+  background-color: #d97706;
+}
+
+.success-modal.info-modal .success-modal-button:hover {
+  background-color: #b45309;
+}
+
 .success-modal p {
   margin: 0 0 18px;
   color: #374151;

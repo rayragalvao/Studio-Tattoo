@@ -12,6 +12,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
   const [modalMateriaisAberto, setModalMateriaisAberto] = useState(false);
   const [dadosCompletamento, setDadosCompletamento] = useState(null);
   const [modalSucesso, setModalSucesso] = useState(false);
+  const [modalJaPreenchido, setModalJaPreenchido] = useState(false);
   const [agendamentoLocal, setAgendamentoLocal] = useState(agendamento);
 
   const agendamentoDados = agendamentoLocal ?? agendamento;
@@ -257,10 +258,18 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
             <button
               className="btn-completar"
               onClick={() => {
-                console.log('🔥 Botão clicado! Abrindo modais...');
-                setModalCompletarAberto(true);
-                setModalMateriaisAberto(true);
-                console.log('✅ Estados atualizados');
+                // Verifica se já tem informações de pagamento preenchidas
+                if (agendamentoDados.pagamentoFeito !== null && 
+                    agendamentoDados.formaPagamento && 
+                    agendamentoDados.tempoDuracao) {
+                  console.log('⚠️ Informações já preenchidas!');
+                  setModalJaPreenchido(true);
+                } else {
+                  console.log('🔥 Botão clicado! Abrindo modais...');
+                  setModalCompletarAberto(true);
+                  setModalMateriaisAberto(true);
+                  console.log('✅ Estados atualizados');
+                }
               }}
             >
               Completar agendamento
@@ -278,7 +287,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
       </div>
 
       {/* 🎯 MODAIS LADO A LADO */}
-      {(modalCompletarAberto || modalMateriaisAberto) && (
+      {!modalSucesso && (modalCompletarAberto || modalMateriaisAberto) && (
         <div className="side-by-side-modals">
           {modalCompletarAberto && (
             <CompletarAgendamento
@@ -329,12 +338,33 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
 
                   console.log('✅ Agendamento atualizado com sucesso:', agendamentoAtualizado);
 
+                  // Salva os materiais usados no agendamento
+                  if (materiais && materiais.length > 0) {
+                    console.log('📦 Salvando materiais usados:', materiais);
+                    try {
+                      await agendamentoService.adicionarMateriaisUsados(
+                        agendamentoDados.id,
+                        materiais
+                      );
+                      console.log('✅ Materiais salvos com sucesso!');
+                    } catch (errorMateriais) {
+                      console.error('⚠️ Erro ao salvar materiais (agendamento já foi concluído):', errorMateriais);
+                      // Não bloqueia o fluxo se falhar ao salvar materiais
+                    }
+                  }
+
                   // Atualiza estado local para refletir imediatamente na UI
                   setAgendamentoLocal(agendamentoAtualizado);
 
+                  // Fecha os modais laterais imediatamente
                   setModalMateriaisAberto(false);
                   setModalCompletarAberto(false);
-                  setModalSucesso(true);
+                  setDadosCompletamento(null);
+                  
+                  // Pequeno delay para garantir que os modais laterais fechem antes de abrir o de sucesso
+                  setTimeout(() => {
+                    setModalSucesso(true);
+                  }, 100);
                 } catch (error) {
                   console.error('❌ Erro:', error);
                   alert('Erro ao completar agendamento: ' + (error.message || 'Erro desconhecido'));
@@ -342,23 +372,41 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
               }}
             />
           )}
-        {modalSucesso && (
-          <div className="success-modal-overlay">
-            <div className="success-modal">
-              <h3>Agendamento concluído com sucesso!</h3>
-              <p>Os dados foram salvos e o status foi atualizado para CONCLUIDO.</p>
-              <button
-                className="success-modal-button"
-                onClick={() => {
-                  setModalSucesso(false);
-                  window.location.reload();
-                }}
-              >
-                Ok
-              </button>
-            </div>
+        </div>
+      )}
+
+      {/* Modal de sucesso - separado dos modais laterais */}
+      {modalSucesso && (
+        <div className="success-modal-overlay">
+          <div className="success-modal">
+            <h3>Agendamento concluído com sucesso!</h3>
+            <p>Os dados foram salvos e o status foi atualizado para CONCLUIDO.</p>
+            <button
+              className="success-modal-button"
+              onClick={() => {
+                setModalSucesso(false);
+                window.location.reload();
+              }}
+            >
+              Ok
+            </button>
           </div>
-        )}
+        </div>
+      )}
+
+      {/* Modal de informações já preenchidas */}
+      {modalJaPreenchido && (
+        <div className="success-modal-overlay">
+          <div className="success-modal info-modal">
+            <h3>Informações já preenchidas</h3>
+            <p>As informações de pagamento e tempo de sessão já foram preenchidas para este agendamento.</p>
+            <button
+              className="success-modal-button"
+              onClick={() => setModalJaPreenchido(false)}
+            >
+              Ok
+            </button>
+          </div>
         </div>
       )}
     </section>

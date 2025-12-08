@@ -8,18 +8,29 @@ const OrcamentoDetail = ({ orcamento, onEnviar }) => {
   const [erroTempo, setErroTempo] = useState(false);
 
   useEffect(()=>{ 
-    setValor(''); 
-    setTempo(''); 
+    console.log('🔄 useEffect executado - orçamento:', orcamento);
+    console.log('💰 Campo valor no orçamento:', orcamento?.valor);
+    console.log('⏰ Campo tempo no orçamento:', orcamento?.tempo);
+    
+    setValor(orcamento?.valor || ''); 
+    setTempo(orcamento?.tempo || ''); 
     setErroValor(false); 
     setErroTempo(false);
+    
+    console.log('✅ Estados definidos - valor:', orcamento?.valor || '', 'tempo:', orcamento?.tempo || '');
+    
     if(orcamento) {
-      console.log('🔍 Orçamento selecionado:', orcamento);
+      console.log('🔍 Orçamento selecionado completo:', orcamento);
       console.log('📝 Ideia:', orcamento.ideia);
+      console.log('📐 Tamanho:', orcamento.tamanho);
+      console.log('💰 Valor atual:', orcamento.valor);
+      console.log('⏰ Tempo atual:', orcamento.tempo);
+      console.log('📋 Todas as propriedades:', Object.keys(orcamento));
       console.log('🖼️ imagemReferencia:', orcamento.imagemReferencia);
       console.log('🔢 Tipo:', typeof orcamento.imagemReferencia);
       console.log('📦 É array?', Array.isArray(orcamento.imagemReferencia));
     }
-  }, [orcamento?.id, orcamento?.codigo_orcamento]);
+  }, [orcamento]);
 
   const formatarValor = (value) => {
     const numero = value.replace(/\D/g, '');

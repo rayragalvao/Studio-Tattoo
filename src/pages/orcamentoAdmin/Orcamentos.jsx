@@ -129,12 +129,6 @@ const AdminOrcamentos = () => {
 
     // Backend precisa de todos os campos do orçamento
     const payload = {
-      nome: orcamento.nome,
-      email: orcamento.email,
-      ideia: orcamento.ideia || orcamento.descricao,
-      tamanho: orcamento.tamanho,
-      cores: orcamento.cores,
-      localCorpo: orcamento.localCorpo || orcamento.local_corpo,
       valor: parseValor(dados?.valor),
       tempo: normalizeTempo(dados?.tempo),
       status: 'APROVADO' // Muda para APROVADO ao responder

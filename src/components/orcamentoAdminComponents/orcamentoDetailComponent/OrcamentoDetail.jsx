@@ -12,12 +12,22 @@ const OrcamentoDetail = ({ orcamento, onEnviar }) => {
     console.log('💰 Campo valor no orçamento:', orcamento?.valor);
     console.log('⏰ Campo tempo no orçamento:', orcamento?.tempo);
     
-    setValor(orcamento?.valor || ''); 
-    setTempo(orcamento?.tempo || ''); 
+    // Se o orçamento tem valor, formata como moeda
+    const valorFormatado = orcamento?.valor 
+      ? orcamento.valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
+      : '';
+    
+    // Se o orçamento tem tempo, converte de Time para formato legível
+    const tempoFormatado = orcamento?.tempo 
+      ? (typeof orcamento.tempo === 'string' ? orcamento.tempo : orcamento.tempo.toString())
+      : '';
+    
+    setValor(valorFormatado); 
+    setTempo(tempoFormatado); 
     setErroValor(false); 
     setErroTempo(false);
     
-    console.log('✅ Estados definidos - valor:', orcamento?.valor || '', 'tempo:', orcamento?.tempo || '');
+    console.log('✅ Estados definidos - valor:', valorFormatado, 'tempo:', tempoFormatado);
     
     if(orcamento) {
       console.log('🔍 Orçamento selecionado completo:', orcamento);
@@ -56,7 +66,14 @@ const OrcamentoDetail = ({ orcamento, onEnviar }) => {
     return vOk && tOk;
   };
 
-  const enviar = () => { if(validar()){ onEnviar?.(orcamento, { valor, tempo }); } };
+  const enviar = () => { 
+    if(validar()){ 
+      console.log('📤 OrcamentoDetail.enviar - Enviando para onEnviar:');
+      console.log('  - valor:', valor);
+      console.log('  - tempo:', tempo);
+      onEnviar?.(orcamento, { valor, tempo }); 
+    } 
+  };
 
   if(!orcamento){ return <section className="orc-detail empty"><p>Selecione um orçamento à esquerda para ver os detalhes.</p></section>; }
 

@@ -10,7 +10,8 @@ import "./navBar.css";
 // Ajustado para permitir customização (ocultar logo e definir itens do menu)
 export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
   const { isAuthenticated, user, logout } = useAuth();
-  const isMobile = useIsMobile(768);
+  // Consider tablets as mobile for the hamburger behavior
+  const isMobile = useIsMobile(1100);
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCadastroModalOpen, setIsCadastroModalOpen] = useState(false);

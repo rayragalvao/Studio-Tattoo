@@ -232,15 +232,140 @@
 }
 
 /* Responsividade */
-@media (max-width: 1024px) {
+/* Tablets em landscape */
+@media (max-width: 1200px) {
   .agend-list {
-    height: auto;
-    min-height: 300px;
+    width: 350px;
+    margin-left: 20px;
   }
 }
 
+/* Tablets em portrait */
+@media (max-width: 1024px) {
+  .agend-list {
+    width: 100%;
+    height: auto;
+    min-height: 400px;
+    max-height: 500px;
+    margin-left: 0;
+    margin-bottom: 0;
+  }
+
+  .agend-list-items {
+    max-height: 280px;
+  }
+}
+
+/* Mobile landscape */
 @media (max-width: 768px) {
   .agend-list {
-    margin-bottom: 16px;
+    padding: 12px;
+    min-height: 350px;
+    max-height: 450px;
+  }
+
+  .agend-list-title {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .agend-list-header {
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+
+  .agend-search {
+    font-size: 12px;
+    padding: 5px 28px 5px 6px;
+  }
+
+  .agend-search-wrapper .icon {
+    font-size: 16px;
+    right: 8px;
+  }
+
+  .btn-filter {
+    padding: 5px 6px;
+    font-size: 16px;
+  }
+
+  .agend-filtros-panel {
+    padding: 8px;
+  }
+
+  .agend-filtro-group select {
+    font-size: 12px;
+    padding: 5px 6px;
+  }
+
+  .agend-btn-limpar-filtros {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+
+  .agend-item {
+    padding: 8px;
+  }
+
+  .agend-item-title {
+    font-size: 13px;
+  }
+
+  .agend-item-info {
+    font-size: 11px;
+  }
+
+  .btn-criar-agendamento {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 480px) {
+  .agend-list {
+    padding: 10px;
+    min-height: 300px;
+    max-height: 400px;
+  }
+
+  .agend-list-title {
+    font-size: 14px;
+  }
+
+  .agend-list-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .agend-search-wrapper {
+    width: 100%;
+  }
+
+  .btn-filter {
+    width: 100%;
+    justify-content: center;
+    padding: 6px 8px;
+  }
+
+  .agend-item {
+    padding: 10px 8px;
+  }
+
+  .agend-item-title {
+    font-size: 12px;
+  }
+
+  .agend-item-subtitle {
+    font-size: 11px;
+  }
+
+  .agend-item-info {
+    font-size: 10px;
+  }
+
+  .agend-status-indicator {
+    width: 6px;
+    height: 6px;
   }
 }

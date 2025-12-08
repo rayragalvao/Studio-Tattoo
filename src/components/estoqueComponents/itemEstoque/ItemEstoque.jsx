@@ -6,7 +6,7 @@ export const ItemEstoque = ({
     onMostrarInformacoes, 
     filtrosAbertos = false 
 }) => {
-    return (
+    return (    
         <div 
             className={`item ${item.quantidade <= item.minAviso ? "item-alerta" : ""}`}
             role="listitem"

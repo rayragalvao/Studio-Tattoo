@@ -206,6 +206,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
         console.log('Cadastro realizado com sucesso:', response.data);
         mostrarNotificacao('sucesso', 'Cadastro Realizado!', 'Sua conta foi criada com sucesso. Bem-vindo!');
         clearForm();
+        onSwitchToLogin();
       } catch (error) {
         console.error('Erro no cadastro:', error);
         

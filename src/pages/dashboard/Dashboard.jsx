@@ -241,7 +241,7 @@ const Dashboard = () => {
                                     </div>
                                     <button 
                                         className="bt-info-orcamento"
-                                        onClick={() => navigate('/agendamento')}
+                                        onClick={() => navigate('/agendamentoAdmin/Agendamentos')}
                                         title="Ver agendamentos"
                                     >
                                         <span className="material-symbols-outlined">info</span>
@@ -253,7 +253,7 @@ const Dashboard = () => {
                                     <h3>Orçamentos aguardando resposta</h3>
                                     <button 
                                         className="bt-info-orcamento"
-                                        onClick={() => navigate('/orcamento')}
+                                        onClick={() => navigate('/orcamentoAdmin/Orcamentos')}
                                         title="Ver orçamentos"
                                     >
                                         <span className="material-symbols-outlined">info</span>

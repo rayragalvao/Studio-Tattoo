@@ -298,11 +298,6 @@ const Dashboard = () => {
                                                     {new Date(ag.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
-                                            <button className="btn-agendar-action">
-                                                <span className="material-symbols-outlined">
-                                                    alarm
-                                                </span>
-                                            </button>
                                         </li>
                                     ))
                                 )}

@@ -261,7 +261,11 @@ export const Estoque = () => {
             qtdAtualizada = qtdAtualizada + qtdParaAdicionar;
         } else if (operacao === "subtrair") {
             if (qtdAtualizada < qtdParaAdicionar) {
-                alert("Quantidade insuficiente em estoque");
+                mostrarNotificacao(
+                    'aviso',
+                    'Quantidade Insuficiente',
+                    'Não é possível subtrair mais do que a quantidade atual em estoque.'
+                );
                 return;
             }
             qtdAtualizada = qtdAtualizada - qtdParaAdicionar;

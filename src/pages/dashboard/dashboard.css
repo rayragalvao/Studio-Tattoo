@@ -152,7 +152,20 @@
     transition: transform 0.2s ease;
 }
 
-.agendamentos-dia-card .item-agendamento .btn-agendar-action {
+.item-agendamento {
+    position: relative;
+    background: #868686;
+    color: #fff;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    transition: all 0.18s ease;
+    display: flex;
+    align-items: center;
+    transform: scale(1);
+}
+
+.agendamentos-dia-card .btn-agendar-action {
     position: static;
     color: var(--cinza-escuro); 
     margin-left: auto;
@@ -165,6 +178,18 @@
 
 .btn-agendar-action span {
     color: var(--branco)
+}
+
+.btn-agendar-action {
+    color: #444;
+    background-color: #fff;
+    border: none;
+    padding: 8px;
+    border-radius: 2px;
+}
+
+.btn-agendar-action span {
+    color: #868686;
 }
 
 .orcamentos-pendentes-card {
@@ -372,23 +397,6 @@
     margin: 0;
 }
 
-.item-agendamento {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px; 
-    margin-bottom: 10px;
-    background: #e8e8e8; 
-    border-radius: 8px;
-    transition: none;
-}
-
-.item-agendamento:hover {
-    background: #e8e8e8; 
-    transform: none;
-    box-shadow: none;
-}
-
 .item-agendamento:last-child {
     margin-bottom: 0;
 }
@@ -396,14 +404,12 @@
 .info-principal {
     display: block;
     font-weight: 600;
-    color: var(--cinza-escuro);
     margin-bottom: 4px;
 }
 
 .info-secundaria {
     display: block;
     font-size: 0.85rem;
-    color: #666;
 }
 
 .item-agendamento-vazio {

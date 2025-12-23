@@ -241,7 +241,7 @@ const Dashboard = () => {
                                     </div>
                                     <button 
                                         className="bt-info-orcamento"
-                                        onClick={() => navigate('/agendamento')}
+                                        onClick={() => navigate('/agendamentoAdmin/Agendamentos')}
                                         title="Ver agendamentos"
                                     >
                                         <span className="material-symbols-outlined">info</span>
@@ -253,7 +253,7 @@ const Dashboard = () => {
                                     <h3>Orçamentos aguardando resposta</h3>
                                     <button 
                                         className="bt-info-orcamento"
-                                        onClick={() => navigate('/orcamento')}
+                                        onClick={() => navigate('/orcamentoAdmin/Orcamentos')}
                                         title="Ver orçamentos"
                                     >
                                         <span className="material-symbols-outlined">info</span>
@@ -298,11 +298,6 @@ const Dashboard = () => {
                                                     {new Date(ag.dataHora).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
-                                            <button className="btn-agendar-action">
-                                                <span className="material-symbols-outlined">
-                                                    alarm
-                                                </span>
-                                            </button>
                                         </li>
                                     ))
                                 )}

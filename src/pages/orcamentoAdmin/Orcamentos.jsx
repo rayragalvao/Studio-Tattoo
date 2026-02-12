@@ -85,6 +85,10 @@ const AdminOrcamentos = () => {
   };
   
   const handleEnviar = async (orcamento, dados) => {
+    console.log('🔍 handleEnviar chamado com dados:', dados);
+    console.log('  - dados.valor:', dados?.valor);
+    console.log('  - dados.tempo:', dados?.tempo);
+    
     // Normalizar payload para o backend: valor (float) e tempo (HH:mm:ss)
     const parseValor = (v) => {
       if (!v) return null;
@@ -95,48 +99,58 @@ const AdminOrcamentos = () => {
     };
 
     const normalizeTempo = (t) => {
+      console.log('🕐 normalizeTempo chamado com:', t, '(tipo:', typeof t, ')');
       if (!t) return null;
-      // aceita formatos tipo "3h30min", "3h", "03:30", "03:30:00"
-      const s = String(t).toLowerCase();
-      // "3h30min" -> horas/minutos
-      const hmMatch = s.match(/(\d+)h(\d{1,2})?min?/);
+      // aceita formatos tipo "3h30min", "3h", "2h", "03:30", "03:30:00"
+      const s = String(t).toLowerCase().trim();
+      
+      // "3h30min" ou "3h" -> horas/minutos
+      const hmMatch = s.match(/(\d+)h(?:(\d{1,2})min?)?$/);
       if (hmMatch) {
         const h = hmMatch[1].padStart(2, '0');
         const m = (hmMatch[2] || '00').padStart(2, '0');
+        console.log(`  ✅ Convertido "${t}" -> "${h}:${m}:00"`);
         return `${h}:${m}:00`;
       }
+      
       // "03:30" ou "03:30:00"
       const parts = s.split(':');
       if (parts.length === 2) {
         const h = parts[0].padStart(2, '0');
         const m = parts[1].padStart(2, '0');
+        console.log(`  ✅ Convertido "${t}" -> "${h}:${m}:00"`);
         return `${h}:${m}:00`;
       }
       if (parts.length === 3) {
         const h = parts[0].padStart(2, '0');
         const m = parts[1].padStart(2, '0');
         const sec = parts[2].padStart(2, '0');
+        console.log(`  ✅ Convertido "${t}" -> "${h}:${m}:${sec}"`);
         return `${h}:${m}:${sec}`;
       }
-      // fallback: somente horas em "3" -> "03:00:00"
+      
+      // fallback: somente número "3" -> "03:00:00"
       const onlyHours = s.match(/^\d+$/) ? s : null;
       if (onlyHours) {
         const h = onlyHours.padStart(2, '0');
+        console.log(`  ✅ Convertido "${t}" -> "${h}:00:00"`);
         return `${h}:00:00`;
       }
+      
+      console.warn(`  ⚠️ Formato de tempo não reconhecido: "${t}"`);
       return null;
     };
 
     // Backend precisa de todos os campos do orçamento
+    const valorParsed = parseValor(dados?.valor);
+    const tempoParsed = normalizeTempo(dados?.tempo);
+    
+    console.log('💰 Valor parseado:', valorParsed);
+    console.log('⏰ Tempo parseado:', tempoParsed);
+    
     const payload = {
-      nome: orcamento.nome,
-      email: orcamento.email,
-      ideia: orcamento.ideia || orcamento.descricao,
-      tamanho: orcamento.tamanho,
-      cores: orcamento.cores,
-      localCorpo: orcamento.localCorpo || orcamento.local_corpo,
-      valor: parseValor(dados?.valor),
-      tempo: normalizeTempo(dados?.tempo),
+      valor: valorParsed,
+      tempo: tempoParsed,
       status: 'APROVADO' // Muda para APROVADO ao responder
     };
 
@@ -146,18 +160,22 @@ const AdminOrcamentos = () => {
       const resposta = await orcamentoService.responder(orcamento.codigo_orcamento || orcamento.codigoOrcamento, payload);
       console.log('✅ Resposta do backend:', resposta);
       
-      // Atualizar status local IMEDIATAMENTE para mudar bolinha para verde
+      // Atualizar orçamento com os novos dados (status, valor, tempo)
       const codigoOrcamento = orcamento.codigo_orcamento || orcamento.codigoOrcamento;
+      const orcamentoAtualizado = resposta.orcamento || resposta;
+      
       setOrcamentos(prevOrcamentos => 
         prevOrcamentos.map(orc => 
           (orc.codigo_orcamento === codigoOrcamento || orc.codigoOrcamento === codigoOrcamento)
-            ? { ...orc, status: 'APROVADO' }
+            ? { ...orc, ...orcamentoAtualizado, status: 'APROVADO' }
             : orc
         )
       );
       
+      // Atualizar o orçamento selecionado com os dados salvos
+      setSelected({ ...orcamento, ...orcamentoAtualizado, status: 'APROVADO' });
+      
       setModalSucesso(true);
-      setSelected(null);
     } catch (err) {
       const status = err.response?.status;
       const data = err.response?.data;

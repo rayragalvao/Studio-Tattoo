@@ -1,22 +1,50 @@
+
 .modal-overlay-completar {
-  position: relative;
-  background: transparent;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
+  padding: 24px 16px;
+  overflow-y: auto;
   z-index: 1000;
 }
 
 .modal-content-completar {
   position: relative;
   background: white;
-  padding: 18px;
+  padding: 20px;
   border-radius: 12px;
   width: 100%;
-  max-width: 380px;
-  max-height: 95vh;
+  max-width: 460px;
+  max-height: 96vh;
   overflow-y: auto;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.side-by-side-modals .modal-overlay-completar {
+  position: static;
+  inset: auto;
+  background: transparent;
+  padding: 0;
+  overflow: visible;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  width: 100%;
+  max-width: 520px;
+  height: auto;
+  flex: 1;
+}
+
+.side-by-side-modals .modal-content-completar {
+  max-height: 96vh;
+  width: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 .modal-close-btn {
@@ -119,4 +147,109 @@
 .btn-salvar-completar:disabled {
   background: #9ca3af;
   cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .modal-overlay-completar {
+    padding: 40px 12px 16px;
+    align-items: flex-start;
+  }
+
+  .modal-content-completar {
+    max-width: 100%;
+    padding: 16px;
+    max-height: 84vh;
+  }
+
+  /* Largura total quando empilhado no mobile */
+  .side-by-side-modals .modal-overlay-completar {
+    width: 100%;
+  }
+
+  .side-by-side-modals .modal-content-completar {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    max-height: 84vh;
+  }
+
+  .modal-content-completar h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    padding-right: 30px;
+  }
+
+  .modal-close-btn {
+    font-size: 24px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .form-group-completar {
+    margin-bottom: 10px;
+  }
+
+  .form-group-completar label {
+    font-size: 10px;
+  }
+
+  .form-group-completar input,
+  .form-group-completar select {
+    font-size: 11px;
+    padding: 5px 7px;
+  }
+
+  .btn-salvar-completar {
+    width: 80%;
+    font-size: 13px;
+    padding: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-content-completar {
+    padding: 14px;
+    border-radius: 10px;
+    max-height: 82vh;
+  }
+
+  .modal-overlay-completar {
+    padding-top: 40px;
+  }
+
+  .modal-content-completar h2 {
+    font-size: 15px;
+  }
+
+  .modal-close-btn {
+    font-size: 22px;
+    top: 10px;
+    right: 10px;
+  }
+
+  .form-group-completar input,
+  .form-group-completar select {
+    font-size: 12px;
+  }
+
+  .btn-salvar-completar {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  .error-text {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 430px) {
+  .modal-overlay-completar {
+    padding-top: 48px;
+  }
+
+  .modal-content-completar {
+    max-height: 80vh;
+  }
 }

@@ -37,49 +37,62 @@ class AuthService {
   }
 
   static async loginWithGoogle(googleUser) {
-    try {
-      // Tenta fazer login com Google no backend
-      const response = await ApiService.post('/usuario/login', {
-        email: googleUser.email,
-        senha: googleUser.uid // Usa UID do Google como "senha"
-      });
+    let attempts = 0;
+    const maxAttempts = 2;
+    let hasTriedRegister = false;
 
-      if (response.token) {
-        AuthStorage.saveToken(response.token, true);
+    let response = "";
+    while (attempts < maxAttempts) {
+      try {
+        response = await ApiService.post('/usuario/login', {
+          email: googleUser.email,
+          senha: googleUser.uid // Usa UID do Google como "senha"
+        });
+        if (response.token) {
+          attempts++;
+        }
+      } catch (error) {
+        attempts++;
+        console.log(`Tentativa ${attempts} de login com Google falhou:`, error);
+          
+        if (!hasTriedRegister) {
+          try {
+            response = await ApiService.post('/usuario/cadastro', {
+              nome: googleUser.displayName,
+              email: googleUser.email,
+              telefone: '',
+              senha: googleUser.uid, // Usa UID do Google como "senha"
+              dtNasc: null,
+              isAdmin: false
+            });
+          } catch (registrationError) {
+            console.error('Erro no cadastro do usuário Google:', registrationError);
+            throw registrationError;
+          }
+        }
         
-        const profileData = await this.fetchUserProfile(response.id);
-        
-        // Combinar dados
-        const normalizedUser = {
-          ...response,
-          telefone: profileData?.telefone || '',
-          dataNascimento: profileData?.dataNascimento || ''
-        };
-        
-        AuthStorage.saveUser(normalizedUser, true);
-        return normalizedUser;
+        hasTriedRegister = true;
       }
-
-      throw new Error('Token não recebido');
-    } catch (backendError) {
-      console.log('Backend não reconheceu Google login, usando fallback local');
-      
-      // Fallback: armazenar dados do Google localmente
-      const userData = {
-        id: googleUser.uid,
-        email: googleUser.email,
-        nome: googleUser.displayName,
-        photoURL: googleUser.photoURL,
-        telefone: '',
-        dataNascimento: '',
-        isAdmin: false,
-        loginType: 'google'
-      };
-      
-      AuthStorage.saveToken(`google_${googleUser.uid}`, true);
-      AuthStorage.saveUser(userData, true);
-      console.log('Usuário Google armazenado localmente:', userData);
-      return userData;
+    }
+    try {
+      if (response.token) {
+          AuthStorage.saveToken(response.token, true);
+          
+          const profileData = await this.fetchUserProfile(response.id);
+          
+          // Combinar dados
+          const normalizedUser = {
+            ...response,
+            telefone: profileData?.telefone || '',
+            dataNascimento: profileData?.dataNascimento || ''
+          };
+          
+          AuthStorage.saveUser(normalizedUser, true);
+          return normalizedUser;
+        }
+    } catch (error) {
+      console.error('Erro no login com Google após registro:', error);
+      throw error;
     }
   }
 

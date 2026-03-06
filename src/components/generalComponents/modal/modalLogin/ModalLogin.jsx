@@ -119,6 +119,7 @@ export const ModalLogin = ({ isOpen, onClose, onSwitchToCadastro, transitionClas
 
   const handleGoogleLogin = async () => {
     setIsLoading(true);
+    console.log('Iniciando login com Google...');
     try {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;

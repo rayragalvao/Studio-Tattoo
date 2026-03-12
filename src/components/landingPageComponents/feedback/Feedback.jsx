@@ -1,25 +1,27 @@
 import React from "react";
 import "./feedback.css";
-import perfil from "../../../assets/img/perfil.png"
+import carlos from "../../../assets/img/carlos-souza.jpg";
+import joao from "../../../assets/img/joao-silva.png";
+import maria from "../../../assets/img/maria-oliveira.jpg";
 
 export const FeedbackClientes = () => {
   const feedbacks = [
     {
       id: 1,
       nome: "João Silva",
-      foto: perfil,
+      foto: joao,
       legenda: "Excelente atendimento e resultado incrível!",
     },
     {
       id: 2,
       nome: "Maria Oliveira",
-      foto: perfil,
+      foto: maria,
       legenda: "A tatuagem ficou perfeita, muito melhor do que eu imaginava.",
     },
     {
       id: 3,
       nome: "Carlos Souza",
-      foto: perfil,
+      foto: carlos,
       legenda: "Profissionalismo e cuidado do início ao fim.",
     },
   ];

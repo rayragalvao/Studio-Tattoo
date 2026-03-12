@@ -28,7 +28,7 @@ export const PortifolioCard = ({ imagem, titulo, tamanho, precoMin, precoMax }) 
         </p>
         <p className="tattoo-obs">*A depender da área do corpo</p>
         <button className="tattoo-botao" onClick={handleQuoteClick}>
-          Ver orçamento
+          Solicitar Orçamento
         </button>
       </div>
     </div>

@@ -1,6 +1,6 @@
 .feedback {
     text-align: center;
-    padding: 50px 20px;
+    padding: -40px 20px;
     background: var(--cinza-escuro);
     color: #fff;
 }

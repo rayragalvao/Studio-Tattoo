@@ -207,8 +207,8 @@ export const Orcamento = () => {
     <>
       <Navbar />
       <Formulario
-        titulo="Do esboço ao real: Seu projeto começa aqui."
-        subtitulo="Conte sua ideia, nós criamos a arte."
+        titulo="Ideia na cabeça. Arte na pele."
+        subtitulo="Conta a ideia que eu crio a arte."
         campos={camposOrcamento}
         onSubmit={handleSubmitOrcamento}
         isSubmitting={isLoading}

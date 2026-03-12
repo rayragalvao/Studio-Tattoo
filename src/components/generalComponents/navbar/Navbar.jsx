@@ -107,7 +107,7 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
     // Lógica padrão original
     const baseMenuItems = [
       { label: "Início", to: "/" },
-      { label: "Portfólio", to: "/portfolio" },
+      { label: "Flashs", to: "/portfolio" },
       { label: "Orçamento", to: "/orcamento" }
     ];
 
@@ -125,7 +125,7 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
         // Para usuários não autenticados ou clientes
         menuItems = [
           { label: "Início", to: "/" },
-          { label: "Portfólio", to: "/portfolio" },
+          { label: "Flashs", to: "/portfolio" },
           { label: "Agendar", to: "/agendamento" },
           { label: "Orçamento", to: "/orcamento" },
           { label: "Menu", to: "/menu-cliente" }
@@ -135,7 +135,7 @@ export const Navbar = ({ customMenuItems = null, hideLogo = false }) => {
     } else {
       menuItems = [
           { label: "Início", to: "/" },
-          { label: "Portfólio", to: "/portfolio" },
+          { label: "Flashs", to: "/portfolio" },
           { label: "Orçamento", to: "/orcamento" }
         ];
     }

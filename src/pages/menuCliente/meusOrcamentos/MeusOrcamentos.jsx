@@ -391,7 +391,7 @@ export const MeusOrcamentos = () => {
                     } else {
                       return (
                         <div className="imagem-box-placeholder">
-                          <p style="color:#999;font-size:14px;text-align:center;">Nenhuma imagem de referência anexada</p>
+                          <p style={{color:'#999', fontSize:'14px', textAlign:'center'}}>Nenhuma imagem de referência anexada</p>
                         </div>
                       );
                     }

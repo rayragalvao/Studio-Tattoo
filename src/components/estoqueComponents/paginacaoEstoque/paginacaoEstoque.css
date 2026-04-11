@@ -1,0 +1,101 @@
+.paginacao-container {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.paginacao-tamanho {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.paginacao-tamanho label {
+    white-space: nowrap;
+    color: #555;
+}
+
+.paginacao-tamanho select {
+    padding: 3px 4px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 0.85rem;
+    cursor: pointer;
+    width: 54px;
+}
+
+.paginacao-controles {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+}
+
+.paginacao-info {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.paginacao-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 4px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    color: #333;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.paginacao-btn:hover:not(:disabled) {
+    background: #f0f0f0;
+    border-color: #aaa;
+}
+
+.paginacao-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.paginacao-btn .material-symbols-outlined {
+    font-size: 14px;
+}
+
+.paginacao-numero {
+    font-weight: 500;
+}
+
+.paginacao-numero.ativo {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+    cursor: default;
+}
+
+.paginacao-numero.ativo:hover {
+    background: #222;
+}
+
+.paginacao-ellipsis {
+    padding: 0 2px;
+    color: #888;
+    user-select: none;
+    font-size: 0.75rem;
+}

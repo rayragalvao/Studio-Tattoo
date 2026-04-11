@@ -64,8 +64,8 @@ html {
 }
 
 .pesquisa-estoque {
-    width: 30em;
-    min-height: 30em;
+    width: 35em;
+    min-height: 35em;
     max-height: 100vh;    
     display: grid;
     grid-template-rows: auto auto auto 1fr auto;

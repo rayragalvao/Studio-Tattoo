@@ -29,23 +29,10 @@ const AdminOrcamentos = () => {
       const dados = await orcamentoService.listarTodos();
       console.log('✅ Orçamentos carregados do backend:', dados);
       console.log('📋 Total de orçamentos:', dados.length);
-      
-      // Verificar TODOS os orçamentos
-      dados.forEach((orc, index) => {
-        console.log(`\n🔍 Orçamento ${index + 1}:`);
-        console.log(`  Código: ${orc.codigoOrcamento}`);
-        console.log(`  Nome: ${orc.nome}`);
-        console.log(`  imagemReferencia:`, orc.imagemReferencia);
-        console.log(`  Tipo:`, typeof orc.imagemReferencia);
-        console.log(`  É array?:`, Array.isArray(orc.imagemReferencia));
-      });
-      
+      console.log('📊 Status:', dados.map(o => `${o.nome}: ${o.status}`));
       setOrcamentos(dados);
     } catch (err) {
       console.error('❌ Erro ao carregar orçamentos do backend:', err);
-      console.error('Status:', err.response?.status);
-      console.error('Mensagem:', err.response?.data);
-      console.error('URL tentada:', err.config?.url);
       alert('Erro ao carregar orçamentos. Verifique se o backend está rodando.');
       setOrcamentos([]);
     } finally {
@@ -62,105 +49,61 @@ const AdminOrcamentos = () => {
     if (filtros.status !== 'Todos') {
       dados = dados.filter(o => o.status === filtros.status);
     }
+    const prioridade = { 'PENDENTE': 0, 'APROVADO': 1, 'REJEITADO': 2 };
+    dados.sort((a, b) => (prioridade[a.status] ?? 1) - (prioridade[b.status] ?? 1));
+    console.log('📋 Ordem após sort:', dados.map(o => `${o.nome} (${o.status})`));
     setExibir(dados);
   }, [search, filtros, orcamentos]);
-
-  // Usamos o menu padrão do Navbar para admins (inclui Orçamentos e Dashboard)
 
   const toggleFiltros = () => setFiltrosAbertos(!filtrosAbertos);
   const atualizarFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
   const limparFiltros = () => { setFiltros({ status:'Todos' }); setSearch(''); setFiltrosAbertos(false); };
   
-  const handleCriarOrcamento = () => {
-    setModalCriarAberto(true);
-  };
-  
-  const handleFecharModalCriar = () => {
-    setModalCriarAberto(false);
-  };
-  
-  const handleOrcamentoCriado = () => {
-    carregarOrcamentos();
-    setModalCriarAberto(false);
-  };
+  const handleCriarOrcamento = () => setModalCriarAberto(true);
+  const handleFecharModalCriar = () => setModalCriarAberto(false);
+  const handleOrcamentoCriado = () => { carregarOrcamentos(); setModalCriarAberto(false); };
   
   const handleEnviar = async (orcamento, dados) => {
     console.log('🔍 handleEnviar chamado com dados:', dados);
-    console.log('  - dados.valor:', dados?.valor);
-    console.log('  - dados.tempo:', dados?.tempo);
     
-    // Normalizar payload para o backend: valor (float) e tempo (HH:mm:ss)
     const parseValor = (v) => {
       if (!v) return null;
-      // remove "R$", espaços e converte vírgula em ponto
       const num = String(v).replace(/[^0-9,\.]/g, '').replace(',', '.');
       const parsed = parseFloat(num);
       return isNaN(parsed) ? null : parsed;
     };
 
     const normalizeTempo = (t) => {
-      console.log('🕐 normalizeTempo chamado com:', t, '(tipo:', typeof t, ')');
       if (!t) return null;
-      // aceita formatos tipo "3h30min", "3h", "2h", "03:30", "03:30:00"
       const s = String(t).toLowerCase().trim();
-      
-      // "3h30min" ou "3h" -> horas/minutos
       const hmMatch = s.match(/(\d+)h(?:(\d{1,2})min?)?$/);
       if (hmMatch) {
         const h = hmMatch[1].padStart(2, '0');
         const m = (hmMatch[2] || '00').padStart(2, '0');
-        console.log(`  ✅ Convertido "${t}" -> "${h}:${m}:00"`);
         return `${h}:${m}:00`;
       }
-      
-      // "03:30" ou "03:30:00"
       const parts = s.split(':');
       if (parts.length === 2) {
-        const h = parts[0].padStart(2, '0');
-        const m = parts[1].padStart(2, '0');
-        console.log(`  ✅ Convertido "${t}" -> "${h}:${m}:00"`);
-        return `${h}:${m}:00`;
+        return `${parts[0].padStart(2,'0')}:${parts[1].padStart(2,'0')}:00`;
       }
       if (parts.length === 3) {
-        const h = parts[0].padStart(2, '0');
-        const m = parts[1].padStart(2, '0');
-        const sec = parts[2].padStart(2, '0');
-        console.log(`  ✅ Convertido "${t}" -> "${h}:${m}:${sec}"`);
-        return `${h}:${m}:${sec}`;
+        return `${parts[0].padStart(2,'0')}:${parts[1].padStart(2,'0')}:${parts[2].padStart(2,'0')}`;
       }
-      
-      // fallback: somente número "3" -> "03:00:00"
       const onlyHours = s.match(/^\d+$/) ? s : null;
-      if (onlyHours) {
-        const h = onlyHours.padStart(2, '0');
-        console.log(`  ✅ Convertido "${t}" -> "${h}:00:00"`);
-        return `${h}:00:00`;
-      }
-      
-      console.warn(`  ⚠️ Formato de tempo não reconhecido: "${t}"`);
+      if (onlyHours) return `${onlyHours.padStart(2,'0')}:00:00`;
       return null;
     };
 
-    // Backend precisa de todos os campos do orçamento
-    const valorParsed = parseValor(dados?.valor);
-    const tempoParsed = normalizeTempo(dados?.tempo);
-    
-    console.log('💰 Valor parseado:', valorParsed);
-    console.log('⏰ Tempo parseado:', tempoParsed);
-    
     const payload = {
-      valor: valorParsed,
-      tempo: tempoParsed,
-      status: 'APROVADO' // Muda para APROVADO ao responder
+      valor: parseValor(dados?.valor),
+      tempo: normalizeTempo(dados?.tempo),
+      status: 'APROVADO'
     };
-
-    console.log('📤 Enviando resposta orçamento:', orcamento?.codigo_orcamento || orcamento?.codigoOrcamento, payload);
 
     try {
       const resposta = await orcamentoService.responder(orcamento.codigo_orcamento || orcamento.codigoOrcamento, payload);
       console.log('✅ Resposta do backend:', resposta);
       
-      // Atualizar orçamento com os novos dados (status, valor, tempo)
       const codigoOrcamento = orcamento.codigo_orcamento || orcamento.codigoOrcamento;
       const orcamentoAtualizado = resposta.orcamento || resposta;
       
@@ -172,9 +115,7 @@ const AdminOrcamentos = () => {
         )
       );
       
-      // Atualizar o orçamento selecionado com os dados salvos
       setSelected({ ...orcamento, ...orcamentoAtualizado, status: 'APROVADO' });
-      
       setModalSucesso(true);
     } catch (err) {
       const status = err.response?.status;

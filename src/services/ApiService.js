@@ -1,7 +1,7 @@
 import AuthStorage from './AuthStorage.js';
 
 const API_CONFIG = {
-  baseURL: 'http://localhost:8080',
+  baseURL: 'http://18.232.200.166/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

@@ -88,7 +88,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
             <div className="referencias-grid">
               {agendamento.orcamento.imagemReferencia.map((img, idx) => {
                 const imgPath = img.replace(/\\/g, '/');
-                const imgUrl = `http://localhost:8080/${imgPath}`;
+                const imgUrl = `http://18.232.200.166/api/${imgPath}`;
                 return (
                   <img key={idx} src={imgUrl} alt={`Referência ${idx + 1}`} className="referencia-image" />
                 );

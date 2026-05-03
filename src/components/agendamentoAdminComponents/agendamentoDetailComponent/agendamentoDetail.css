@@ -1,18 +1,19 @@
 .agend-detail {
-  background-color: #ffff;
-  border-radius: 6px;
-  padding: 12px 20px 16px;
-  overflow-y: auto;
-  height: 80vh;
-  min-height: 600px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  /* Padroniza altura com outras telas e evita saltos ao alternar views */
+  min-height: calc(100vh - 140px);
+  max-height: calc(100vh - 140px);
   max-width: 800px;
   width: 100%;
-  margin-left: 50px;
+  margin-left: 90px;
   margin-right: 0;
   display: flex;
+  overflow-y: auto;
   flex-direction: column;
   gap: 18px;
-  box-sizing: border-box;
 }
 
 .agend-detail.empty {

@@ -3,11 +3,13 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  height: 80vh;
+  /* Altura consistente com o painel de detalhe */
+  height: calc(100vh - 140px);
   width: 400px;
-  margin-left: 30px;
+  margin-left: 80px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .agend-list-items::-webkit-scrollbar {

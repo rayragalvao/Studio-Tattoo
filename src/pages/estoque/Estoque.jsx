@@ -36,21 +36,51 @@ export const Estoque = () => {
 
     const [carregando, setCarregando] = useState(false);
     const [filtrosAtivos, setFiltrosAtivos] = useState(false);
+    // Paginação
+    const [page, setPage] = useState(0); // backend geralmente usa 0-based
+    const [pageSize, setPageSize] = useState(10);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
     const [mostrarConfirmacaoExclusao, setMostrarConfirmacaoExclusao] = useState(false);
 
     useEffect(() => {
-        if (itensEstoque.length <= 0) {
-            setCarregando(true);
-        }
-        api.get(url)
-            .then(response => {                
-                setItensEstoque(response.data);
-                setItensEstoqueExibir(response.data);
+        setCarregando(true);
+        api.get(url, { params: { page, size: pageSize } })
+            .then(response => {
+                const raw = response.data;
 
-                console.log(response.data);
+                // Normalizar possíveis formatos de resposta (array direto ou objeto paginado)
+                let items = [];
+                if (Array.isArray(raw)) {
+                    items = raw;
+                } else if (raw && Array.isArray(raw.content)) {
+                    items = raw.content;
+                } else if (raw && Array.isArray(raw.data)) {
+                    items = raw.data;
+                } else if (raw && Array.isArray(raw.items)) {
+                    items = raw.items;
+                } else if (raw && typeof raw === 'object') {
+                    // tentar encontrar a primeira propriedade que seja um array
+                    const arr = Object.values(raw).find(v => Array.isArray(v));
+                    if (arr) items = arr;
+                }
+
+                setItensEstoque(items);
+                setItensEstoqueExibir(items);
+
+                // Extrair metadados de paginação se existirem
+                if (raw && typeof raw === 'object') {
+                    if (typeof raw.totalPages === 'number') setTotalPages(raw.totalPages);
+                    if (typeof raw.totalElements === 'number') setTotalElements(raw.totalElements);
+                    if (typeof raw.number === 'number') setPage(raw.number);
+                    if (typeof raw.size === 'number') setPageSize(raw.size);
+                }
+
+                console.log('Resposta API estoque:', raw);
+                console.log('Itens normalizados:', items);
                 setCarregando(false);
 
-                let itensEstoqueBaixo = response.data.filter(item =>
+                const itensEstoqueBaixo = items.filter(item =>
                     item.quantidade <= (item.minAviso || 0)
                 );
                 if (itensEstoqueBaixo.length > 0) {
@@ -65,7 +95,7 @@ export const Estoque = () => {
                 setCarregando(false);
                 console.error('Erro ao buscar itens de estoque:', error);
             });
-    }, [itensEstoque.length]);
+    }, [page, pageSize]);
 
     function mostrarNotificacao(tipo, titulo, mensagem) {
         setNotificacao({
@@ -587,6 +617,101 @@ export const Estoque = () => {
                                 filtrosAbertos={filtrosAbertos}
                             />
                         ))}
+                    </div>
+                )}
+
+                {(totalElements > 0 || itensEstoque.length > 0 || totalPages > 1) && (
+                    <div className="paginacao" role="navigation" aria-label="Controles de paginação">
+                        <div className="paginacao-left">
+                            <label className="paginacao-select-label">
+                                Itens
+                                <select
+                                    className="paginacao-select"
+                                    value={pageSize}
+                                    onChange={(e) => { setPageSize(Number(e.target.value)); setPage(0); }}
+                                    aria-label="Itens por página"
+                                >
+                                    <option value={5}>5</option>
+                                    <option value={10}>10</option>
+                                    <option value={20}>20</option>
+                                    <option value={50}>50</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div className="paginacao-center">
+                            <button
+                                className="paginacao-btn paginacao-prev"
+                                onClick={() => setPage(p => Math.max(0, p - 1))}
+                                disabled={page <= 0}
+                                aria-label="Página anterior"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                                    <path d="M15 18l-6-6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </button>
+
+                            {(() => {
+                                // calcular totalPages efetivo
+                                const computedTotal = totalPages || (totalElements ? Math.ceil(totalElements / pageSize) : Math.ceil((itensEstoque.length || 0) / pageSize) || 1);
+                                const current = Math.max(0, Math.min(page, computedTotal - 1));
+                                const pages = [];
+
+                                const addPage = (p) => pages.push({ type: 'page', value: p });
+                                const addEllipsis = () => pages.push({ type: 'ellipsis' });
+
+                                if (computedTotal <= 7) {
+                                    for (let i = 0; i < computedTotal; i++) addPage(i);
+                                } else {
+                                    addPage(0);
+                                    if (current > 3) addEllipsis();
+
+                                    const start = Math.max(1, current - 1);
+                                    const end = Math.min(computedTotal - 2, current + 1);
+                                    for (let i = start; i <= end; i++) addPage(i);
+
+                                    if (current < computedTotal - 4) addEllipsis();
+                                    addPage(computedTotal - 1);
+                                }
+
+                                return pages.map((pObj, idx) => {
+                                    if (pObj.type === 'ellipsis') return (
+                                        <span key={`e-${idx}`} className="paginacao-ellipsis">…</span>
+                                    );
+                                    const p = pObj.value;
+                                    return (
+                                        <button
+                                            key={`p-${p}`}
+                                            className={`paginacao-page ${p === current ? 'active' : ''}`}
+                                            onClick={() => setPage(p)}
+                                            aria-label={`Ir para página ${p + 1}`}
+                                        >
+                                            {p + 1}
+                                        </button>
+                                    );
+                                });
+                            })()}
+
+                            <button
+                                className="paginacao-btn paginacao-next"
+                                onClick={() => setPage(p => p + 1)}
+                                disabled={(totalPages ? page >= totalPages - 1 : (itensEstoque.length < pageSize && (page + 1) * pageSize >= (totalElements || itensEstoque.length)))}
+                                aria-label="Próxima página"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                                    <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div className="paginacao-right">
+                            {(() => {
+                                const total = totalElements || itensEstoque.length || 0;
+                                const start = total === 0 ? 0 : page * pageSize + 1;
+                                const end = Math.min((page + 1) * pageSize, total);
+                                return <span className="paginacao-range">{start}–{end} de {total}</span>;
+                            })()}
+                        </div>
                     </div>
                 )}
 

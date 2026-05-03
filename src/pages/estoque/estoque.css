@@ -215,6 +215,117 @@ html {
     z-index: 9999 !important;
 }
 
+.paginacao {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    justify-content: center;
+    margin: 8px 0;
+}
+
+.paginacao-left { flex: 1; display:flex; align-items:center; gap:8px }
+.paginacao-center { flex: 2; display:flex; align-items:center; justify-content:center; gap:6px }
+.paginacao-right { flex: 1; display:flex; align-items:center; justify-content:flex-end }
+
+.paginacao-btn {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e6e6e6;
+    background: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.paginacao-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.paginacao-info {
+    font-size: 14px;
+    color: #374151;
+    margin: 0 8px;
+}
+
+.paginacao-select-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.paginacao-select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 64px;
+    min-width: 56px;
+    height: 36px;
+    padding: 6px 8px;
+    border-radius: 10px;
+    border: 1px solid #e6e6e6;
+    background: #fff;
+    text-align: center;
+    font-weight: 700;
+    color: #111;
+    display: inline-block;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+/* pequeno ajuste do ícone nativo em browsers que suportam */
+.paginacao-select::-ms-expand { display: none; }
+
+.paginacao-btn svg {
+    display: block;
+    color: #374151;
+}
+
+.paginacao-btn:disabled svg {
+    color: #c1c1c1;
+}
+
+.paginacao-page {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid #e6e6e6;
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: 600;
+    color: #374151;
+    font-size: 13px;
+    line-height: 1;
+}
+
+@media (max-width: 768px) {
+    .paginacao-select { width: 48px; height: 30px; font-size: 13px }
+    .paginacao-page { width: 28px; height: 28px }
+    .paginacao-btn { padding: 3px 6px }
+}
+
+.paginacao-page.active {
+    background: #111;
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+.paginacao-ellipsis {
+    padding: 0 8px;
+    color: #9ca3af;
+    font-weight: 600;
+}
+
+.paginacao-range {
+    color: #374151;
+    font-size: 13px;
+}
+
 /* Telas Extra Grandes (1441px - 1920px) */
 @media (min-width: 1500px) and (max-width: 1920px) {
     .section-estoque {

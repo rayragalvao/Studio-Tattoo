@@ -3,9 +3,9 @@
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  height: 70vh;
+  height: 80vh;
   width: 400px;
-  margin-left: 30px;
+  margin-left: 75px;
   display: flex;
   flex-direction: column;
 }
@@ -211,8 +211,16 @@
 /* Responsividade */
 @media (max-width: 1024px) {
   .orc-list {
+    width: 100%;
+    max-width: 100%;
+    margin-left: 0;
     height: auto;
     min-height: 300px;
+    padding: 16px;
+  }
+
+  .orc-list-items {
+    max-height: 380px;
   }
 }
 

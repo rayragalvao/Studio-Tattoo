@@ -10,7 +10,7 @@ export const PaginacaoEstoque = ({
     onMudarTamanhoPagina,
     carregando = false
 }) => {
-    if (totalPaginas <= 1 && totalItens <= tamanhoPagina) return null;
+    if (totalItens === 0) return null;
 
     const inicio = paginaAtual * tamanhoPagina + 1;
     const fim = Math.min((paginaAtual + 1) * tamanhoPagina, totalItens);

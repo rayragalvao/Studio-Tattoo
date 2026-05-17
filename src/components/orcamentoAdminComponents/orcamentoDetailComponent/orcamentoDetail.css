@@ -1,16 +1,18 @@
 .orc-detail {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  min-height: calc(100vh - 100px);
+  background-color: #ffff;
+  border-radius: 6px;
+  padding: 12px 20px 16px;
+  overflow-y: auto;
+  height: 80vh;
+  min-height: 600px;
   max-width: 800px;
   width: 100%;
-  margin-left: 50px;
+  margin-left: 100px;
   margin-right: 0;
   display: flex;
   flex-direction: column;
   gap: 18px;
+  box-sizing: border-box;
 }
 
 .orc-detail.empty {
@@ -163,6 +165,14 @@
   .info-sections-grid {
     grid-template-columns: 1fr;
   }
+
+  .orc-detail {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+    min-height: 400px;
+    height: auto;
+  }
 }
 @media (max-width: 768px) {
   .fields-grid {
@@ -170,6 +180,7 @@
   }
   .orc-detail {
     padding: 16px;
+    min-height: 360px;
   }
 }
 @media (max-width: 480px) {

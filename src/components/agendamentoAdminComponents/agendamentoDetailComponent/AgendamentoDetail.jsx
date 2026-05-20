@@ -222,7 +222,7 @@ const AgendamentoDetail = ({ agendamento, onConfirmar, onCancelar }) => {
               <div className="referencias-grid">
                 {imagensReferencia.map((img, idx) => {
                   const imgPath = img.replace(/\\/g, '/');
-                  const imgUrl = `http://18.232.200.166/api/${imgPath}`;
+                  const imgUrl = `http://34.199.8.137/api/${imgPath}`;
 
                   return (
                     <img

@@ -2,7 +2,7 @@ import axios from 'axios';
 import AuthStorage from './AuthStorage.js';
 
 const api = axios.create({
-  baseURL: 'http://18.232.200.166/api',
+  baseURL: 'http://34.199.8.137/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

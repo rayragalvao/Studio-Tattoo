@@ -355,7 +355,7 @@ export const MeusOrcamentos = () => {
                               imageUrl = img;
                             } else {
                               const cleanPath = img.replace(/\\/g, '/');
-                              imageUrl = `http://18.232.200.166/api/${cleanPath}`;
+                              imageUrl = `http://34.199.8.137/api/${cleanPath}`;
                             }
                             
                             return (

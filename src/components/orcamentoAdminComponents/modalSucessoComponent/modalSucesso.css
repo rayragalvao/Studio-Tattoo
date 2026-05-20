@@ -4,23 +4,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.64);
+  backdrop-filter: blur(3px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  animation: fadeIn 0.2s ease-in-out;
+  animation: fadeIn 0.25s ease-out;
+  padding: 24px;
 }
 
 .modal-sucesso-content {
   background: white;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 90%;
+  padding: 28px;
+  border-radius: 14px;
+  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.28);
+  max-width: 480px;
+  width: min(90%, 480px);
   text-align: center;
-  animation: slideDown 0.3s ease-out;
+  animation: slideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal-sucesso-icon {
@@ -48,16 +50,19 @@
   background: #10b981;
   color: white;
   border: none;
-  padding: 12px 32px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 500;
+  padding: 12px 34px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .modal-sucesso-btn:hover {
   background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
 }
 
 @keyframes fadeIn {

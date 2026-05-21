@@ -72,20 +72,22 @@ export const Orcamento = () => {
       errorMessage: "Local do corpo é obrigatório",
       options: [
         "Selecione uma opção",
-        "Braço",
-        "Antebraço",
-        "Perna",
-        "Costas",
-        "Costelas",
-        "Abdômen",
-        "Glúteos",
-        "Meio dos seios",
-        "Cotovelo",
-        "Ombro",
-        "Punho",
-        "Tornozelo",
-        "Pescoço",
-        "Outro",
+        ...[
+          "Braço",
+          "Antebraço",
+          "Perna",
+          "Costas",
+          "Costelas",
+          "Abdômen",
+          "Glúteos",
+          "Meio dos seios",
+          "Cotovelo",
+          "Ombro",
+          "Punho",
+          "Tornozelo",
+          "Pescoço",
+          "Outro",
+        ].sort(),
       ],
     },
     {
@@ -166,20 +168,20 @@ export const Orcamento = () => {
       setCardResposta(
         sucesso
           ? {
-              tipo: "sucesso",
-              titulo: "Sua ideia já chegou até nós!",
-              mensagem: "Em breve entraremos em contato por e-mail.",
-              codigo: codigoRetornado,
-              botaoTexto: "Continuar navegando",
-            }
+            tipo: "sucesso",
+            titulo: "Sua ideia já chegou até nós!",
+            mensagem: "Em breve entraremos em contato por e-mail.",
+            codigo: codigoRetornado,
+            botaoTexto: "Continuar navegando",
+          }
           : {
-              tipo: "erro",
-              titulo: backendResponse.title || "Erro ao enviar orçamento",
-              mensagem:
-                backendResponse.message ||
-                "Falha ao processar sua solicitação.",
-              botaoTexto: "Tentar novamente",
-            }
+            tipo: "erro",
+            titulo: backendResponse.title || "Erro ao enviar orçamento",
+            mensagem:
+              backendResponse.message ||
+              "Falha ao processar sua solicitação.",
+            botaoTexto: "Tentar novamente",
+          }
       );
       if (sucesso) {
         setLimparForms(true);

@@ -6,27 +6,45 @@ import { CardResposta } from "../../components/generalComponents/cardResposta/Ca
 import { ItemEstoque } from "../../components/estoqueComponents/itemEstoque/ItemEstoque";
 import { CardEstoque } from "../../components/estoqueComponents/cardEstoque/CardEstoque";
 import { PainelFiltros } from "../../components/estoqueComponents/painelFiltros/PainelFiltros";
+import { PaginacaoEstoque } from "../../components/estoqueComponents/paginacaoEstoque/paginacaoEstoque";
 import "../../styles/global.css";
 import "./estoque.css";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import api from "../../services/api.js";
+import estoqueService from "../../services/EstoqueService.js";
 
 export const Estoque = () => {
     const url = "/estoque";
+
+    // ── Estados de UI ────────────────────────────────────────────────────────
     const [adicionarEstoque, setAdicionarEstoque] = useState(false);
     const [informacoesItem, setInformacoesItem] = useState(false);
-    const [itensEstoque, setItensEstoque] = useState([]);
-    const [itensEstoqueExibir, setItensEstoqueExibir] = useState(itensEstoque);
     const [itemSelecionado, setItemSelecionado] = useState(null);
     const [qtdParaAtualizar, setQtdParaAtualizar] = useState(0);
     const [tipoOperacao, setTipoOperacao] = useState("adicionar");
-
+    const [carregando, setCarregando] = useState(false);
     const [filtrosAbertos, setFiltrosAbertos] = useState(false);
+    const [filtrosAtivos, setFiltrosAtivos] = useState(false);
+    const [mostrarConfirmacaoExclusao, setMostrarConfirmacaoExclusao] = useState(false);
+
+    // ── Estados de dados ─────────────────────────────────────────────────────
+    const [itensEstoque, setItensEstoque] = useState([]);
+
+    // ── Estados de paginação ─────────────────────────────────────────────────
+    const [paginaAtual, setPaginaAtual] = useState(0);
+    const [totalPaginas, setTotalPaginas] = useState(0);
+    const [totalItens, setTotalItens] = useState(0);
+    const [tamanhoPagina, setTamanhoPagina] = useState(10);
+
+    // ── Estados de filtros ───────────────────────────────────────────────────
+    const [termoPesquisa, setTermoPesquisa] = useState('');
     const [filtros, setFiltros] = useState({
         unidadeMedida: "Todas",
         alertaEstoque: "Todos",
         ordenarPor: "nome"
     });
+
+    // ── Notificação ──────────────────────────────────────────────────────────
     const [notificacao, setNotificacao] = useState({
         visivel: false,
         tipo: 'sucesso',
@@ -34,125 +52,147 @@ export const Estoque = () => {
         mensagem: ''
     });
 
-    const [carregando, setCarregando] = useState(false);
-    const [filtrosAtivos, setFiltrosAtivos] = useState(false);
-    const [mostrarConfirmacaoExclusao, setMostrarConfirmacaoExclusao] = useState(false);
+    // Ref para debounce da pesquisa
+    const debounceRef = useRef(null);
 
-    useEffect(() => {
-        if (itensEstoque.length <= 0) {
-            setCarregando(true);
-        }
-        api.get(url)
-            .then(response => {                
-                setItensEstoque(response.data);
-                setItensEstoqueExibir(response.data);
+    // ── Busca paginada do backend ─────────────────────────────────────────────
+    const buscarItens = useCallback((pagina = 0, tamanho = tamanhoPagina, nome = termoPesquisa) => {
+        setCarregando(true);
+        estoqueService.listarPaginado(pagina, tamanho, nome)
+            .then(data => {
+                // data é o Page do Spring: { content, totalElements, totalPages, number, size }
+                setItensEstoque(data.content || []);
+                setTotalPaginas(data.totalPages || 0);
+                setTotalItens(data.totalElements || 0);
+                setPaginaAtual(data.number || 0);
 
-                console.log(response.data);
-                setCarregando(false);
-
-                let itensEstoqueBaixo = response.data.filter(item =>
+                // Aviso de estoque baixo (checado sobre a página atual)
+                const itensEstoqueBaixo = (data.content || []).filter(item =>
                     item.quantidade <= (item.minAviso || 0)
                 );
                 if (itensEstoqueBaixo.length > 0) {
                     mostrarNotificacao(
                         'aviso',
                         'Estoque Baixo',
-                        itensEstoqueBaixo.length + ' itens estão com estoque baixo.'
+                        `${itensEstoqueBaixo.length} ${itensEstoqueBaixo.length === 1 ? 'item está' : 'itens estão'} com estoque baixo nesta página.`
                     );
                 }
             })
             .catch(error => {
-                setCarregando(false);
                 console.error('Erro ao buscar itens de estoque:', error);
-            });
-    }, [itensEstoque.length]);
-
-    function mostrarNotificacao(tipo, titulo, mensagem) {
-        setNotificacao({
-            visivel: true,
-            tipo,
-            titulo,
-            mensagem
-        });
-    }
-
-    function fecharNotificacao() {
-        setNotificacao(prev => ({
-            ...prev,
-            visivel: false
-        }));
-    };
-
-    function validarFormulario() {
-        const erros = [];
-        
-        if (!itemSelecionado.nome?.trim()) {
-            erros.push('Nome é obrigatório');
-        }
-        
-        if (!itemSelecionado.quantidade || itemSelecionado.quantidade < 0) {
-            erros.push('Quantidade deve ser um número positivo');
-        }
-        
-        if (!itemSelecionado.minAviso && itemSelecionado.minAviso !== 0) {
-            erros.push('Mínimo em estoque é obrigatório');
-        }
-        
-        if (itemSelecionado.minAviso < 0) {
-            erros.push('Mínimo em estoque deve ser um número positivo');
-        }
-        
-        if (!itemSelecionado.unidadeMedida) {
-            erros.push('Unidade de medida é obrigatória');
-        }
-        
-        return erros;
-    }
-
-    function cadastrarItem() {
-        const erros = validarFormulario();
-        
-        if (erros.length > 0) {
-            mostrarNotificacao(
-                'erro',
-                'Dados Inválidos',
-                erros.join(' | ')
-            );
-            return;
-        }
-
-        console.log("Item a ser cadastrado:", itemSelecionado);
-        setCarregando(true);
-        
-        api.post(url, itemSelecionado)
-            .then(response => {
-                console.log("Item cadastrado com sucesso:", response.data);
-
-                mostrarNotificacao(
-                    'sucesso', 
-                    'Item Cadastrado!', 
-                    `${itemSelecionado.nome} foi adicionado ao estoque.`
-                );
-
-                setItensEstoque([...itensEstoque, response.data]);
-                setItensEstoqueExibir([...itensEstoqueExibir, response.data]);
-                
-                // Fechar formulário e limpar dados
-                setAdicionarEstoque(false);
-                setItemSelecionado(null);
-            })
-            .catch(error => {
-                console.error('Erro ao cadastrar item:', error);
-
-                mostrarNotificacao(
-                    'erro', 
-                    'Erro ao Cadastrar', 
-                    error.response?.data?.message || 'Erro interno do servidor'
-                );
+                mostrarNotificacao('erro', 'Erro ao Carregar', 'Não foi possível buscar os itens do estoque.');
             })
             .finally(() => {
                 setCarregando(false);
             });
+    }, [tamanhoPagina, termoPesquisa]);
+
+    // Carrega ao montar
+    useEffect(() => {
+        buscarItens(0, tamanhoPagina, '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ── Handlers de paginação ────────────────────────────────────────────────
+    function mudarPagina(novaPagina) {
+        buscarItens(novaPagina, tamanhoPagina, termoPesquisa);
+    }
+
+    function mudarTamanhoPagina(novoTamanho) {
+        setTamanhoPagina(novoTamanho);
+        buscarItens(0, novoTamanho, termoPesquisa);
+    }
+
+    // ── Pesquisa com debounce ────────────────────────────────────────────────
+    function handlePesquisa(e) {
+        const valor = e.target.value;
+        setTermoPesquisa(valor);
+
+        // Cancela o debounce anterior e cria um novo (300ms)
+        clearTimeout(debounceRef.current);
+        debounceRef.current = setTimeout(() => {
+            buscarItens(0, tamanhoPagina, valor);
+        }, 300);
+    }
+
+    // ── Filtros (unidadeMedida e alertaEstoque são aplicados localmente
+    //    sobre a página atual, pois o backend só suporta filtro por nome) ─────
+    const itensExibir = (() => {
+        let lista = [...itensEstoque];
+
+        if (filtros.unidadeMedida !== "Todas") {
+            lista = lista.filter(item =>
+                item.unidadeMedida?.toLowerCase() === filtros.unidadeMedida.toLowerCase()
+            );
+        }
+
+        if (filtros.alertaEstoque === "alerta") {
+            lista = lista.filter(item => item.quantidade <= (item.minAviso || 0));
+        } else if (filtros.alertaEstoque === "ok") {
+            lista = lista.filter(item => item.quantidade > (item.minAviso || 0));
+        }
+
+        lista.sort((a, b) => {
+            const aEmAlerta = a.quantidade <= (a.minAviso || 0);
+            const bEmAlerta = b.quantidade <= (b.minAviso || 0);
+            if (aEmAlerta && !bEmAlerta) return -1;
+            if (!aEmAlerta && bEmAlerta) return 1;
+            switch (filtros.ordenarPor) {
+                case "quantidade": return b.quantidade - a.quantidade;
+                case "alerta": return (a.quantidade <= (a.minAviso || 0)) ? -1 : 1;
+                default: return a.nome.localeCompare(b.nome);
+            }
+        });
+
+        return lista;
+    })();
+
+    useEffect(() => {
+        setFiltrosAtivos(
+            filtros.unidadeMedida !== "Todas" || filtros.alertaEstoque !== "Todos"
+        );
+    }, [filtros]);
+
+    // ── Notificação ──────────────────────────────────────────────────────────
+    function mostrarNotificacao(tipo, titulo, mensagem) {
+        setNotificacao({ visivel: true, tipo, titulo, mensagem });
+    }
+
+    function fecharNotificacao() {
+        setNotificacao(prev => ({ ...prev, visivel: false }));
+    }
+
+    // ── Validação ────────────────────────────────────────────────────────────
+    function validarFormulario() {
+        const erros = [];
+        if (!itemSelecionado.nome?.trim()) erros.push('Nome é obrigatório');
+        if (!itemSelecionado.quantidade || itemSelecionado.quantidade < 0) erros.push('Quantidade deve ser um número positivo');
+        if (!itemSelecionado.minAviso && itemSelecionado.minAviso !== 0) erros.push('Mínimo em estoque é obrigatório');
+        if (itemSelecionado.minAviso < 0) erros.push('Mínimo em estoque deve ser um número positivo');
+        if (!itemSelecionado.unidadeMedida) erros.push('Unidade de medida é obrigatória');
+        return erros;
+    }
+
+    // ── CRUD ─────────────────────────────────────────────────────────────────
+    function cadastrarItem() {
+        const erros = validarFormulario();
+        if (erros.length > 0) {
+            mostrarNotificacao('erro', 'Dados Inválidos', erros.join(' | '));
+            return;
+        }
+        setCarregando(true);
+        api.post(url, itemSelecionado)
+            .then(response => {
+                mostrarNotificacao('sucesso', 'Item Cadastrado!', `${itemSelecionado.nome} foi adicionado ao estoque.`);
+                setAdicionarEstoque(false);
+                setItemSelecionado(null);
+                // Volta para a primeira página para ver o novo item
+                buscarItens(0, tamanhoPagina, termoPesquisa);
+            })
+            .catch(error => {
+                mostrarNotificacao('erro', 'Erro ao Cadastrar', error.response?.data?.message || 'Erro interno do servidor');
+            })
+            .finally(() => setCarregando(false));
     }
 
     function mostrarConfirmacaoExcluir() {
@@ -160,100 +200,55 @@ export const Estoque = () => {
     }
 
     function excluirItem() {
-        console.log("Item a ser excluído:", itemSelecionado);
         setCarregando(true);
-        
         api.delete(`${url}/${itemSelecionado.id}`)
-            .then(response => {
-                console.log("Item excluído com sucesso:", response.data);
-                const itensAtualizados = itensEstoque.filter(item => item.id !== itemSelecionado.id);
-                setItensEstoque(itensAtualizados);
-                setItensEstoqueExibir(itensAtualizados);
-
-                mostrarNotificacao(
-                    'sucesso',
-                    'Item Excluído',
-                    `${itemSelecionado.nome} foi removido do estoque.`
-                );
-
-                // Fechar modais e limpar
+            .then(() => {
+                mostrarNotificacao('sucesso', 'Item Excluído', `${itemSelecionado.nome} foi removido do estoque.`);
                 setMostrarConfirmacaoExclusao(false);
                 setInformacoesItem(false);
                 setItemSelecionado(null);
+                // Se era o único item da página, volta uma página
+                const novaPagina = itensEstoque.length === 1 && paginaAtual > 0
+                    ? paginaAtual - 1
+                    : paginaAtual;
+                buscarItens(novaPagina, tamanhoPagina, termoPesquisa);
             })
             .catch(error => {
-                console.error('Erro ao excluir item:', error);
-                mostrarNotificacao(
-                    'erro',
-                    'Erro ao Excluir',
-                    error.response?.data?.message || 'Erro interno do servidor'
-                );
+                mostrarNotificacao('erro', 'Erro ao Excluir', error.response?.data?.message || 'Erro interno do servidor');
             })
-            .finally(() => {
-                setCarregando(false);
-            });
+            .finally(() => setCarregando(false));
     }
 
     function cancelarExclusao() {
         setMostrarConfirmacaoExclusao(false);
     }
 
-    function atualizarItem(){
+    function atualizarItem() {
         const erros = validarFormulario();
-        
         if (erros.length > 0) {
-            mostrarNotificacao(
-                'erro',
-                'Dados Inválidos',
-                erros.join('. ')
-            );
+            mostrarNotificacao('erro', 'Dados Inválidos', erros.join('. '));
             return;
         }
-
-        console.log("Item a ser atualizado:", itemSelecionado);
         setCarregando(true);
-        
         api.put(`${url}/${itemSelecionado.id}`, itemSelecionado)
             .then(response => {
-                console.log("Item atualizado com sucesso:", response.data);
-                const itensAtualizados = itensEstoque.map(item =>
-                    item.id === itemSelecionado.id ? response.data : item
-                );
-                setItensEstoque(itensAtualizados);
-                setItensEstoqueExibir(itensAtualizados);
-
-                mostrarNotificacao(
-                    'sucesso',
-                    'Item Atualizado',
-                    'As informações do item foram atualizadas com sucesso.'
-                );
-
+                mostrarNotificacao('sucesso', 'Item Atualizado', 'As informações do item foram atualizadas com sucesso.');
                 setAdicionarEstoque(false);
                 setItemSelecionado(null);
+                buscarItens(paginaAtual, tamanhoPagina, termoPesquisa);
             })
             .catch(error => {
-                console.error('Erro ao atualizar item:', error);
-                mostrarNotificacao(
-                    'erro',
-                    'Erro ao Atualizar',
-                    error.response?.data?.message || 'Erro interno do servidor'
-                );
+                mostrarNotificacao('erro', 'Erro ao Atualizar', error.response?.data?.message || 'Erro interno do servidor');
             })
-            .finally(() => {
-                setCarregando(false);
-            });
+            .finally(() => setCarregando(false));
     }
 
-    function atualizarQuantidade(operacao){
+    function atualizarQuantidade(operacao) {
         let qtdAtualizada = Number(itemSelecionado.quantidade);
         let qtdParaAdicionar = Number(qtdParaAtualizar);
 
         if (isNaN(qtdParaAdicionar) || qtdParaAdicionar <= 0) {
-            mostrarNotificacao(
-                'erro',
-                'Quantidade Inválida',
-                'Por favor, insira uma quantidade válida para atualizar.'
-            );
+            mostrarNotificacao('erro', 'Quantidade Inválida', 'Por favor, insira uma quantidade válida para atualizar.');
             return;
         }
 
@@ -261,166 +256,55 @@ export const Estoque = () => {
             qtdAtualizada = qtdAtualizada + qtdParaAdicionar;
         } else if (operacao === "subtrair") {
             if (qtdAtualizada < qtdParaAdicionar) {
-                mostrarNotificacao(
-                    'aviso',
-                    'Quantidade Insuficiente',
-                    'Não é possível subtrair mais do que a quantidade atual em estoque.'
-                );
+                mostrarNotificacao('aviso', 'Quantidade Insuficiente', 'Não é possível subtrair mais do que a quantidade atual em estoque.');
                 return;
             }
             qtdAtualizada = qtdAtualizada - qtdParaAdicionar;
         }
 
-        console.log("Quantidade atualizada para:", qtdAtualizada);
-
         api.patch(`${url}/${itemSelecionado.id}/${qtdAtualizada}`)
             .then(response => {
-                console.log("Quantidade atualizada com sucesso:", response.data);
-                
-                const itensAtualizados = itensEstoque.map(item =>
-                    item.id === itemSelecionado.id ? { ...item, quantidade: qtdAtualizada } : item
-                );
-                setItensEstoque(itensAtualizados);
-                setItensEstoqueExibir(itensAtualizados);
-
-                mostrarNotificacao(
-                    'sucesso',
-                    'Estoque Atualizado',
-                    'A quantidade de itens foi atualizada com sucesso.'
-                );
-
+                mostrarNotificacao('sucesso', 'Estoque Atualizado', 'A quantidade de itens foi atualizada com sucesso.');
                 setQtdParaAtualizar(0);
                 setItemSelecionado(response.data);
                 document.getElementById('inputAtualizarQtd').value = '';
+                buscarItens(paginaAtual, tamanhoPagina, termoPesquisa);
             })
             .catch(error => {
-                console.error('Erro ao atualizar quantidade do item:', error);
-                mostrarNotificacao(
-                    'erro',
-                    'Erro ao Atualizar',
-                    error.response.data.message
-                );
+                mostrarNotificacao('erro', 'Erro ao Atualizar', error.response?.data?.message || 'Erro ao atualizar quantidade');
             });
     }
 
+    // ── Filtros ──────────────────────────────────────────────────────────────
     function toggleFiltros() {
         setFiltrosAbertos(!filtrosAbertos);
     }
 
-    const aplicarFiltros = useCallback(() => {
-        let itensFiltrados = [...itensEstoque];
-
-        // Filtro por texto
-        const pesquisa = document.getElementById('pesquisa')?.value || '';
-        if (pesquisa) {
-            itensFiltrados = itensFiltrados.filter(item =>
-                item.nome.toLowerCase().includes(pesquisa.toLowerCase())
-            );
-        }
-
-        // Filtro por unidade de medida
-        if (filtros.unidadeMedida !== "Todas") {
-            itensFiltrados = itensFiltrados.filter(item =>
-                item.unidadeMedida?.toLowerCase() === filtros.unidadeMedida.toLowerCase()
-            );
-        }
-
-        // Filtro por alerta de estoque
-        if (filtros.alertaEstoque === "alerta") {
-            itensFiltrados = itensFiltrados.filter(item =>
-                item.quantidade <= (item.minAviso || 0)
-            );
-        } else if (filtros.alertaEstoque === "ok") {
-            itensFiltrados = itensFiltrados.filter(item =>
-                item.quantidade >= (item.minAviso || 0)
-            );
-        } 
-
-        // Ordenação com prioridade para itens em alerta
-        itensFiltrados.sort((a, b) => {
-            // Prioridade 1: Itens com quantidade menor que o mínimo aparecem primeiro
-            const aEmAlerta = a.quantidade <= (a.minAviso || 0);
-            const bEmAlerta = b.quantidade <= (b.minAviso || 0);
-            
-            if (aEmAlerta && !bEmAlerta) return -1;
-            if (!aEmAlerta && bEmAlerta) return 1;
-            
-            // Prioridade 2: Dentro do mesmo grupo (alerta ou não), aplicar ordenação escolhida
-            switch (filtros.ordenarPor) {
-                case "nome":
-                    return a.nome.localeCompare(b.nome);
-                case "quantidade":
-                    return b.quantidade - a.quantidade;
-                case "alerta":
-                    return (a.quantidade <= (a.minAviso || 0)) ? -1 : 1;
-                default:
-                    return 0;
-            }
-        });
-
-        if (JSON.stringify(itensFiltrados) !== JSON.stringify(itensEstoqueExibir)) {
-            setItensEstoqueExibir(itensFiltrados);
-        }
-
-        if (filtros.unidadeMedida !== "Todas" || filtros.alertaEstoque !== "Todos") {
-            setFiltrosAtivos(true);
-            return;
-        } else {
-            setFiltrosAtivos(false);
-        }
-    }, [itensEstoque, filtros, itensEstoqueExibir]);
-
-    // Aplicar filtros sempre que mudarem
-    useEffect(() => {
-        if (itensEstoque.length > 0) {
-            aplicarFiltros();
-        }
-    }, [itensEstoque, filtros, aplicarFiltros]);
-
     function atualizarFiltro(campo, valor) {
-        setFiltros(prev => ({
-            ...prev,
-            [campo]: valor
-        }));
+        setFiltros(prev => ({ ...prev, [campo]: valor }));
+    }
+
+    function aplicarFiltros() {
+        // Filtros locais não precisam rebuscar — itensExibir já os aplica
     }
 
     function limparFiltros() {
-        setFiltros({
-            unidadeMedida: "Todas",
-            alertaEstoque: "Todos",
-            ordenarPor: "nome"
-        });
+        setFiltros({ unidadeMedida: "Todas", alertaEstoque: "Todos", ordenarPor: "nome" });
+        setTermoPesquisa('');
         document.getElementById('pesquisa').value = '';
-        setItensEstoqueExibir(itensEstoque);
-
+        buscarItens(0, tamanhoPagina, '');
         setFiltrosAtivos(false);
     }
 
+    // ── Modais ───────────────────────────────────────────────────────────────
     function mostrarAdicionarEstoque(tipo) {
         setTipoOperacao(tipo);
-
         if (tipo === "adicionar") {
-            setItemSelecionado({
-                nome: '',
-                quantidade: 0,
-                minAviso: 0,
-                unidadeMedida: 'Unidades'
-            });
+            setItemSelecionado({ nome: '', quantidade: 0, minAviso: 0, unidadeMedida: 'Unidades' });
         }
-
-        if (informacoesItem) {
-            setInformacoesItem(false);
-        }
-
+        if (informacoesItem) setInformacoesItem(false);
         setTimeout(() => {
-            const cardAddEstoque = document.getElementById('card-add-estoque');
-            if (cardAddEstoque) {
-                cardAddEstoque.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'nearest'
-                });
-            }
+            document.getElementById('card-add-estoque')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 150);
         setAdicionarEstoque(true);
     }
@@ -431,22 +315,11 @@ export const Estoque = () => {
     }
 
     function mostrarInformacoesItem(item) {
-        if (adicionarEstoque) {
-            setAdicionarEstoque(false);
-        }
-
+        if (adicionarEstoque) setAdicionarEstoque(false);
         setInformacoesItem(true);
         setItemSelecionado(item);
-
         setTimeout(() => {
-            const cardInformacoes = document.getElementById('card-informacoes-item');
-            if (cardInformacoes) {
-                cardInformacoes.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'nearest'
-                });
-            }
+            document.getElementById('card-informacoes-item')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }, 150);
     }
 
@@ -455,151 +328,132 @@ export const Estoque = () => {
         setInformacoesItem(false);
     }
 
-    // Função para navegação por teclado
-    function handleKeyDown(event, action, ...args) {
-        if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            action(...args);
-        }
-    }
-
-    // Função para fechar modais com ESC
+    // ── ESC fecha modais ─────────────────────────────────────────────────────
     useEffect(() => {
         function handleEscape(event) {
             if (event.key === 'Escape') {
-                if (mostrarConfirmacaoExclusao) {
-                    cancelarExclusao();
-                } else if (adicionarEstoque) {
-                    cancelarAdicionarEstoque();
-                } else if (informacoesItem) {
-                    fecharInformacoesItem();
-                } else if (filtrosAbertos) {
-                    setFiltrosAbertos(false);
-                }
+                if (mostrarConfirmacaoExclusao) cancelarExclusao();
+                else if (adicionarEstoque) cancelarAdicionarEstoque();
+                else if (informacoesItem) fecharInformacoesItem();
+                else if (filtrosAbertos) setFiltrosAbertos(false);
             }
         }
-
         document.addEventListener('keydown', handleEscape);
         return () => document.removeEventListener('keydown', handleEscape);
     }, [adicionarEstoque, informacoesItem, filtrosAbertos, mostrarConfirmacaoExclusao]);
 
-  return (
-    <>
-        <Notificacao
-            tipo={notificacao.tipo}
-            titulo={notificacao.titulo}
-            mensagem={notificacao.mensagem}
-            visivel={notificacao.visivel}
-            onFechar={fecharNotificacao}
-            duracao={4000}
-        />
-      <Navbar />
-        <h1 className="h1-estoque"> Estoque </h1>
-        <div className="section-estoque">
-            <div className="card-estoque pesquisa-estoque">
-                <div className="div-barra-pesquisa">
-                    <div className="input-barra-pesquisa">
-                        <input
-                            type="text"
-                            placeholder="Pesquisa"
-                            className="input-estoque"
-                            id="pesquisa"
-                            aria-label="Pesquisar itens do estoque"
-                            aria-describedby="search-help"
-                            onChange={(e) => aplicarFiltros()}
-                        />
-                        <span 
-                            className="icon material-symbols-outlined"
-                            aria-hidden="true"
+    // ── Render ───────────────────────────────────────────────────────────────
+    return (
+        <>
+            <Notificacao
+                tipo={notificacao.tipo}
+                titulo={notificacao.titulo}
+                mensagem={notificacao.mensagem}
+                visivel={notificacao.visivel}
+                onFechar={fecharNotificacao}
+                duracao={4000}
+            />
+            <Navbar />
+            <h1 className="h1-estoque">Estoque</h1>
+            <div className="section-estoque">
+                <div className="card-estoque pesquisa-estoque">
+                    <div className="div-barra-pesquisa">
+                        <div className="input-barra-pesquisa">
+                            <input
+                                type="text"
+                                placeholder="Pesquisa"
+                                className="input-estoque"
+                                id="pesquisa"
+                                aria-label="Pesquisar itens do estoque"
+                                aria-describedby="search-help"
+                                onChange={handlePesquisa}
+                            />
+                            <span className="icon material-symbols-outlined" aria-hidden="true">search</span>
+                            <span id="search-help" className="sr-only">
+                                Digite o nome do item para filtrar a lista
+                            </span>
+                        </div>
+
+                        <button
+                            className={`bt-filtro ${filtrosAbertos ? 'ativo' : ''}`}
+                            onClick={toggleFiltros}
+                            aria-label={filtrosAbertos ? "Fechar painel de filtros" : "Abrir painel de filtros"}
+                            aria-expanded={filtrosAbertos}
+                            aria-controls="painel-filtros"
                         >
-                            search
-                        </span>
-                        <span id="search-help" className="sr-only">
-                            Digite o nome do item para filtrar a lista
-                        </span>
+                            <span className="icon material-symbols-outlined" aria-hidden="true">filter_list</span>
+                        </button>
                     </div>
-                
-                    <button 
-                        className={`bt-filtro ${filtrosAbertos ? 'ativo' : ''}`}
-                        onClick={toggleFiltros}
-                        aria-label={filtrosAbertos ? "Fechar painel de filtros" : "Abrir painel de filtros"}
-                        aria-expanded={filtrosAbertos}
-                        aria-controls="painel-filtros"
-                    >
-                        <span 
-                            className="icon material-symbols-outlined"
-                            aria-hidden="true"
+
+                    <PainelFiltros
+                        filtrosAbertos={filtrosAbertos}
+                        filtros={filtros}
+                        onAtualizarFiltro={atualizarFiltro}
+                        onAplicarFiltros={() => { aplicarFiltros(); setFiltrosAbertos(false); }}
+                        onLimparFiltros={limparFiltros}
+                        onFechar={() => setFiltrosAbertos(false)}
+                    />
+
+                    <div className="filtros-ativos">
+                        {filtrosAtivos && (
+                            <>
+                                <span className="fonte-negrito">Filtros ativos: </span>
+                                {filtros.unidadeMedida !== "Todas" && (
+                                    <span className="tag-filtro">{filtros.unidadeMedida}</span>
+                                )}
+                                {filtros.unidadeMedida !== "Todas" && filtros.alertaEstoque !== "Todos" && (
+                                    <span className="tag-filtro-separador"> | </span>
+                                )}
+                                {filtros.alertaEstoque !== "Todos" && (
+                                    <span className="tag-filtro">
+                                        {filtros.alertaEstoque === "alerta" ? "Estoque Baixo" : "Estoque OK"}
+                                    </span>
+                                )}
+                            </>
+                        )}
+                    </div>
+
+                    {carregando ? (
+                        <div className="carregando">Carregando materiais...</div>
+                    ) : itensExibir.length === 0 ? (
+                        <div className="nenhum-item">Nenhum item encontrado.</div>
+                    ) : (
+                        <div
+                            className="container-itens"
+                            role="list"
+                            aria-label={`Lista de itens do estoque — ${totalItens} itens no total`}
                         >
-                            filter_list
-                        </span>
+                            {itensExibir.map((item) => (
+                                <ItemEstoque
+                                    key={item.id}
+                                    item={item}
+                                    onMostrarInformacoes={mostrarInformacoesItem}
+                                    filtrosAbertos={filtrosAbertos}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    {/* ── Paginação ── */}
+                    <PaginacaoEstoque
+                        paginaAtual={paginaAtual}
+                        totalPaginas={totalPaginas}
+                        totalItens={totalItens}
+                        tamanhoPagina={tamanhoPagina}
+                        onMudarPagina={mudarPagina}
+                        onMudarTamanhoPagina={mudarTamanhoPagina}
+                        carregando={carregando}
+                    />
+
+                    <button
+                        className="submit-button"
+                        onClick={() => mostrarAdicionarEstoque("adicionar")}
+                        aria-label="Abrir formulário para adicionar novo item ao estoque"
+                    >
+                        Adicionar um novo item
                     </button>
                 </div>
 
-                {/* Painel de Filtros */}
-                <PainelFiltros
-                    filtrosAbertos={filtrosAbertos}
-                    filtros={filtros}
-                    onAtualizarFiltro={atualizarFiltro}
-                    onAplicarFiltros={aplicarFiltros}
-                    onLimparFiltros={limparFiltros}
-                    onFechar={() => setFiltrosAbertos(false)}
-                />
-
-                
-                {/* Indicador de filtros ativos */}
-                <div className="filtros-ativos">
-                    { filtrosAtivos && (
-                        <>
-                            <span className="fonte-negrito">Filtros ativos: </span>
-                            {filtros.unidadeMedida !== "Todas" && (
-                                <span className="tag-filtro">{filtros.unidadeMedida}</span>
-                            )}
-                            {filtros.unidadeMedida !== "Todas" && filtros.alertaEstoque !== "Todos" && (
-                                <span className="tag-filtro-separador"> | </span>
-                            )}
-                            {filtros.alertaEstoque !== "Todos" && (
-                                <span className="tag-filtro">
-                                    {filtros.alertaEstoque === "alerta" ? "Estoque Baixo" : "Estoque OK"}
-                                </span>
-                            )}
-                        </>
-                    )}
-                </div>
-                { carregando ? (
-                    <div className="carregando">
-                        Carregando materiais...
-                    </div>
-                ) : itensEstoqueExibir.length === 0 ? (
-                    <div className="nenhum-item">
-                        Nenhum item encontrado.
-                    </div>
-                ) : (
-                    <div 
-                        className="container-itens"
-                        role="list"
-                        aria-label={`Lista de itens do estoque - ${itensEstoqueExibir.length} itens encontrados`}
-                    >
-                        {itensEstoqueExibir.map((item, index) => (
-                            <ItemEstoque
-                                key={index}
-                                item={item}
-                                onMostrarInformacoes={mostrarInformacoesItem}
-                                filtrosAbertos={filtrosAbertos}
-                            />
-                        ))}
-                    </div>
-                )}
-
-                <button 
-                    className="submit-button" 
-                    onClick={() => mostrarAdicionarEstoque("adicionar")}
-                    aria-label="Abrir formulário para adicionar novo item ao estoque"
-                >
-                    Adicionar um novo item
-                </button>
-            </div>
-
-            
                 {adicionarEstoque && (
                     <CardEstoque
                         tipo={tipoOperacao}
@@ -623,41 +477,39 @@ export const Estoque = () => {
                         carregando={carregando}
                     />
                 )}
-            
-        </div>
+            </div>
 
-        {/* Modal de Confirmação de Exclusão */}
-        {mostrarConfirmacaoExclusao && itemSelecionado && (
-            <CardResposta
-                tipo="aviso"
-                titulo="Confirmar Exclusão"
-                mensagem={`Tem certeza que deseja excluir "${itemSelecionado.nome}" do estoque? Esta ação não pode ser desfeita.`}
-                botaoTexto={carregando ? "Excluindo..." : "Sim, Excluir"}
-                onClose={cancelarExclusao}
-                className="modal-confirmacao-exclusao"
-            >
-                <div className="botoes-confirmacao">
-                    <button 
-                        className="submit-button cancel-button"
-                        onClick={cancelarExclusao}
-                        disabled={carregando}
-                        aria-label="Cancelar exclusão"
-                    >
-                        Cancelar
-                    </button>
-                    <button 
-                        className="submit-button"
-                        onClick={excluirItem}
-                        disabled={carregando}
-                        aria-label={`Confirmar exclusão de ${itemSelecionado.nome}`}
-                    >
-                        {carregando ? "Excluindo..." : "Sim, Excluir"}
-                    </button>
-                </div>
-            </CardResposta>
-        )}
+            {mostrarConfirmacaoExclusao && itemSelecionado && (
+                <CardResposta
+                    tipo="aviso"
+                    titulo="Confirmar Exclusão"
+                    mensagem={`Tem certeza que deseja excluir "${itemSelecionado.nome}" do estoque? Esta ação não pode ser desfeita.`}
+                    botaoTexto={carregando ? "Excluindo..." : "Sim, Excluir"}
+                    onClose={cancelarExclusao}
+                    className="modal-confirmacao-exclusao"
+                >
+                    <div className="botoes-confirmacao">
+                        <button
+                            className="submit-button cancel-button"
+                            onClick={cancelarExclusao}
+                            disabled={carregando}
+                            aria-label="Cancelar exclusão"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            className="submit-button"
+                            onClick={excluirItem}
+                            disabled={carregando}
+                            aria-label={`Confirmar exclusão de ${itemSelecionado.nome}`}
+                        >
+                            {carregando ? "Excluindo..." : "Sim, Excluir"}
+                        </button>
+                    </div>
+                </CardResposta>
+            )}
 
-      <Footer />
-    </>
-  );
+            <Footer />
+        </>
+    );
 };

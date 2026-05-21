@@ -36,7 +36,8 @@ class AuthService {
     }
   }
 
-  static async loginWithGoogle(googleUser) {
+  // comentei o login com Google por enquanto, pois estava causando confusão no fluxo de login tradicional. Podemos reativar e ajustar depois se necessário.
+  /*static async loginWithGoogle(googleUser) {
     let attempts = 0;
     const maxAttempts = 2;
     let hasTriedRegister = false;
@@ -63,7 +64,8 @@ class AuthService {
               telefone: '',
               senha: googleUser.uid, // Usa UID do Google como "senha"
               dtNasc: null,
-              isAdmin: false
+              isAdmin: false,
+              googleLogin: true
             });
           } catch (registrationError) {
             console.error('Erro no cadastro do usuário Google:', registrationError);
@@ -94,7 +96,65 @@ class AuthService {
       console.error('Erro no login com Google após registro:', error);
       throw error;
     }
-  }
+  } */
+
+static async loginWithGoogle(googleUser) {
+    try {
+        // Tenta login primeiro com senha derivada do email
+        try {
+            const loginResponse = await ApiService.post('/usuario/login', {
+                email: googleUser.email,
+                senha: 'GOOGLE_' + googleUser.email
+            });
+            if (loginResponse.token) {
+                AuthStorage.saveToken(loginResponse.token, true);
+                const profileData = await this.fetchUserProfile(loginResponse.id);
+                const normalizedUser = {
+                    ...loginResponse,
+                    telefone: profileData?.telefone || '',
+                    dataNascimento: profileData?.dataNascimento || ''
+                };
+                AuthStorage.saveUser(normalizedUser, true);
+                return normalizedUser;
+            }
+        } catch (loginError) {
+            console.log('Login Google falhou, tentando cadastro:', loginError);
+        }
+
+        // Se login falhou, cadastra
+        await ApiService.post('/usuario/cadastro', {
+            nome: googleUser.displayName,
+            email: googleUser.email,
+            telefone: '',
+            senha: null,
+            dtNasc: null,
+            isAdmin: false,
+            googleLogin: true
+        });
+
+        // Após cadastro, loga com senha derivada
+        const loginResponse = await ApiService.post('/usuario/login', {
+            email: googleUser.email,
+            senha: 'GOOGLE_' + googleUser.email
+        });
+
+        AuthStorage.saveToken(loginResponse.token, true);
+        const profileData = await this.fetchUserProfile(loginResponse.id);
+        const normalizedUser = {
+            ...loginResponse,
+            telefone: profileData?.telefone || '',
+            dataNascimento: profileData?.dataNascimento || ''
+        };
+        AuthStorage.saveUser(normalizedUser, true);
+        return normalizedUser;
+
+    } catch (error) {
+        console.error('Erro no Google login:', error);
+        throw error;
+    }
+}
+
+
 
   static async register(userData) {
     try {

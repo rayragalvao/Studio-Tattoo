@@ -119,7 +119,7 @@ const OrcamentoDetail = ({ orcamento, onEnviar }) => {
               {orcamento.imagemReferencia.map((img, idx) => {
                 // Converter barras invertidas do Windows para barras normais
                 const imgPath = img.replace(/\\/g, '/');
-                const imgUrl = `http://localhost:8080/${imgPath}`;
+                const imgUrl = `http://34.199.8.137/api/${imgPath}`;
                 console.log(`🖼️ Carregando imagem ${idx + 1}:`, imgUrl);
                 return (
                   <img key={idx} src={imgUrl} alt={`Referência ${idx + 1}`} className="referencia-image" />

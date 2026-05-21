@@ -30,9 +30,8 @@ const AdminAgendamentos = () => {
       const dados = await agendamentoService.listarAgendamentos();
       console.log('✅ Agendamentos carregados:', dados);
       console.log('📋 Total:', dados?.length || 0);
-      
+      console.log('📊 Status:', dados?.map(a => `${a.nomeUsuario}: ${a.status}`));
       setAgendamentos(dados || []);
-      setExibir(dados || []);
     } catch (err) {
       console.error('❌ Erro ao carregar agendamentos:', err);
       alert('Erro ao carregar agendamentos. Verifique se o backend está rodando.');
@@ -58,35 +57,25 @@ const AdminAgendamentos = () => {
     if (filtros.status !== 'Todos') {
       result = result.filter(a => a.status === filtros.status);
     }
-    
+
+    const prioridade = { 'PENDENTE': 0, 'CONFIRMADO': 1, 'CONCLUIDO': 2, 'CANCELADO': 3 };
+    result.sort((a, b) => (prioridade[a.status] ?? 2) - (prioridade[b.status] ?? 2));
+
     setExibir(result);
   }, [search, filtros, agendamentos]);
 
   const toggleFiltros = () => setFiltrosAbertos(!filtrosAbertos);
-  
-  const atualizarFiltro = (campo, valor) => {
-    setFiltros(prev => ({ ...prev, [campo]: valor }));
-  };
-  
-  const limparFiltros = () => {
-    setFiltros({ status: 'Todos' });
-    setSearch('');
-    setFiltrosAbertos(false);
-  };
-
-  const handleSelect = (item) => {
-    setSelected(item);
-  };
+  const atualizarFiltro = (campo, valor) => setFiltros(prev => ({ ...prev, [campo]: valor }));
+  const limparFiltros = () => { setFiltros({ status: 'Todos' }); setSearch(''); setFiltrosAbertos(false); };
+  const handleSelect = (item) => setSelected(item);
 
   const handleConfirmar = async (id) => {
     try {
       const item = exibir.find(a => a.id === id) || selected;
-
       if (!item?.emailUsuario || !item?.codigoOrcamento || !item?.dataHora) {
         alert('Dados do agendamento incompletos (email, código de orçamento ou dataHora ausentes).');
         return;
       }
-
       await agendamentoService.atualizarAgendamento(id, {
         emailUsuario: item.emailUsuario,
         codigoOrcamento: item.codigoOrcamento,
@@ -102,26 +91,18 @@ const AdminAgendamentos = () => {
     }
   };
 
-  const handleCancelar = async (id) => {
-    setModalCancelamento({ aberto: true, id });
-  };
+  const handleCancelar = async (id) => setModalCancelamento({ aberto: true, id });
 
   const confirmarCancelamento = async () => {
     const id = modalCancelamento.id;
-    if (!id) {
-      setModalCancelamento({ aberto: false, id: null });
-      return;
-    }
-
+    if (!id) { setModalCancelamento({ aberto: false, id: null }); return; }
     try {
       const item = exibir.find(a => a.id === id) || selected;
-
       if (!item?.emailUsuario || !item?.codigoOrcamento || !item?.dataHora) {
         alert('Dados do agendamento incompletos (email, código de orçamento ou dataHora ausentes).');
         setModalCancelamento({ aberto: false, id: null });
         return;
       }
-
       await agendamentoService.atualizarAgendamento(id, {
         emailUsuario: item.emailUsuario,
         codigoOrcamento: item.codigoOrcamento,
@@ -138,18 +119,9 @@ const AdminAgendamentos = () => {
     }
   };
 
-  const handleCriarAgendamento = () => {
-    setModalCriarAberto(true);
-  };
-
-  const handleFecharModalCriar = () => {
-    setModalCriarAberto(false);
-  };
-
-  const handleAgendamentoCriado = async () => {
-    setModalCriarAberto(false);
-    await carregarAgendamentos();
-  };
+  const handleCriarAgendamento = () => setModalCriarAberto(true);
+  const handleFecharModalCriar = () => setModalCriarAberto(false);
+  const handleAgendamentoCriado = async () => { setModalCriarAberto(false); await carregarAgendamentos(); };
 
   return (
     <>
@@ -185,10 +157,7 @@ const AdminAgendamentos = () => {
             <h3>Cancelar agendamento</h3>
             <p>Tem certeza que deseja cancelar este agendamento?</p>
             <div className="cancel-modal-actions">
-              <button
-                className="cancel-modal-confirm"
-                onClick={confirmarCancelamento}
-              >
+              <button className="cancel-modal-confirm" onClick={confirmarCancelamento}>
                 Cancelar agendamento
               </button>
               <button

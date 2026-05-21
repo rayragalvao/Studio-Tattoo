@@ -92,19 +92,10 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
   };
 
   const validatePassword = (password) => {
-    const minLength = 6;
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-    if (password.length < minLength) {
-      return 'A senha deve ter pelo menos 6 caracteres';
-    }
-    if (!hasNumbers) {
-      return 'A senha deve conter pelo menos um número';
-    }
-    if (!hasSpecialChar) {
-      return 'A senha deve conter pelo menos um caractere especial';
-    }
+    if (password.length < 8) return 'A senha deve ter pelo menos 8 caracteres';
+    if (!/[A-Z]/.test(password)) return 'A senha deve conter pelo menos uma letra maiúscula';
+    if (!/[a-z]/.test(password)) return 'A senha deve conter pelo menos uma letra minúscula';
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) return 'A senha deve conter pelo menos um caractere especial';
     return '';
   };
 
@@ -288,8 +279,9 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
 
   const getPasswordCriteria = (password) => {
     return {
-      minLength: password.length >= 6,
-      hasNumber: /\d/.test(password),
+      minLength: password.length >= 8,
+      hasUpperCase: /[A-Z]/.test(password),
+      hasLowerCase: /[a-z]/.test(password),
       hasSpecialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password)
     };
   };
@@ -417,11 +409,7 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                     }}
                   >
                     <span className="material-symbols-outlined">
-                      {showPassword ? (
-                        'visibility_off'
-                      ) : (
-                        'visibility'
-                      )}
+                      {showPassword ? 'visibility_off' : 'visibility'}
                     </span>
                   </button>
                 </div>
@@ -440,11 +428,15 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                           <>
                             <li className={criteria.minLength ? 'valid' : 'invalid'}>
                               <span className="icon">{criteria.minLength ? '✓' : '×'}</span>
-                              Pelo menos 6 caracteres
+                              Pelo menos 8 caracteres
                             </li>
-                            <li className={criteria.hasNumber ? 'valid' : 'invalid'}>
-                              <span className="icon">{criteria.hasNumber ? '✓' : '×'}</span>
-                              Pelo menos um número (0-9)
+                            <li className={criteria.hasUpperCase ? 'valid' : 'invalid'}>
+                              <span className="icon">{criteria.hasUpperCase ? '✓' : '×'}</span>
+                              Pelo menos uma letra maiúscula (A-Z)
+                            </li>
+                            <li className={criteria.hasLowerCase ? 'valid' : 'invalid'}>
+                              <span className="icon">{criteria.hasLowerCase ? '✓' : '×'}</span>
+                              Pelo menos uma letra minúscula (a-z)
                             </li>
                             <li className={criteria.hasSpecialChar ? 'valid' : 'invalid'}>
                               <span className="icon">{criteria.hasSpecialChar ? '✓' : '×'}</span>
@@ -486,12 +478,8 @@ export const ModalCadastro = ({ isOpen, onClose, onSwitchToLogin, transitionClas
                   }}
                 >
                   <span className="material-symbols-outlined">
-                      {showConfirmPassword ? (
-                        'visibility_off'
-                      ) : (
-                        'visibility'
-                      )}
-                    </span>
+                    {showConfirmPassword ? 'visibility_off' : 'visibility'}
+                  </span>
                 </button>
               </div>
               {errors.confirmacaoSenha && (

@@ -1,0 +1,113 @@
+.paginacao-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    overflow: visible;
+}
+
+.paginacao-tamanho {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.paginacao-tamanho label {
+    white-space: nowrap;
+    color: #333;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.paginacao-tamanho select {
+    padding: 8px 10px;
+    border: 2px solid #999;
+    border-radius: 6px;
+    background: #f9f9f9;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 70px;
+    height: 36px;
+    font-weight: 700;
+    color: #222;
+}
+
+.paginacao-controles {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.paginacao-info {
+    font-size: 0.9rem;
+    color: #333;
+    margin: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+    font-weight: 500;
+}
+
+.paginacao-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: #fff;
+    color: #333;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.paginacao-btn:hover:not(:disabled) {
+    background: #f5f5f5;
+    border-color: #555;
+    transform: scale(1.05);
+}
+
+.paginacao-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.paginacao-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+.paginacao-numero {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.paginacao-numero.ativo {
+    background: #222;
+    color: #fff;
+    border-color: #222;
+    cursor: default;
+}
+
+.paginacao-numero.ativo:hover {
+    background: #222;
+    transform: scale(1.05);
+}
+
+.paginacao-ellipsis {
+    padding: 0 4px;
+    color: #666;
+    user-select: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+}

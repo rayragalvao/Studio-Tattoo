@@ -64,8 +64,8 @@ html {
 }
 
 .pesquisa-estoque {
-    width: 30em;
-    min-height: 30em;
+    width: 35em;
+    min-height: 35em;
     max-height: 100vh;    
     display: grid;
     grid-template-rows: auto auto auto 1fr auto;
@@ -260,9 +260,14 @@ html {
         padding: 0.5em;
     }
 
+    .container-cards {
+        width: 100%;
+        min-width: auto;
+    }
+
     .pesquisa-estoque {
         width: 100%;
-        max-width: 70vw;
+        max-width: 100%;
         height: auto;
         min-height: 70vh;
         gap: 1em;

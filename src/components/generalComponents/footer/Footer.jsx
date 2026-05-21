@@ -10,7 +10,7 @@ export const Footer = () => {
 
   const baseMenuItems = [
     { label: "Início", to: "/" },
-    { label: "Portfólio", to: "/portfolio" },
+    { label: "Flashs", to: "/portfolio" },
     { label: "Orçamento", to: "/orcamento" }
   ];
 

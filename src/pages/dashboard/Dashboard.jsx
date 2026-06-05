@@ -90,8 +90,11 @@ const chartOptions = {
                     size: 12
                 },
                 callback: function(value) {
-                    return 'R$' + (value / 1000).toFixed(1) + 'k';
-                }
+                   if (value >= 1000) {
+                     return 'R$' + (value / 1000).toFixed(1) + 'k';
+              }
+            return 'R$ ' + value.toLocaleString('pt-BR');
+        }
             }
         },
     },

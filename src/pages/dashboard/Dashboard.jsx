@@ -201,23 +201,26 @@ const Dashboard = () => {
 
     // Recriar chartData com dados atualizados
     const chartDataAtualizado = {
-        labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-        datasets: [
-            {
-                label: 'Faturamento',
-                data: faturamentoDados && faturamentoDados.length > 0 ? faturamentoDados : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                backgroundColor: function(context) {
-                    const index = context.dataIndex;
-                    const currentMonth = new Date().getMonth();
-                    return index === currentMonth ? '#fb923c' : '#7c3aed';
-                },
-                borderRadius: 8,
-                borderSkipped: false,
-                barThickness: 24,
-                maxBarThickness: 32,
+    labels: Array.from({ length: 12 }, (_, i) => {
+        const d = new Date();
+        d.setMonth(d.getMonth() - 11 + i);
+        return d.toLocaleDateString('pt-BR', { month: 'short', year: '2-digit' });
+    }),
+    datasets: [
+        {
+            label: 'Faturamento',
+            data: faturamentoDados && faturamentoDados.length > 0 ? faturamentoDados : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+            backgroundColor: function(context) {
+                const index = context.dataIndex;
+                return index === 11 ? '#fb923c' : '#7c3aed';
             },
-        ],
-    };
+            borderRadius: 8,
+            borderSkipped: false,
+            barThickness: 24,
+            maxBarThickness: 32,
+        },
+    ],
+};
 
 
     return (

@@ -5,10 +5,15 @@ class EstoqueService {
    * Lista todos os materiais do estoque (sem paginação)
    * @returns {Promise<Array>} - Array com os materiais
    */
+
   async listarMateriais() {
     try {
       const response = await api.get('/estoque');
-      return response.data || [];
+      const data = response.data;
+      if (data && Array.isArray(data.content)) {
+        return data.content;
+      }
+      return Array.isArray(data) ? data : [];
     } catch (error) {
       console.error('Erro ao listar materiais:', error);
       throw error;

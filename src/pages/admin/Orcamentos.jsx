@@ -98,7 +98,19 @@ const AdminOrcamentos = () => {
     const parseValor = (v) => {
       if (!v) return null;
       // remove "R$", espaços e converte vírgula em ponto
-      const num = String(v).replace(/[^0-9,\.]/g, '').replace(',', '.');
+    //  const num = String(v).replace(/[^0-9,\.]/g, '').replace(',', '.');
+    const parseValor = (v) => {
+  if (!v) return null;
+  // Remove R$, espaços, pontos de milhar e converte vírgula decimal em ponto
+  const num = String(v)
+    .replace(/[R$\s]/g, '')
+    .replace(/\./g, '')      // remove pontos de milhar
+    .replace(',', '.');       // converte vírgula decimal em ponto
+  const parsed = parseFloat(num);
+  return isNaN(parsed) ? null : parsed;
+};
+
+
       const parsed = parseFloat(num);
       return isNaN(parsed) ? null : parsed;
     };

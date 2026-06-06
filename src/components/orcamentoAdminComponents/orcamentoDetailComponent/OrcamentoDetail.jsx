@@ -43,11 +43,11 @@ const OrcamentoDetail = ({ orcamento, onEnviar }) => {
   }, [orcamento]);
 
   const formatarValor = (value) => {
-    const numero = value.replace(/\D/g, '');
-    if(!numero) return '';
-    const valorNumerico = Number(numero)/100;
-    return valorNumerico.toLocaleString('pt-BR',{ style:'currency', currency:'BRL'});
-  };
+  const numero = value.replace(/\D/g, '');
+  if (!numero) return '';
+  const valorNumerico = Number(numero);
+  return valorNumerico.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+};
   const handleValorChange = e => { setValor(formatarValor(e.target.value)); setErroValor(false); };
 
   const formatarTempo = (value) => {

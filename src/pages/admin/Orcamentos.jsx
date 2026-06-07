@@ -93,100 +93,69 @@ const AdminOrcamentos = () => {
     setModalCriarAberto(false);
   };
   
-  const handleEnviar = async (orcamento, dados) => {
-    // Normalizar payload para o backend: valor (float) e tempo (HH:mm:ss)
-    const parseValor = (v) => {
-      if (!v) return null;
-      // remove "R$", espaços e converte vírgula em ponto
-    //  const num = String(v).replace(/[^0-9,\.]/g, '').replace(',', '.');
-    const parseValor = (v) => {
-  if (!v) return null;
-  // Remove R$, espaços, pontos de milhar e converte vírgula decimal em ponto
-  const num = String(v)
-    .replace(/[R$\s]/g, '')
-    .replace(/\./g, '')      // remove pontos de milhar
-    .replace(',', '.');       // converte vírgula decimal em ponto
-  const parsed = parseFloat(num);
-  return isNaN(parsed) ? null : parsed;
-};
-
-
-      const parsed = parseFloat(num);
-      return isNaN(parsed) ? null : parsed;
-    };
-
-    const normalizeTempo = (t) => {
-      if (!t) return null;
-      // aceita formatos tipo "3h30min", "3h", "03:30", "03:30:00"
-      const s = String(t).toLowerCase();
-      // "3h30min" -> horas/minutos
-      const hmMatch = s.match(/(\d+)h(\d{1,2})?min?/);
-      if (hmMatch) {
-        const h = hmMatch[1].padStart(2, '0');
-        const m = (hmMatch[2] || '00').padStart(2, '0');
-        return `${h}:${m}:00`;
-      }
-      // "03:30" ou "03:30:00"
-      const parts = s.split(':');
-      if (parts.length === 2) {
-        const h = parts[0].padStart(2, '0');
-        const m = parts[1].padStart(2, '0');
-        return `${h}:${m}:00`;
-      }
-      if (parts.length === 3) {
-        const h = parts[0].padStart(2, '0');
-        const m = parts[1].padStart(2, '0');
-        const sec = parts[2].padStart(2, '0');
-        return `${h}:${m}:${sec}`;
-      }
-      // fallback: somente horas em "3" -> "03:00:00"
-      const onlyHours = s.match(/^\d+$/) ? s : null;
-      if (onlyHours) {
-        const h = onlyHours.padStart(2, '0');
-        return `${h}:00:00`;
-      }
-      return null;
-    };
-
-    // Backend precisa de todos os campos do orçamento
-    const payload = {
-      nome: orcamento.nome,
-      email: orcamento.email,
-      ideia: orcamento.ideia || orcamento.descricao,
-      tamanho: orcamento.tamanho,
-      cores: orcamento.cores,
-      localCorpo: orcamento.localCorpo || orcamento.local_corpo,
-      valor: parseValor(dados?.valor),
-      tempo: normalizeTempo(dados?.tempo),
-      status: 'APROVADO' // Muda para APROVADO ao responder
-    };
-
-    console.log('📤 Enviando resposta orçamento:', orcamento?.codigo_orcamento || orcamento?.codigoOrcamento, payload);
-
-    try {
-      const resposta = await orcamentoService.responder(orcamento.codigo_orcamento || orcamento.codigoOrcamento, payload);
-      console.log('✅ Resposta do backend:', resposta);
-      
-      // Atualizar status local IMEDIATAMENTE para mudar bolinha para verde
-      const codigoOrcamento = orcamento.codigo_orcamento || orcamento.codigoOrcamento;
-      setOrcamentos(prevOrcamentos => 
-        prevOrcamentos.map(orc => 
-          (orc.codigo_orcamento === codigoOrcamento || orc.codigoOrcamento === codigoOrcamento)
-            ? { ...orc, status: 'APROVADO' }
-            : orc
-        )
-      );
-      
-      setModalSucesso(true);
-      setSelected(null);
-    } catch (err) {
-      const status = err.response?.status;
-      const data = err.response?.data;
-      console.error('Erro ao enviar resposta:', { status, data, err });
-      alert(`Erro ao enviar resposta. Status: ${status || 'desconhecido'}${data?.message ? ' - ' + data.message : ''}`);
-    }
+ 
+const handleEnviar = async (orcamento, dados) => {
+  const parseValor = (v) => {
+    if (!v) return null;
+    const num = String(v)
+      .replace(/[R$\s]/g, '')
+      .replace(/\./g, '')
+      .replace(',', '.');
+    const parsed = parseFloat(num);
+    return isNaN(parsed) ? null : parsed;
   };
 
+  const normalizeTempo = (t) => {
+    if (!t) return null;
+    const s = String(t).toLowerCase();
+    const hmMatch = s.match(/(\d+)h(\d{1,2})?min?/);
+    if (hmMatch) {
+      const h = hmMatch[1].padStart(2, '0');
+      const m = (hmMatch[2] || '00').padStart(2, '0');
+      return `${h}:${m}:00`;
+    }
+    const parts = s.split(':');
+    if (parts.length === 2) return `${parts[0].padStart(2,'0')}:${parts[1].padStart(2,'0')}:00`;
+    if (parts.length === 3) return `${parts[0].padStart(2,'0')}:${parts[1].padStart(2,'0')}:${parts[2].padStart(2,'0')}`;
+    const onlyHours = s.match(/^\d+$/) ? s : null;
+    if (onlyHours) return `${onlyHours.padStart(2,'0')}:00:00`;
+    return null;
+  };
+
+  const payload = {
+    nome: orcamento.nome,
+    email: orcamento.email,
+    ideia: orcamento.ideia || orcamento.descricao,
+    tamanho: orcamento.tamanho,
+    cores: orcamento.cores,
+    localCorpo: orcamento.localCorpo || orcamento.local_corpo,
+    valor: parseValor(dados?.valor),
+    tempo: normalizeTempo(dados?.tempo),
+    status: 'APROVADO'
+  };
+
+  console.log('📤 Enviando resposta orçamento:', orcamento?.codigoOrcamento, payload);
+
+  try {
+    const resposta = await orcamentoService.responder(orcamento.codigo_orcamento || orcamento.codigoOrcamento, payload);
+    console.log('✅ Resposta do backend:', resposta);
+    const codigoOrcamento = orcamento.codigo_orcamento || orcamento.codigoOrcamento;
+    setOrcamentos(prevOrcamentos =>
+      prevOrcamentos.map(orc =>
+        (orc.codigo_orcamento === codigoOrcamento || orc.codigoOrcamento === codigoOrcamento)
+          ? { ...orc, status: 'APROVADO' }
+          : orc
+      )
+    );
+    setModalSucesso(true);
+    setSelected(null);
+  } catch (err) {
+    const status = err.response?.status;
+    const data = err.response?.data;
+    console.error('Erro ao enviar resposta:', { status, data, err });
+    alert(`Erro ao enviar resposta. Status: ${status || 'desconhecido'}${data?.message ? ' - ' + data.message : ''}`);
+  }
+};
   return (
     <>
       <Navbar isCustom={true} customMenuItems={customMenuItems} hideLogo />

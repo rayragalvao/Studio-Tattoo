@@ -1,28 +1,28 @@
 import React from "react";
 import "./feedback.css";
-import carlos from "../../../assets/img/carlos-souza.jpg";
-import joao from "../../../assets/img/joao-silva.png";
-import maria from "../../../assets/img/maria-oliveira.jpg";
+import carlos from "../../../assets/img/daniel.jpg";
+import joao from "../../../assets/img/bruno.jpg";
+import maria from "../../../assets/img/gabriella.jpg";
 
 export const FeedbackClientes = () => {
   const feedbacks = [
     {
       id: 1,
-      nome: "João Silva",
+      nome: "Daniel Veloso",
       foto: joao,
-      legenda: "Excelente atendimento e resultado incrível!",
+      legenda: "Excelente atendimento e resultado incrível! Recomendo a todos que buscam uma tatuagem de qualidade.",
     },
     {
       id: 2,
-      nome: "Maria Oliveira",
+      nome: "Gabriella Oliveira",
       foto: maria,
-      legenda: "A tatuagem ficou perfeita, muito melhor do que eu imaginava.",
+      legenda: "A tatuagem ficou perfeita, muito melhor do que eu imaginava. Já quero marcar para fazer mais.",
     },
     {
       id: 3,
-      nome: "Carlos Souza",
+      nome: "Bruno Santtoro",
       foto: carlos,
-      legenda: "Profissionalismo e cuidado do início ao fim.",
+      legenda: "Profissionalismo e cuidado do início ao fim. Estou muito satisfeito com minha nova tatuagem, superou minhas expectativas!",
     },
   ];
 
